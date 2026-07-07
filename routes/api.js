@@ -49,6 +49,9 @@ const upload = multer({
 // POST /api/auth/login
 router.post('/auth/login', authController.login);
 
+// POST /api/auth/register  (public — no JWT required)
+router.post('/auth/register', authController.register);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ── Applicant routes ──────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────

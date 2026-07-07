@@ -1,12 +1,11 @@
 'use strict';
-
 const jwt = require('jsonwebtoken');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // JWT Authentication Middleware
 // Reads the Authorization: Bearer <token> header, verifies the token using
 // JWT_SECRET, and appends the decoded payload to req.user.
-// The payload includes: { id, role, name }
+// The payload includes: { User_ID, Role, name }
 // ─────────────────────────────────────────────────────────────────────────────
 
 function authMiddleware(req, res, next) {
@@ -19,11 +18,11 @@ function authMiddleware(req, res, next) {
     });
   }
 
-  const token = authHeader.slice(7); // strip "Bearer "
+  const token = authHeader.slice(7);
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id, role, name, iat, exp }
+    req.user = decoded; // { User_ID, Role, name, iat, exp }
     return next();
   } catch (err) {
     const message =
@@ -37,11 +36,12 @@ function authMiddleware(req, res, next) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Role guard factory — use after authMiddleware
-// Example: router.get('/admin/stats', authMiddleware, requireRole('Admin'), ...)
 // ─────────────────────────────────────────────────────────────────────────────
 function requireRole(...allowedRoles) {
   return (req, res, next) => {
-    if (!req.user || !allowedRoles.includes(req.user.role)) {
+    // Note: our new DB uses Role as Enum ('Admin', 'Minister', 'Grama_Niladhari', 'Samurdhi_Officer', 'Applicant')
+    // We map frontend role names to DB ENUM if needed, but assuming JWT Role matches frontend requested role.
+    if (!req.user || !allowedRoles.includes(req.user.Role)) {
       return res.status(403).json({
         status: 'error',
         message: 'You do not have permission to access this resource.',

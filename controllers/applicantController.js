@@ -1,56 +1,28 @@
 'use strict';
-
 const path = require('path');
 const pool = require('../config/db');
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Applicant Controller — Applicant endpoints
-// Routes require authMiddleware + requireRole('Applicant')
+// Applicant Controller
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ── POST /api/applications/submit ────────────────────────────────────────────
-// Multipart form (multer already ran before this controller).
-// req.file contains the uploaded house photo.
-// Body fields: monthly_income, family_size
 async function submitApplication(req, res) {
   try {
-    const applicantId   = req.user.id;
-    const monthlyIncome = parseFloat(req.body?.monthly_income);
-    const familySize    = parseInt(req.body?.family_size, 10);
+    const applicantId = req.user.User_ID;
+    
+    // NOTE: The ER diagram schema removed Monthly_Income (moved to APPLICANT table), 
+    // Family_Size, and House_Photo_Path. We will insert what the new schema allows.
+    // If the frontend sends house_photo, multer processes it, but we drop the path here
+    // unless the DB is updated to store it.
 
-    // ── Validation ────────────────────────────────────────────────────────────
-    const errors = [];
-
-    if (isNaN(monthlyIncome) || monthlyIncome < 0) {
-      errors.push('Monthly Income must be a valid non-negative number.');
-    }
-
-    if (!Number.isInteger(familySize) || familySize < 1) {
-      errors.push('Family Size must be a whole number of at least 1.');
-    }
-
-    if (!req.file) {
-      errors.push('House photograph is required.');
-    }
-
-    if (errors.length > 0) {
-      return res.status(422).json({ status: 'error', message: errors.join(' '), errors });
-    }
-
-    // Relative path stored in DB (served via express.static on /public)
-    const photoRelativePath = `uploads/houses/${req.file.filename}`;
-
-    // ── Insert into DB ────────────────────────────────────────────────────────
     const [result] = await pool.execute(
-      `INSERT INTO \`Welfare_Application\`
-        (\`Monthly_Income\`, \`Family_Size\`, \`House_Photo_Path\`, \`Applicant_ID\`)
-       VALUES (?, ?, ?, ?)`,
-      [monthlyIncome, familySize, photoRelativePath, applicantId]
+      `INSERT INTO \`WELFARE_APPLICATION\` (\`Applicant_ID\`) VALUES (?)`,
+      [applicantId]
     );
 
     return res.status(201).json({
-      status:         'success',
-      message:        'Application submitted successfully.',
+      status: 'success',
+      message: 'Application submitted successfully.',
       application_id: result.insertId,
     });
   } catch (err) {
@@ -59,14 +31,16 @@ async function submitApplication(req, res) {
   }
 }
 
-// ── GET /api/applicant/dashboard ─────────────────────────────────────────────
-// Returns the applicant's profile and latest application status.
 async function getDashboard(req, res) {
   try {
-    const applicantId = req.user.id;
+    const applicantId = req.user.User_ID;
 
+    // Join APPLICANT with USERS to get Name and Income
     const [[applicant]] = await pool.execute(
-      'SELECT `Full_Name`, `Status`, `Monthly_Income`, `Registered_Date` FROM `Applicant` WHERE `Applicant_ID` = ? LIMIT 1',
+      `SELECT u.Username AS Full_Name, a.Monthly_Income 
+       FROM \`APPLICANT\` a 
+       JOIN \`USERS\` u ON u.User_ID = a.Applicant_ID 
+       WHERE a.Applicant_ID = ? LIMIT 1`,
       [applicantId]
     );
 
@@ -74,9 +48,10 @@ async function getDashboard(req, res) {
       return res.status(404).json({ status: 'error', message: 'Applicant record not found.' });
     }
 
+    // Fetch from the new WELFARE_APPLICATION schema
     const [[appRow]] = await pool.execute(
-      `SELECT \`Application_ID\`, \`App_Status\`, \`Date\`
-       FROM \`Welfare_Application\`
+      `SELECT \`Application_ID\`, \`Status\`, \`Date\`
+       FROM \`WELFARE_APPLICATION\`
        WHERE \`Applicant_ID\` = ?
        ORDER BY \`Date\` DESC LIMIT 1`,
       [applicantId]
@@ -84,17 +59,15 @@ async function getDashboard(req, res) {
 
     return res.status(200).json({
       status: 'success',
-      name:   applicant.Full_Name,
+      name: applicant.Full_Name,
       profile: {
-        status:          applicant.Status,
-        monthly_income:  applicant.Monthly_Income,
-        registered_date: applicant.Registered_Date,
+        monthly_income: applicant.Monthly_Income,
       },
       latest_application: appRow
         ? {
             application_id: appRow.Application_ID,
-            app_status:     appRow.App_Status,
-            date:           appRow.Date,
+            app_status: appRow.Status,
+            date: appRow.Date,
           }
         : null,
     });
@@ -104,20 +77,20 @@ async function getDashboard(req, res) {
   }
 }
 
-// ── GET /api/applicant/payments ───────────────────────────────────────────────
-// Returns all payment records for the logged-in applicant.
 async function getPayments(req, res) {
   try {
-    const applicantId = req.user.id;
+    const applicantId = req.user.User_ID;
 
+    // Using the exact columns from new SAMURDHI_PAYMENT table
     const [payments] = await pool.execute(
-      `SELECT
-        sp.SP_ID    AS sp_id,
-        sp.P_Status  AS p_status,
-        sp.Date      AS date,
-        sp.Payment   AS payment,
-        sp.GN_ID     AS gn_id
-       FROM \`Samurdhi_payment\` sp
+      `SELECT 
+        sp.Payment_ID AS sp_id, 
+        sp.Status     AS p_status, 
+        sp.Date       AS date, 
+        sp.Amount     AS payment,
+        ma.GN_ID      AS gn_id
+       FROM \`SAMURDHI_PAYMENT\` sp
+       LEFT JOIN \`MINISTER_APPROVAL\` ma ON ma.Request_ID = sp.Request_ID
        WHERE sp.Applicant_ID = ?
        ORDER BY sp.Date DESC`,
       [applicantId]
@@ -126,11 +99,11 @@ async function getPayments(req, res) {
     return res.status(200).json({
       status: 'success',
       payments: payments.map((row) => ({
-        sp_id:    row.sp_id,
+        sp_id: row.sp_id,
         p_status: row.p_status,
-        date:     row.date,
-        payment:  row.payment,
-        gn_id:    row.gn_id,
+        date: row.date,
+        payment: row.payment,
+        gn_id: row.gn_id,
       })),
     });
   } catch (err) {

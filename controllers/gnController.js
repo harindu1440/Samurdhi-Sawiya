@@ -1,44 +1,41 @@
 'use strict';
-
 const pool = require('../config/db');
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GN Controller — Grama Niladhari endpoints
-// All routes require authMiddleware + requireRole('Grama Niladhari')
+// GN Controller
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ── GET /api/gn/stats ────────────────────────────────────────────────────────
-// Returns stats + pending application list for the GN dashboard.
 async function getStats(req, res) {
   try {
-    const gnId = req.user.id;
+    const gnId = req.user.User_ID;
 
     // GN's division info
     const [[gnRow]] = await pool.execute(
-      'SELECT `Division` FROM `Grama_Niladhari` WHERE `GN_ID` = ? LIMIT 1',
+      'SELECT `Division` FROM `GRAMA_NILADHARI` WHERE `GN_ID` = ? LIMIT 1',
       [gnId]
     );
     const division = gnRow ? String(gnRow.Division || 'Unassigned') : 'Unassigned';
 
-    // Aggregate counts (all applications in the system visible to GN)
+    // Aggregate counts
     const [[totals]] = await pool.execute(`
       SELECT
         COUNT(*)                        AS total_applications,
-        SUM(GN_Approval = 0 AND App_Status = 'Pending') AS pending_gn_approvals
-      FROM Welfare_Application
+        SUM(Status = 'Under Review')    AS pending_gn_approvals
+      FROM \`WELFARE_APPLICATION\`
     `);
 
-    // Pending applications awaiting GN review
+    // Pending applications awaiting GN review (Under Review implies visited by Officer, waiting for GN)
     const [pending] = await pool.execute(`
       SELECT
-        wa.Application_ID  AS application_id,
-        a.Full_Name         AS applicant_name,
+        wa.Application_ID   AS application_id,
+        u.Username          AS applicant_name,
         wa.Date             AS date,
-        wa.App_Status       AS status,
-        wa.Monthly_Income   AS monthly_income
-      FROM Welfare_Application wa
-      JOIN Applicant a ON a.Applicant_ID = wa.Applicant_ID
-      WHERE wa.GN_Approval = 0 AND wa.App_Status = 'Pending'
+        wa.Status           AS status,
+        a.Monthly_Income    AS monthly_income
+      FROM \`WELFARE_APPLICATION\` wa
+      JOIN \`APPLICANT\` a ON a.Applicant_ID = wa.Applicant_ID
+      JOIN \`USERS\` u ON u.User_ID = a.Applicant_ID
+      WHERE wa.Status = 'Under Review'
       ORDER BY wa.Date DESC
       LIMIT 20
     `);
@@ -47,7 +44,7 @@ async function getStats(req, res) {
       status: 'success',
       division,
       stats: {
-        total_applications:  Number(totals.total_applications  || 0),
+        total_applications:   Number(totals.total_applications  || 0),
         pending_gn_approvals: Number(totals.pending_gn_approvals || 0),
       },
       pending_applications: pending.map((row) => ({
@@ -64,27 +61,25 @@ async function getStats(req, res) {
   }
 }
 
-// ── GET /api/gn/applications ─────────────────────────────────────────────────
-// Returns all welfare applications visible to GN.
 async function getApplications(req, res) {
   try {
-    const gnId = req.user.id;
+    const gnId = req.user.User_ID;
 
-    // Division from DB
     const [[gnRow]] = await pool.execute(
-      'SELECT `Division` FROM `Grama_Niladhari` WHERE `GN_ID` = ? LIMIT 1',
+      'SELECT `Division` FROM `GRAMA_NILADHARI` WHERE `GN_ID` = ? LIMIT 1',
       [gnId]
     );
     const division = gnRow ? String(gnRow.Division || 'Unassigned') : 'Unassigned';
 
     const [applications] = await pool.execute(`
       SELECT
-        wa.Application_ID  AS application_id,
-        a.Full_Name         AS applicant_name,
+        wa.Application_ID   AS application_id,
+        u.Username          AS applicant_name,
         wa.Date             AS submitted_date,
-        wa.App_Status       AS status
-      FROM Welfare_Application wa
-      JOIN Applicant a ON a.Applicant_ID = wa.Applicant_ID
+        wa.Status           AS status
+      FROM \`WELFARE_APPLICATION\` wa
+      JOIN \`APPLICANT\` a ON a.Applicant_ID = wa.Applicant_ID
+      JOIN \`USERS\` u ON u.User_ID = a.Applicant_ID
       ORDER BY wa.Date DESC
       LIMIT 200
     `);
@@ -105,8 +100,6 @@ async function getApplications(req, res) {
   }
 }
 
-// ── GET /api/gn/applications/:id ─────────────────────────────────────────────
-// Returns full detail for one application (for the review modal).
 async function getApplicationDetail(req, res) {
   try {
     const applicationId = parseInt(req.params.id, 10);
@@ -117,18 +110,20 @@ async function getApplicationDetail(req, res) {
     const [[row]] = await pool.execute(`
       SELECT
         wa.Application_ID     AS application_id,
-        a.Full_Name            AS applicant_name,
-        a.Address              AS address,
-        a.Phone_Num            AS phone_num,
-        wa.Monthly_Income      AS monthly_income,
-        wa.Family_Size         AS family_size,
-        wa.Date                AS submitted_date,
-        wa.App_Status          AS status,
-        wa.GN_Approval         AS gn_approval,
-        wa.Officer_Approval    AS officer_approval,
-        wa.House_Photo_Path    AS house_photo_path
-      FROM Welfare_Application wa
-      JOIN Applicant a ON a.Applicant_ID = wa.Applicant_ID
+        u.Username            AS applicant_name,
+        a.Address             AS address,
+        u.Phone_Num           AS phone_num,
+        a.Monthly_Income      AS monthly_income,
+        wa.Date               AS submitted_date,
+        wa.Status             AS status,
+        hv.Recommendation     AS visit_recommendation,
+        hv.Remarks            AS visit_remarks,
+        ma.Status             AS minister_approval_status
+      FROM \`WELFARE_APPLICATION\` wa
+      JOIN \`APPLICANT\` a ON a.Applicant_ID = wa.Applicant_ID
+      JOIN \`USERS\` u ON u.User_ID = a.Applicant_ID
+      LEFT JOIN \`HOME_VISIT\` hv ON hv.Visit_ID = wa.Visit_ID
+      LEFT JOIN \`MINISTER_APPROVAL\` ma ON ma.Application_ID = wa.Application_ID
       WHERE wa.Application_ID = ?
       LIMIT 1
     `, [applicationId]);
@@ -145,13 +140,11 @@ async function getApplicationDetail(req, res) {
         address:          row.address,
         phone_num:        row.phone_num,
         monthly_income:   row.monthly_income,
-        family_size:      row.family_size,
         submitted_date:   row.submitted_date,
         status:           row.status,
-        gn_approval:      Number(row.gn_approval),
-        officer_approval: Number(row.officer_approval),
-        // Build a public URL for the uploaded photo
-        house_photo_url:  row.house_photo_path ? `/${row.house_photo_path}` : null,
+        visit_recommendation: row.visit_recommendation || 'Pending Visit',
+        visit_remarks:    row.visit_remarks || '',
+        minister_approval_status: row.minister_approval_status || 'Not Forwarded'
       },
     });
   } catch (err) {
@@ -162,10 +155,11 @@ async function getApplicationDetail(req, res) {
 
 // ── POST /api/gn/review ──────────────────────────────────────────────────────
 // Body: { application_id, action: 'approve'|'reject' }
-// Same double-check mirror: if Officer_Approval===1 AND GN approves → 'Accepted'
+// GN "approving" means forwarding to the Minister by creating a MINISTER_APPROVAL.
 async function review(req, res) {
   const conn = await pool.getConnection();
   try {
+    const gnId = req.user.User_ID;
     const applicationId = parseInt(req.body?.application_id, 10);
     const action = String(req.body?.action || '').toLowerCase();
 
@@ -182,7 +176,7 @@ async function review(req, res) {
     await conn.beginTransaction();
 
     const [[application]] = await conn.execute(
-      'SELECT `Officer_Approval`, `App_Status` FROM `Welfare_Application` WHERE `Application_ID` = ? LIMIT 1 FOR UPDATE',
+      'SELECT \`Status\` FROM \`WELFARE_APPLICATION\` WHERE \`Application_ID\` = ? LIMIT 1 FOR UPDATE',
       [applicationId]
     );
 
@@ -192,32 +186,48 @@ async function review(req, res) {
       return res.status(404).json({ status: 'error', message: 'Application not found.' });
     }
 
-    const isApprove = action === 'approve';
-    const gnApprovalValue = isApprove ? 1 : 0;
-    const officerAlreadyApproved = Number(application.Officer_Approval) === 1;
+    // Check if it was already forwarded
+    const [[existingApproval]] = await conn.execute(
+      'SELECT 1 FROM \`MINISTER_APPROVAL\` WHERE \`Application_ID\` = ? LIMIT 1',
+      [applicationId]
+    );
 
-    // Double-check: if officer already approved AND GN now approves → Accepted
-    let nextStatus = 'Pending';
-    if (isApprove && officerAlreadyApproved) {
-      nextStatus = 'Accepted';
+    if (existingApproval) {
+      await conn.rollback();
+      conn.release();
+      return res.status(409).json({ status: 'error', message: 'Application was already forwarded to Minister.' });
     }
 
-    await conn.execute(
-      'UPDATE `Welfare_Application` SET `GN_Approval` = ?, `App_Status` = ? WHERE `Application_ID` = ?',
-      [gnApprovalValue, nextStatus, applicationId]
-    );
+    const isApprove = action === 'approve';
+
+    if (isApprove) {
+      // Forward to minister
+      await conn.execute(
+        'INSERT INTO \`MINISTER_APPROVAL\` (\`GN_ID\`, \`Application_ID\`, \`Status\`) VALUES (?, ?, ?)',
+        [gnId, applicationId, 'Pending']
+      );
+      
+      // Update app status to Forwarded
+      await conn.execute(
+        'UPDATE \`WELFARE_APPLICATION\` SET \`Status\` = ? WHERE \`Application_ID\` = ?',
+        ['Forwarded', applicationId]
+      );
+    } else {
+      // Rejecting terminates the application
+      await conn.execute(
+        'UPDATE \`WELFARE_APPLICATION\` SET \`Status\` = ? WHERE \`Application_ID\` = ?',
+        ['Rejected', applicationId]
+      );
+    }
 
     await conn.commit();
     conn.release();
 
     return res.status(200).json({
       status:              'success',
-      message:             isApprove ? 'Application approved by GN.' : 'Application rejected by GN.',
+      message:             isApprove ? 'Application forwarded to Minister.' : 'Application rejected.',
       application_id:      applicationId,
-      application_status:  nextStatus,
-      gn_approval:         gnApprovalValue,
-      officer_approval:    Number(application.Officer_Approval),
-      double_check_passed: isApprove && officerAlreadyApproved,
+      application_status:  isApprove ? 'Forwarded' : 'Rejected',
     });
   } catch (err) {
     await conn.rollback().catch(() => {});
@@ -227,29 +237,29 @@ async function review(req, res) {
   }
 }
 
-// ── GET /api/gn/payments ─────────────────────────────────────────────────────
-// Returns payment records for applicants in the GN's division.
 async function getPayments(req, res) {
   try {
-    const gnId = req.user.id;
+    const gnId = req.user.User_ID;
 
     const [[gnRow]] = await pool.execute(
-      'SELECT `Division` FROM `Grama_Niladhari` WHERE `GN_ID` = ? LIMIT 1',
+      'SELECT `Division` FROM `GRAMA_NILADHARI` WHERE `GN_ID` = ? LIMIT 1',
       [gnId]
     );
     const division = gnRow ? String(gnRow.Division || 'Unassigned') : 'Unassigned';
 
     const [payments] = await pool.execute(`
       SELECT
-        sp.SP_ID         AS sp_id,
+        sp.Payment_ID    AS sp_id,
         sp.Applicant_ID  AS applicant_id,
-        a.Full_Name       AS applicant_name,
-        sp.P_Status       AS p_status,
-        sp.Date           AS date,
-        sp.Payment        AS payment
-      FROM Samurdhi_payment sp
-      JOIN Applicant a ON a.Applicant_ID = sp.Applicant_ID
-      WHERE sp.GN_ID = ?
+        u.Username       AS applicant_name,
+        sp.Status        AS p_status,
+        sp.Date          AS date,
+        sp.Amount        AS payment
+      FROM \`SAMURDHI_PAYMENT\` sp
+      JOIN \`APPLICANT\` a ON a.Applicant_ID = sp.Applicant_ID
+      JOIN \`USERS\` u ON u.User_ID = a.Applicant_ID
+      JOIN \`MINISTER_APPROVAL\` ma ON ma.Request_ID = sp.Request_ID
+      WHERE ma.GN_ID = ?
       ORDER BY sp.Date DESC
     `, [gnId]);
 
