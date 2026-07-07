@@ -43,6 +43,17 @@
     .strength-weak   { width: 33%; background: #e74c3c; }
     .strength-medium { width: 66%; background: #f39c12; }
     .strength-strong { width: 100%; background: #27ae60; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
   </style>
   <script src="assets/js/register.js" defer></script>
 </head>
@@ -90,64 +101,70 @@
         <div id="error-box" class="error-box" aria-live="polite" hidden></div>
 
         <form id="register-form" class="auth-form" novalidate>
-
-          <!-- Username -->
-          <div class="field">
-            <input
-              type="text"
-              id="username"
-              name="username"
-              autocomplete="username"
-              placeholder=" "
-              required
-              minlength="3"
-              maxlength="100"
-            >
-            <label for="username">Username</label>
-          </div>
-
-          <!-- Phone Number -->
-          <div class="field">
-            <input
-              type="tel"
-              id="phone_num"
-              name="phone_num"
-              autocomplete="tel"
-              placeholder=" "
-              pattern="[0-9+]{7,20}"
-            >
-            <label for="phone_num">Phone Number (optional)</label>
-          </div>
-
-          <!-- Password -->
-          <div class="field">
-            <input
-              type="password"
-              id="password"
-              name="password"
-              autocomplete="new-password"
-              placeholder=" "
-              required
-              minlength="8"
-            >
-            <label for="password">Password</label>
-            <!-- Live strength indicator -->
-            <div class="password-strength" id="strength-track" aria-hidden="true">
-              <div class="password-strength-bar" id="strength-bar"></div>
+          <div class="form-grid">
+            
+            <!-- Full Name (Full Width) -->
+            <div class="field full-width">
+              <input type="text" id="full_name" name="full_name" autocomplete="name" placeholder=" " required>
+              <label for="full_name">Full Name as per NIC</label>
             </div>
-          </div>
 
-          <!-- Confirm Password -->
-          <div class="field">
-            <input
-              type="password"
-              id="confirm_password"
-              name="confirm_password"
-              autocomplete="new-password"
-              placeholder=" "
-              required
-            >
-            <label for="confirm_password">Confirm Password</label>
+            <!-- NIC Number -->
+            <div class="field">
+              <input type="text" id="nic" name="nic" placeholder=" " required maxlength="20">
+              <label for="nic">NIC Number</label>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="field">
+              <input type="date" id="dob" name="dob" placeholder=" " required>
+              <label for="dob">Date of Birth</label>
+            </div>
+
+            <!-- Gender -->
+            <div class="field">
+              <select id="gender" name="gender" required>
+                <option value="" disabled selected hidden></option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              <label for="gender">Gender</label>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="field">
+              <input type="tel" id="phone_num" name="phone_num" autocomplete="tel" placeholder=" " pattern="[0-9+]{7,20}">
+              <label for="phone_num">Phone Number (optional)</label>
+            </div>
+
+            <!-- Address (Full Width) -->
+            <div class="field full-width">
+              <textarea id="address" name="address" placeholder=" " required rows="2" style="resize: vertical;"></textarea>
+              <label for="address">Permanent Address</label>
+            </div>
+
+            <!-- Username (Full Width) -->
+            <div class="field full-width">
+              <input type="text" id="username" name="username" autocomplete="username" placeholder=" " required minlength="3" maxlength="100">
+              <label for="username">Create a Username</label>
+            </div>
+
+            <!-- Password -->
+            <div class="field">
+              <input type="password" id="password" name="password" autocomplete="new-password" placeholder=" " required minlength="8">
+              <label for="password">Password</label>
+              <!-- Live strength indicator -->
+              <div class="password-strength" id="strength-track" aria-hidden="true">
+                <div class="password-strength-bar" id="strength-bar"></div>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="field">
+              <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" placeholder=" " required>
+              <label for="confirm_password">Confirm Password</label>
+            </div>
+
           </div>
 
           <button type="submit" class="submit-button" id="register-btn">

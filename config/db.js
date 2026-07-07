@@ -3,10 +3,10 @@
 const mysql = require('mysql2/promise');
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Railway MySQL connection pool
+// Pterodactyl MySQL connection pool
 // All values come from environment variables — no hardcoded fallbacks.
-// In Railway, these are injected automatically when a MySQL service is linked.
-// On Render, add them as Environment Variables in the dashboard.
+// Set MYSQLHOST, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQLPORT
+// in your .env (local) or the panel's environment variables (production).
 // ─────────────────────────────────────────────────────────────────────────────
 
 const pool = mysql.createPool({

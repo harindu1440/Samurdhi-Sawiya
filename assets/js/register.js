@@ -90,8 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const phone_num       = String(form.phone_num.value       || '').trim();
     const password        = String(form.password.value        || '');
     const confirmPassword = String(form.confirm_password.value || '');
+    
+    // New fields
+    const fullName        = String(form.full_name.value       || '').trim();
+    const nic             = String(form.nic.value             || '').trim();
+    const dob             = String(form.dob.value             || '').trim();
+    const gender          = String(form.gender.value          || '').trim();
+    const address         = String(form.address.value         || '').trim();
 
     // ── Client-side validation ─────────────────────────────────────────────────
+    if (!fullName) {
+      showError('Please enter your full name.');
+      return;
+    }
+
+    if (!nic) {
+      showError('Please enter your NIC number.');
+      return;
+    }
+
     if (username.length < 3) {
       showError('Username must be at least 3 characters long.');
       return;
@@ -123,7 +140,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/api/auth/register', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ Username: username, Phone_Num: phone_num, Password: password }),
+        body:    JSON.stringify({ 
+          Username: username, 
+          Phone_Num: phone_num, 
+          Password: password,
+          Full_Name: fullName,
+          NIC: nic,
+          Address: address,
+          DOB: dob,
+          Gender: gender
+        }),
       });
 
       let data;

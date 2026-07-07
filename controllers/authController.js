@@ -90,6 +90,11 @@ async function register(req, res) {
     const username = String(req.body?.Username  || '').trim();
     const phoneNum = String(req.body?.Phone_Num || '').trim();
     const password = String(req.body?.Password  || '');
+    const fullName = String(req.body?.Full_Name || '').trim();
+    const nic      = String(req.body?.NIC       || '').trim();
+    const address  = String(req.body?.Address   || '').trim();
+    const dob      = String(req.body?.DOB       || '').trim();
+    const gender   = String(req.body?.Gender    || '').trim();
 
     if (!username || username.length < 3) {
       conn.release();
@@ -125,8 +130,8 @@ async function register(req, res) {
     const newUserId = userResult.insertId;
 
     await conn.execute(
-      'INSERT INTO `APPLICANT` (`Applicant_ID`) VALUES (?)',
-      [newUserId]
+      'INSERT INTO `APPLICANT` (`Applicant_ID`, `Full_Name`, `NIC`, `Address`, `DOB`, `Gender`) VALUES (?, ?, ?, ?, ?, ?)',
+      [newUserId, fullName || null, nic || null, address || null, dob || null, gender || null]
     );
 
     await conn.commit();
