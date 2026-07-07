@@ -12,7 +12,7 @@ const cors    = require('cors');
 const apiRouter = require('./routes/api');
 
 const app  = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVER_PORT || process.env.PORT || 3000;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Middleware
@@ -70,6 +70,6 @@ app.use((err, _req, res, _next) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Start
 // ─────────────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`SamurdhiSaviya server running on port ${PORT}`);
 });
