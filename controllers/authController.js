@@ -84,8 +84,9 @@ async function login(req, res) {
 // Body: { Username, Phone_Num, Password }
 // ─────────────────────────────────────────────────────────────────────────────
 async function register(req, res) {
-  const conn = await pool.getConnection();
+  let conn;
   try {
+    conn = await pool.getConnection();
     const username = String(req.body?.Username  || '').trim();
     const phoneNum = String(req.body?.Phone_Num || '').trim();
     const password = String(req.body?.Password  || '');
@@ -138,8 +139,8 @@ async function register(req, res) {
     });
 
   } catch (err) {
-    await conn.rollback().catch(() => {});
-    conn.release();
+    if (conn) await conn.rollback().catch(() => {});
+    if (conn) conn.release();
     console.error('[authController.register]', err.message);
 
     if (err.code === 'ER_DUP_ENTRY') {

@@ -126,10 +126,20 @@ document.addEventListener('DOMContentLoaded', () => {
         body:    JSON.stringify({ Username: username, Phone_Num: phone_num, Password: password }),
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonErr) {
+        // If the server didn't return valid JSON (e.g. 500 error page)
+        if (!response.ok) {
+          throw new Error('A server error occurred. Please try again later.');
+        } else {
+          throw new Error('Unexpected response format from the server.');
+        }
+      }
 
-      if (!response.ok || data.status !== 'success') {
-        throw new Error(data.message || 'Registration failed. Please try again.');
+      if (!response.ok || data?.status !== 'success') {
+        throw new Error(data?.message || 'Registration failed. Please try again.');
       }
 
       // ── Success ──────────────────────────────────────────────────────────────
