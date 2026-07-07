@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Audit Reports | SamurdhiSaviya</title>
+  <meta name="description" content="Export approved applications and payment history for audit reporting.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/reports.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/reports.js" defer></script>
+</head>
+<body>
+  <div class="report-layout" data-reports-page>
+    <aside class="sidebar" aria-label="Admin navigation">
+      <a class="brand" href="admin_dashboard.html">
+        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+        <span class="brand-text">
+          <strong>SamurdhiSaviya</strong>
+          <small>Audit Reports</small>
+        </span>
+      </a>
+
+      <nav class="nav-links">
+        <a class="nav-link" href="admin_dashboard.html"><i class="fa-solid fa-chart-column"></i> Overview</a>
+        <a class="nav-link" href="admin_users.html"><i class="fa-solid fa-users-gear"></i> User Management</a>
+        <a class="nav-link active" href="reports.html"><i class="fa-solid fa-file-export"></i> Reports</a>
+        <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="footer-label">Signed in as</span>
+        <strong id="admin-name">Admin</strong>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">System auditing</p>
+          <h1>Generate approved application and payment exports.</h1>
+          <p class="topbar-copy">Choose a date range, pull the approved workflow records, and download a structured Excel workbook for official review.</p>
+        </div>
+        <div class="status-chip" id="report-status">Ready</div>
+      </header>
+
+      <section class="panel report-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Date range</p>
+            <h2>Create a reporting window</h2>
+          </div>
+        </div>
+
+        <form id="report-form" class="report-form">
+          <label>
+            <span>Start Date</span>
+            <input type="date" id="start-date" name="start_date" required>
+          </label>
+
+          <label>
+            <span>End Date</span>
+            <input type="date" id="end-date" name="end_date" required>
+          </label>
+
+          <button type="submit" class="primary-button" id="generate-report-button">
+            <i class="fa-solid fa-file-arrow-down"></i>
+            Generate Report
+          </button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Preview</p>
+            <h2>Latest report data</h2>
+          </div>
+          <div class="panel-badge" id="record-count">0 records</div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th scope="col">Application ID</th>
+                <th scope="col">Applicant Name</th>
+                <th scope="col">Applicant ID</th>
+                <th scope="col">Application Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Payment ID</th>
+                <th scope="col">Payment Date</th>
+                <th scope="col">Payment</th>
+                <th scope="col">GN Division</th>
+              </tr>
+            </thead>
+            <tbody id="report-body">
+              <tr>
+                <td colspan="9" class="empty-state">Select a date range and generate a report.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>GN Payment Overview | SamurdhiSaviya</title>
+  <meta name="description" content="Transparent payment overview for the Grama Niladhari.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/gn_payments_view.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/gn_payments_view.js" defer></script>
+</head>
+<body>
+  <main class="payments-shell" data-gn-payments>
+    <header class="payments-header">
+      <a class="brand" href="gn_dashboard.html" aria-label="Back to GN dashboard">
+        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
+        <span class="brand-text">
+          <strong>SamurdhiSaviya</strong>
+          <small>Payment Overview</small>
+        </span>
+      </a>
+
+      <div class="header-meta">
+        <div class="division-chip" id="division-chip">Division: Loading...</div>
+        <div class="user-chip">Welcome, <span id="user-name">Grama Niladhari</span></div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">Payment transparency</p>
+      <h1>Monitor accepted welfare payments across your division.</h1>
+      <p class="hero-copy">
+        Search quickly by applicant name or ID, review payment status, and keep oversight simple and transparent.
+      </p>
+    </section>
+
+    <section class="table-card" aria-label="Payment overview table">
+      <div class="table-toolbar">
+        <div>
+          <p class="eyebrow">Queue</p>
+          <h2>Accepted payment records</h2>
+        </div>
+        <div class="toolbar-badge" id="payment-count">0 records</div>
+      </div>
+
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input type="search" id="payment-search" placeholder="Search by applicant name or ID" onkeyup="filterPayments()" autocomplete="off">
+      </div>
+
+      <div class="table-wrap">
+        <table class="payments-table">
+          <thead>
+            <tr>
+              <th scope="col">Payment ID</th>
+              <th scope="col">Applicant ID</th>
+              <th scope="col">Applicant Name</th>
+              <th scope="col">Payment Status</th>
+              <th scope="col">Date</th>
+              <th scope="col">Payment</th>
+            </tr>
+          </thead>
+          <tbody id="payments-body">
+            <tr>
+              <td colspan="6" class="empty-state">Loading payment records...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

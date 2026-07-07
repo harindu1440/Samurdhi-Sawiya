@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Environment secrets — NEVER commit this
+.env
+
+# Uploaded house photos (ephemeral on Render anyway)
+public/uploads/houses/*
+!public/uploads/houses/.gitkeep
+
+# Logs
+*.log
+core/error_log.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

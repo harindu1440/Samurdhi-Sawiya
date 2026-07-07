@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Grama Niladhari Dashboard | SamurdhiSaviya</title>
+  <meta name="description" content="Grama Niladhari dashboard for reviewing pending applications and monitoring welfare administration.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/gn_dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+  <main class="gn-shell" data-gn-dashboard>
+    <header class="gn-header">
+      <a class="brand" href="index.html" aria-label="SamurdhiSaviya home">
+        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
+        <span class="brand-text">
+          <strong>SamurdhiSaviya</strong>
+          <small>Grama Niladhari Portal</small>
+        </span>
+      </a>
+
+      <div class="user-chip">
+        Welcome, <span id="user-name">Grama Niladhari</span>
+      </div>
+    </header>
+
+    <section class="gn-hero">
+      <p class="eyebrow">Grama Niladhari dashboard</p>
+      <h1>Monitor and verify pending applications with full visibility.</h1>
+      <p class="hero-copy">
+        Review incoming requests, track approval workload, and keep the local welfare workflow moving efficiently.
+      </p>
+    </section>
+
+    <section class="metrics-grid" aria-label="Dashboard metrics">
+      <article class="metric-card">
+        <span class="metric-icon"><i class="fa-solid fa-folder-open"></i></span>
+        <p>Total Applications</p>
+        <strong id="total-applications">0</strong>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-icon"><i class="fa-solid fa-hourglass-half"></i></span>
+        <p>Pending GN Approvals</p>
+        <strong id="pending-gn-approvals">0</strong>
+      </article>
+
+      <a class="metric-card" href="gn_payments_view.html">
+        <span class="metric-icon"><i class="fa-solid fa-coins"></i></span>
+        <p>Payment Overview</p>
+        <strong>Open</strong>
+      </a>
+    </section>
+
+    <section class="table-section" aria-label="Pending applications table">
+      <div class="table-header">
+        <div>
+          <p class="eyebrow">Pending review queue</p>
+          <h2>Applications awaiting GN action</h2>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="pending-table">
+          <thead>
+            <tr>
+              <th scope="col">Application ID</th>
+              <th scope="col">Applicant Name</th>
+              <th scope="col">Submitted Date</th>
+              <th scope="col">Status</th>
+              <th scope="col">Monthly Income</th>
+            </tr>
+          </thead>
+          <tbody id="pending-applications-body">
+            <tr>
+              <td colspan="5" class="empty-state">Loading pending applications...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

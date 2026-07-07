@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>SamurdhiSaviya | Login</title>
+  <meta name="description" content="Secure login for applicants, Grama Niladhari, and Samurdhi officers in the SamurdhiSaviya digital management system.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/auth.js" defer></script>
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-shell" aria-label="Login panel">
+      <aside class="auth-visual" aria-hidden="true">
+        <div class="auth-visual-overlay"></div>
+        <div class="auth-visual-content">
+          <span class="auth-badge">SamurdhiSaviya Secure Access</span>
+          <h1>Trusted digital access for public welfare operations.</h1>
+          <p>
+            Manage applications, approvals, visits, and payments through a streamlined
+            government-grade workflow designed for clarity and control.
+          </p>
+          <ul class="auth-points">
+            <li><i class="fa-solid fa-shield-halved"></i> Protected access for all roles</li>
+            <li><i class="fa-solid fa-layer-group"></i> Centralized workflow visibility</li>
+            <li><i class="fa-solid fa-bolt"></i> Fast response with API-driven login</li>
+          </ul>
+        </div>
+        <img class="auth-illustration" src="assets/images/login-visual.svg" alt="Decorative login illustration">
+      </aside>
+
+      <section class="auth-card">
+        <div class="auth-card-header">
+          <div class="auth-logo">
+            <i class="fa-solid fa-landmark" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h2>Sign in to your account</h2>
+            <p>Use your assigned credentials to continue.</p>
+          </div>
+        </div>
+
+        <div id="error-box" class="error-box" aria-live="polite" hidden></div>
+
+        <form id="login-form" class="auth-form" novalidate>
+          <div class="field">
+            <input type="text" id="user_id" name="user_id" autocomplete="username" placeholder=" " required>
+            <label for="user_id">User ID</label>
+          </div>
+
+          <div class="field">
+            <input type="password" id="password" name="password" autocomplete="current-password" placeholder=" " required>
+            <label for="password">Password</label>
+          </div>
+
+          <div class="field field--select">
+            <select id="role" name="role" required>
+              <option value="" selected disabled>Select your role</option>
+              <option value="Applicant">Applicant</option>
+              <option value="Grama Niladhari">Grama Niladhari</option>
+              <option value="Samurdhi Officer">Samurdhi Officer</option>
+              <option value="Admin">Admin</option>
+            </select>
+            <label for="role">Role</label>
+          </div>
+
+          <button type="submit" class="submit-button">
+            <span>Login</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <p class="auth-footer-note">
+          Access is restricted to authorized users only.
+        </p>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

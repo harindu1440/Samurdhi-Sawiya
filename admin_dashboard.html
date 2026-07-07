@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Admin Dashboard | SamurdhiSaviya</title>
+  <meta name="description" content="Secure admin dashboard for monitoring beneficiaries, funds, and approval queues.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin_dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/admin_dashboard.js" defer></script>
+</head>
+<body>
+  <div class="admin-layout" data-admin-dashboard>
+    <aside class="sidebar" aria-label="Admin navigation">
+      <a class="brand" href="admin_dashboard.html">
+        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+        <span class="brand-text">
+          <strong>SamurdhiSaviya</strong>
+          <small>Admin Control Center</small>
+        </span>
+      </a>
+
+      <nav class="nav-links">
+        <a class="nav-link active" href="admin_dashboard.html"><i class="fa-solid fa-chart-column"></i> Overview</a>
+        <a class="nav-link" href="admin_users.html"><i class="fa-solid fa-users-gear"></i> User Management</a>
+        <a class="nav-link" href="reports.html"><i class="fa-solid fa-file-export"></i> Reports</a>
+        <a class="nav-link" href="gn_dashboard.html"><i class="fa-solid fa-map-location-dot"></i> GN Portal</a>
+        <a class="nav-link" href="applicant_dashboard.html"><i class="fa-solid fa-users"></i> Applicant Portal</a>
+        <a class="nav-link" href="applicant_payments.html"><i class="fa-solid fa-coins"></i> Payment History</a>
+        <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="footer-label">Signed in as</span>
+        <strong id="admin-name">Admin</strong>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Secure administration</p>
+          <h1>Real-time welfare system metrics.</h1>
+          <p class="topbar-copy">Track beneficiaries, disbursed funds, and applications waiting for action from one secure admin surface.</p>
+        </div>
+        <div class="status-chip">Role locked: Admin</div>
+      </header>
+
+      <section class="metrics-grid" aria-label="Admin metrics">
+        <article class="metric-card">
+          <span class="metric-icon"><i class="fa-solid fa-user-group"></i></span>
+          <p>Total Beneficiaries</p>
+          <strong data-counter="beneficiaries">0</strong>
+        </article>
+
+        <article class="metric-card">
+          <span class="metric-icon"><i class="fa-solid fa-sack-dollar"></i></span>
+          <p>Total Funds Disbursed</p>
+          <strong data-counter="funds">0</strong>
+        </article>
+
+        <article class="metric-card">
+          <span class="metric-icon"><i class="fa-solid fa-hourglass-half"></i></span>
+          <p>Pending Approvals</p>
+          <strong data-counter="approvals">0</strong>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Overview</p>
+            <h2>Live system snapshot</h2>
+          </div>
+          <div class="panel-badge" id="last-updated">Updating...</div>
+        </div>
+        <div class="panel-body">
+          <p>The dashboard refreshes aggregate values from the live database and animates the metrics as soon as they are available.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

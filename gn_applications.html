@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>GN Applications | SamurdhiSaviya</title>
+  <meta name="description" content="Review applications assigned to the Grama Niladhari division.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/gn_applications.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/gn_applications.js" defer></script>
+</head>
+<body>
+  <main class="gn-app-shell">
+    <header class="gn-app-header">
+      <a class="brand" href="gn_dashboard.html" aria-label="Back to dashboard">
+        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
+        <span class="brand-text">
+          <strong>SamurdhiSaviya</strong>
+          <small>GN Applications</small>
+        </span>
+      </a>
+
+      <div class="header-meta">
+        <div class="division-chip" id="division-chip">Division: Loading...</div>
+        <div class="user-chip">Welcome, <span id="user-name">Grama Niladhari</span></div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">Assigned applications</p>
+      <h1>Review the applications mapped to your division.</h1>
+      <p class="hero-copy">
+        Open each record in a secure modal to inspect applicant information, verify the house photograph, and approve or reject the request.
+      </p>
+    </section>
+
+    <section class="table-card" aria-label="Applications table">
+      <div class="table-toolbar">
+        <div>
+          <p class="eyebrow">Queue</p>
+          <h2>Applications awaiting GN review</h2>
+        </div>
+        <div class="toolbar-badge" id="application-count">0 records</div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="applications-table">
+          <thead>
+            <tr>
+              <th scope="col">Application ID</th>
+              <th scope="col">Applicant</th>
+              <th scope="col">Submitted</th>
+              <th scope="col">Status</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="applications-body">
+            <tr>
+              <td colspan="5" class="empty-state">Loading applications...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="review-modal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button type="button" class="modal-close" id="modal-close" aria-label="Close review modal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="modal-loading" id="modal-loading" hidden>
+        <div class="spinner"></div>
+        <p>Loading application details...</p>
+      </div>
+
+      <div class="modal-content" id="modal-content">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Application review</p>
+            <h2 id="modal-title">Applicant Details</h2>
+          </div>
+          <div class="modal-status" id="modal-status">Pending</div>
+        </div>
+
+        <div class="modal-grid">
+          <div class="details-panel">
+            <dl class="detail-list">
+              <div>
+                <dt>Applicant Name</dt>
+                <dd id="detail-name">-</dd>
+              </div>
+              <div>
+                <dt>Address</dt>
+                <dd id="detail-address">-</dd>
+              </div>
+              <div>
+                <dt>Phone Number</dt>
+                <dd id="detail-phone">-</dd>
+              </div>
+              <div>
+                <dt>Monthly Income</dt>
+                <dd id="detail-income">-</dd>
+              </div>
+              <div>
+                <dt>Family Size</dt>
+                <dd id="detail-family-size">-</dd>
+              </div>
+              <div>
+                <dt>Submitted On</dt>
+                <dd id="detail-date">-</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="photo-panel">
+            <p class="panel-label">House photograph</p>
+            <img id="detail-photo" alt="Uploaded house photograph" src="" />
+          </div>
+        </div>
+
+        <div id="modal-error" class="modal-error" hidden></div>
+
+        <div class="modal-actions">
+          <button type="button" class="action-button approve" id="approve-button">Approve</button>
+          <button type="button" class="action-button reject" id="reject-button">Reject</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

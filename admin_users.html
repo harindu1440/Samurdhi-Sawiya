@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Admin User Management | SamurdhiSaviya</title>
+  <meta name="description" content="Secure user management for Grama Niladhari and Samurdhi Officer accounts.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin_users.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/admin_users.js" defer></script>
+</head>
+<body>
+  <div class="admin-layout" data-admin-users>
+    <aside class="sidebar" aria-label="Admin navigation">
+      <a class="brand" href="admin_dashboard.html">
+        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+        <span class="brand-text">
+          <strong>SamurdhiSaviya</strong>
+          <small>Admin Control Center</small>
+        </span>
+      </a>
+
+      <nav class="nav-links">
+        <a class="nav-link" href="admin_dashboard.html"><i class="fa-solid fa-chart-column"></i> Overview</a>
+        <a class="nav-link active" href="admin_users.html"><i class="fa-solid fa-users-gear"></i> User Management</a>
+        <a class="nav-link" href="gn_dashboard.html"><i class="fa-solid fa-map-location-dot"></i> GN Portal</a>
+        <a class="nav-link" href="applicant_dashboard.html"><i class="fa-solid fa-users"></i> Applicant Portal</a>
+        <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="footer-label">Signed in as</span>
+        <strong id="admin-name">Admin</strong>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">User administration</p>
+          <h1>Manage GN and officer accounts securely.</h1>
+          <p class="topbar-copy">Create, update, and remove role-based accounts without leaving the dashboard. Changes apply instantly to the grid below.</p>
+        </div>
+        <div class="actions">
+          <label class="search-box" for="user-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="search" id="user-search" placeholder="Search by name, phone, or ID" onkeyup="filterUsers()" autocomplete="off">
+          </label>
+          <button type="button" class="primary-button" id="open-create-modal">
+            <i class="fa-solid fa-user-plus"></i>
+            Add User
+          </button>
+        </div>
+      </header>
+
+      <section class="panel" aria-label="Users table">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Accounts</p>
+            <h2>Grama Niladhari and Samurdhi Officer records</h2>
+          </div>
+          <div class="panel-badge" id="user-count">0 records</div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th scope="col">Role</th>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Division / Area</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Password</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-body">
+              <tr>
+                <td colspan="7" class="empty-state">Loading users...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="user-modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="user-modal-title">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Account form</p>
+          <h2 id="user-modal-title">Add user</h2>
+        </div>
+        <button type="button" class="icon-button" id="close-modal" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="user-form" class="user-form" autocomplete="off">
+        <input type="hidden" name="user_id" id="user-id">
+        <input type="hidden" name="action" id="form-action" value="create">
+
+        <label>
+          <span>Role</span>
+          <select name="role" id="user-role" required>
+            <option value="Grama Niladhari">Grama Niladhari</option>
+            <option value="Samurdhi Officer">Samurdhi Officer</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Name</span>
+          <input type="text" name="full_name" id="full-name" maxlength="255" required>
+        </label>
+
+        <label>
+          <span id="territory-label">Division</span>
+          <input type="text" name="territory" id="territory" maxlength="255" required>
+        </label>
+
+        <label>
+          <span>Phone Number</span>
+          <input type="text" name="phone_num" id="phone-num" maxlength="15" required>
+        </label>
+
+        <label>
+          <span id="password-label">Default Password</span>
+          <input type="password" name="default_password" id="default-password" minlength="8" required>
+        </label>
+
+        <p class="form-note" id="password-note">Default password is required when creating a new account.</p>
+
+        <div class="form-actions">
+          <button type="button" class="secondary-button" id="cancel-modal">Cancel</button>
+          <button type="submit" class="primary-button" id="submit-user">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save User
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

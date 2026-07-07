@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Record Home Visit | SamurdhiSaviya</title>
+  <meta name="description" content="Record a home visit for Samurdhi applicant review.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/record_visit.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/record_visit.js" defer></script>
+</head>
+<body>
+  <main class="visit-shell">
+    <section class="visit-panel">
+      <p class="eyebrow">Home Visit workflow</p>
+      <h1>Capture field observations for applicant assessment.</h1>
+      <p class="visit-copy">
+        Enter the visit date, record your remarks, and submit a formal recommendation for the selected applicant.
+      </p>
+
+      <div class="visit-highlights">
+        <div class="highlight-card">
+          <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+          <span>Structured visit logging</span>
+        </div>
+        <div class="highlight-card">
+          <i class="fa-solid fa-file-signature" aria-hidden="true"></i>
+          <span>Professional recommendation trail</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card" aria-label="Home visit form">
+      <header class="form-header">
+        <div class="form-logo">
+          <i class="fa-solid fa-house-user" aria-hidden="true"></i>
+        </div>
+        <div>
+          <h2>Record Home Visit</h2>
+          <p>Complete the visit details below.</p>
+        </div>
+      </header>
+
+      <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+      <div id="error-box" class="error-box" hidden aria-live="polite"></div>
+
+      <form id="visit-form" class="visit-form" novalidate>
+        <input type="hidden" id="applicant_id" name="applicant_id" value="">
+
+        <div class="field">
+          <input type="date" id="visit_date" name="visit_date" required>
+          <label for="visit_date">Visit Date</label>
+        </div>
+
+        <div class="field">
+          <textarea id="remarks" name="remarks" rows="7" placeholder=" " required></textarea>
+          <label for="remarks">Remarks</label>
+        </div>
+
+        <div class="field field--select">
+          <select id="recommendation" name="recommendation" required>
+            <option value="" selected disabled>Select a recommendation</option>
+            <option value="Highly Recommended">Highly Recommended</option>
+            <option value="Recommended">Recommended</option>
+            <option value="Not Recommended">Not Recommended</option>
+          </select>
+          <label for="recommendation">Recommendation</label>
+        </div>
+
+        <button type="submit" class="submit-button">
+          <span class="button-label">Submit Visit</span>
+          <span class="button-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>SamurdhiSaviya | Digital Management System</title>
+  <meta name="description" content="SamurdhiSaviya is a secure digital management system for applicant tracking, approvals, payments, and community service workflows.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/animations.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <nav class="navbar" aria-label="Primary navigation">
+        <a class="brand" href="#home" aria-label="SamurdhiSaviya home">
+          <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
+          <span class="brand-text">
+            <strong>SamurdhiSaviya</strong>
+            <small>Digital Management System</small>
+          </span>
+        </a>
+
+        <div class="nav-links" role="list">
+          <a href="#home" role="listitem">Home</a>
+          <a href="#about" role="listitem">About</a>
+          <a href="#services" role="listitem">Services</a>
+          <a href="#contact" role="listitem">Contact</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <div class="hero-content">
+          <p class="hero-kicker">Trusted Public Service Platform</p>
+          <h1>Modern welfare management built for speed, clarity, and accountability.</h1>
+          <p class="hero-subtitle">
+            SamurdhiSaviya streamlines applicant registration, field verification, approvals,
+            complaints, and payment tracking into one secure digital workflow for teams and citizens.
+          </p>
+          <a class="cta-button" href="#services">
+            <i class="fa-solid fa-arrow-right"></i>
+            Get Started
+          </a>
+        </div>
+
+        <div class="hero-panel" aria-hidden="true">
+          <div class="panel-card panel-card-primary">
+            <span class="panel-label">Active Applications</span>
+            <strong>1,284</strong>
+            <p>Processed with full traceability</p>
+          </div>
+          <div class="panel-card panel-card-secondary">
+            <span class="panel-label">Approval Workflow</span>
+            <strong>Secure</strong>
+            <p>Officer and GN validation layers</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="overview-grid" id="about" aria-label="Platform overview">
+      <article class="overview-card">
+        <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+        <h2>About</h2>
+        <p>A secure administrative layer designed for transparent applicant management and reliable public service delivery.</p>
+      </article>
+      <article class="overview-card" id="services">
+        <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+        <h2>Services</h2>
+        <p>Registration, approvals, home visits, complaints, and payments kept in one structured workflow.</p>
+      </article>
+      <article class="overview-card" id="contact">
+        <i class="fa-solid fa-headset" aria-hidden="true"></i>
+        <h2>Contact</h2>
+        <p>Connect with officers and local administrators through a consistent system record and communication trail.</p>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Apply for Benefits | SamurdhiSaviya</title>
+  <meta name="description" content="Apply for Samurdhi benefits through a secure digital form with income, family size, and house photograph upload.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/apply_benefit.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+  <main class="benefit-page">
+    <section class="benefit-shell">
+      <div class="benefit-panel">
+        <p class="eyebrow">Apply for Samurdhi benefits</p>
+        <h1>Submit your benefit request with clear details and verified documents.</h1>
+        <p class="benefit-copy">
+          Provide your household income, family size, and a recent photograph of your house.
+          The system will validate your submission and guide you back to the dashboard on success.
+        </p>
+
+        <div class="benefit-highlights">
+          <div class="highlight-card">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            <span>Secure upload handling</span>
+          </div>
+          <div class="highlight-card">
+            <i class="fa-solid fa-file-circle-check" aria-hidden="true"></i>
+            <span>Validation before submit</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="form-card" aria-label="Application form">
+        <div class="form-card-header">
+          <div class="form-logo">
+            <i class="fa-solid fa-landmark" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h2>Benefit Application</h2>
+            <p>Complete all required fields below.</p>
+          </div>
+        </div>
+
+        <div id="error-box" class="error-box" aria-live="polite" hidden></div>
+        <div id="success-box" class="success-box" aria-live="polite" hidden>
+          <div class="success-icon" aria-hidden="true">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <strong>Application submitted successfully</strong>
+          <p>Your request has been accepted and will now redirect to the dashboard.</p>
+        </div>
+
+        <form id="benefit-form" class="benefit-form" novalidate enctype="multipart/form-data">
+          <div class="field">
+            <input type="number" id="monthly_income" name="monthly_income" min="0" step="0.01" placeholder=" " required>
+            <label for="monthly_income">Monthly Income</label>
+          </div>
+
+          <div class="field">
+            <input type="number" id="family_size" name="family_size" min="1" step="1" placeholder=" " required>
+            <label for="family_size">Family Size</label>
+          </div>
+
+          <div class="field field--file">
+            <input type="file" id="house_photo" name="house_photo" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
+            <label for="house_photo">House Photo</label>
+            <p class="field-hint">Accepted formats: JPG, JPEG, PNG</p>
+          </div>
+
+          <button type="submit" class="submit-button">
+            <span class="button-label">Submit Application</span>
+            <span class="button-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,145 @@
+:root {
+  --bg: #eef4fb;
+  --surface: rgba(255, 255, 255, 0.9);
+  --surface-strong: #ffffff;
+  --primary: #0f2748;
+  --accent: #2f6fed;
+  --success: #1f8f5f;
+  --warning: #c47b18;
+  --muted: #5b677d;
+  --border: rgba(15, 39, 72, 0.12);
+  --shadow: 0 24px 60px rgba(15, 39, 72, 0.14);
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: #132033;
+  background:
+    radial-gradient(circle at top left, rgba(47, 111, 237, 0.16), transparent 35%),
+    radial-gradient(circle at bottom right, rgba(23, 58, 102, 0.12), transparent 32%),
+    linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+}
+a { color: inherit; text-decoration: none; }
+
+.payments-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 26px 0 48px;
+}
+
+.payments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+.brand { display: inline-flex; align-items: center; gap: 14px; }
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 16px 30px rgba(15, 39, 72, 0.22);
+}
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-text strong { font-size: 1.02rem; }
+.brand-text small { margin-top: 4px; color: var(--muted); font-size: 0.82rem; }
+.user-chip { padding: 12px 16px; border-radius: 999px; background: rgba(47, 111, 237, 0.12); color: var(--primary); font-weight: 700; }
+.hero { padding: 56px 12px 28px; max-width: 840px; }
+.eyebrow {
+  margin: 0 0 16px;
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+  color: var(--primary);
+}
+.hero-copy {
+  margin: 18px 0 0;
+  font-size: clamp(1.02rem, 1.8vw, 1.16rem);
+  line-height: 1.8;
+  color: var(--muted);
+}
+.table-card { padding: 8px 12px 0; }
+.table-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.table-toolbar h2 { margin: 0; font-size: 1.6rem; color: var(--primary); }
+.table-wrap {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+}
+.payments-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.payments-table thead th {
+  padding: 18px 20px;
+  text-align: left;
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  background: #f8fbff;
+}
+.payments-table tbody td {
+  padding: 18px 20px;
+  border-top: 1px solid var(--border);
+}
+.payments-table tbody tr:hover { background: rgba(47, 111, 237, 0.04); }
+.empty-state { text-align: center; color: var(--muted); padding: 36px 20px !important; }
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+.status-completed { color: var(--success); background: rgba(31, 143, 95, 0.12); }
+.status-pending { color: var(--warning); background: rgba(196, 123, 24, 0.12); }
+.status-default { color: var(--accent); background: rgba(47, 111, 237, 0.12); }
+
+@media (max-width: 960px) {
+  .payments-header { flex-direction: column; align-items: flex-start; }
+  .table-wrap { overflow-x: auto; }
+  .payments-table { min-width: 760px; }
+}
+
+@media (max-width: 640px) {
+  .payments-shell { width: min(100% - 20px, 1180px); padding-top: 10px; }
+  .payments-header { padding: 16px; border-radius: 22px; }
+  .brand-mark { width: 46px; height: 46px; }
+  .hero { padding: 40px 6px 20px; }
+  .table-card { padding-left: 6px; padding-right: 6px; }
+}
