@@ -14,7 +14,7 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   
-  <!-- Custom CSS (Matching Login Theme) -->
+  <!-- Custom CSS (Matching Login Theme Exactly) -->
   <link rel="stylesheet" href="assets/css/applicant_dashboard.css">
 
   <!-- GSAP for initial entrance animations -->
@@ -26,38 +26,61 @@
 </head>
 <body>
 
-  <main class="dashboard-shell">
-    <!-- Header -->
-    <header class="dashboard-header">
-      <a class="brand" href="index.html" aria-label="SamurdhiSaviya home">
-        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
-        <span class="brand-text">
-          <strong>SamurdhiSaviya</strong>
-          <small>Applicant Portal</small>
-        </span>
-      </a>
+  <main class="dashboard-page">
+    <section class="dashboard-shell" aria-label="Dashboard panel">
+      
+      <!-- Left Sidebar (Matches Login Visual) -->
+      <aside class="dashboard-sidebar">
+        <div class="sidebar-overlay"></div>
+        <div class="sidebar-content">
+          
+          <a class="brand" href="index.html" aria-label="SamurdhiSaviya home">
+            <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
+            <span class="brand-text">
+              <strong>SamurdhiSaviya</strong>
+              <small>Applicant Portal</small>
+            </span>
+          </a>
 
-      <div class="header-actions">
-        <span class="user-chip">Welcome, <strong id="user-name">Applicant</strong></span>
-        <button onclick="logout()" class="btn-logout">
-          <span>Sign Out</span>
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-        </button>
-      </div>
-    </header>
+          <div class="profile-widget dashboard-anim-item">
+            <div class="profile-avatar">
+              <i class="fa-solid fa-user-check"></i>
+            </div>
+            <h3 id="profile-name">Applicant</h3>
+            <p>Registered Citizen</p>
+            <div class="profile-stats">
+              <span class="stat-label">Declared Income</span>
+              <span class="stat-val">LKR <span id="profile-income">--</span></span>
+            </div>
+          </div>
 
-    <div class="dashboard-grid">
-      <!-- Left Column: Primary Content -->
-      <div class="content-main">
+          <div class="complaint-cta dashboard-anim-item">
+            <h4><i class="fa-solid fa-bullhorn"></i> Need Assistance?</h4>
+            <p>Report issues or delays with your application directly to officials.</p>
+            <a href="lodge_complain.html" class="btn-primary">
+              Lodge a Complaint <i class="fa-solid fa-arrow-right" style="font-size:0.8rem; margin-left:4px;"></i>
+            </a>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- Right Content (Matches Login Card) -->
+      <section class="dashboard-content">
         
-        <!-- Welcome Hero -->
-        <section class="dashboard-hero dashboard-anim-item">
-          <h1>My Application Overview</h1>
-          <p>Track your welfare benefit status and recent payment disbursements.</p>
-        </section>
+        <header class="content-header">
+          <div>
+            <h1>My Application Overview</h1>
+            <p>Track your welfare benefit status and recent disbursements.</p>
+          </div>
+          <button onclick="logout()" class="btn-logout">
+            <span>Sign Out</span>
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </header>
 
         <!-- Application Status Widget -->
-        <section class="widget status-widget dashboard-anim-item">
+        <div class="widget status-widget dashboard-anim-item">
           <div class="status-header">
             <div>
               <div class="status-label">Current Status</div>
@@ -75,10 +98,10 @@
               <p class="id">App ID: <span id="app-id">--</span></p>
             </div>
           </div>
-        </section>
+        </div>
 
         <!-- Payment History Widget -->
-        <section class="widget widget-table dashboard-anim-item">
+        <div class="widget widget-table dashboard-anim-item">
           <div class="widget-table-header">
             <h2><i class="fa-solid fa-wallet" style="color:var(--accent);"></i> Recent Payments</h2>
             <span id="payment-count" class="table-count">0 records</span>
@@ -105,43 +128,11 @@
               </tbody>
             </table>
           </div>
-        </section>
+        </div>
 
-      </div>
+      </section>
 
-      <!-- Right Column: Side Widgets -->
-      <aside class="content-sidebar">
-        
-        <!-- Profile Mini-Widget -->
-        <section class="widget profile-widget dashboard-anim-item">
-          <div class="profile-avatar">
-            <i class="fa-solid fa-user-check"></i>
-          </div>
-          <h3 id="profile-name">Applicant</h3>
-          <p>Registered Citizen</p>
-          <div class="profile-stats">
-            <span>Declared Income:</span>
-            <span>LKR <span id="profile-income">--</span></span>
-          </div>
-        </section>
-
-        <!-- Lodge a Complaint Widget -->
-        <section class="widget complaint-widget dashboard-anim-item">
-          <i class="fa-solid fa-bullhorn bg-icon"></i>
-          <div style="position:relative; z-index:1;">
-            <div class="complaint-icon">
-              <i class="fa-solid fa-message"></i>
-            </div>
-            <h2>Need Assistance?</h2>
-            <p>Report issues or delays with your application directly to Samurdhi officials.</p>
-            <a href="lodge_complain.html" class="btn-primary">
-              Lodge a Complaint <i class="fa-solid fa-arrow-right" style="font-size:0.8rem; margin-left:4px;"></i>
-            </a>
-          </div>
-        </section>
-
-      </aside>
-    </div>
+    </section>
   </main>
 
 </body>

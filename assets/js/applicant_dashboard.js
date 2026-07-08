@@ -157,7 +157,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 6. Init GSAP Animations (staggered entrance)
   if (typeof gsap !== 'undefined') {
-    gsap.from('.dashboard-header', { duration: 0.8, y: -20, opacity: 0, ease: 'power3.out' });
     gsap.from('.dashboard-anim-item', { 
       duration: 0.8, 
       y: 30, 
