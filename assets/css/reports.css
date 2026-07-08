@@ -163,7 +163,7 @@ button, input { font: inherit; }
   border-radius: 16px;
   font-weight: 700;
   color: #fff;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
   box-shadow: 0 16px 30px rgba(47, 111, 237, 0.24);
   cursor: pointer;
 }

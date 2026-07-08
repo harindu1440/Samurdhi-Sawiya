@@ -116,12 +116,6 @@
   opacity: 0.15 !important;
 }
 
-/* Accent Glow for SVG Icons in Dark Mode (High-tech feel) */
-[data-theme="dark"] .fa-solid,
-[data-theme="dark"] svg {
-  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.4));
-}
-
 /* Base Body Styles */
 body {
   margin: 0;

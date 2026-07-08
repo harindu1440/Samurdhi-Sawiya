@@ -41,7 +41,7 @@
   height: 44px;
   border-radius: 12px;
   color: #fff;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
   box-shadow: 0 8px 16px rgba(15, 39, 72, 0.15);
 }
 .brand-text {
@@ -354,11 +354,10 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 [data-theme="dark"] .complaint-widget .btn-primary {
-  background: #3b82f6; /* bright blue button */
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
   color: #fff;
   border: none;
 }
 [data-theme="dark"] .complaint-widget .btn-primary:hover {
-  background: #2563eb;
   box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
 }

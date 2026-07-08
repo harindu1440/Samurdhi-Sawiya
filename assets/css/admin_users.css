@@ -146,7 +146,7 @@ button, input, select { font: inherit; }
 }
 .primary-button {
   color: #fff;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
   box-shadow: 0 16px 30px rgba(47, 111, 237, 0.24);
 }
 .secondary-button { background: #eef4ff; color: var(--primary); }
@@ -224,7 +224,7 @@ button, input, select { font: inherit; }
   cursor: pointer;
   color: #fff;
 }
-.action-edit { background: linear-gradient(135deg, var(--primary), var(--accent)); }
+.action-edit { background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent)); }
 .action-delete { background: linear-gradient(135deg, #c24141, var(--danger)); }
 
 .modal-backdrop {
