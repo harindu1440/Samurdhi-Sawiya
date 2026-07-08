@@ -35,7 +35,6 @@ async function getDashboard(req, res) {
       FROM \`WELFARE_APPLICATION\` wa
       JOIN \`APPLICANT\` a ON a.User_ID = wa.Applicant_ID
       JOIN \`USERS\` u ON u.User_ID = a.User_ID
-      WHERE wa.Status IN ('Pending', 'Officer_Approved')
       ORDER BY 
         CASE WHEN wa.Status = 'Pending' THEN 1 ELSE 2 END ASC,
         wa.Date_Submitted ASC

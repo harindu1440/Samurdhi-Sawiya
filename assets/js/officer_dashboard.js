@@ -38,14 +38,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     tbody.innerHTML = apps.map(app => {
-      const isApproved = app.Status === 'Officer_Approved';
-      const statusBadge = isApproved
-        ? '<span class="bg-green-500/20 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-500/30">Approved</span>'
-        : '<span class="bg-yellow-500/20 text-yellow-700 dark:text-yellow-500 px-3 py-1 rounded-full text-xs font-semibold border border-yellow-500/30">Pending Review</span>';
+      const isPending = app.Status === 'Pending';
+      const isRejected = app.Status === 'Rejected';
+      
+      let statusBadge = '';
+      if (isPending) {
+        statusBadge = '<span class="bg-yellow-500/20 text-yellow-700 dark:text-yellow-500 px-3 py-1 rounded-full text-xs font-semibold border border-yellow-500/30">Pending Review</span>';
+      } else if (isRejected) {
+        statusBadge = '<span class="bg-red-500/20 text-red-700 dark:text-red-500 px-3 py-1 rounded-full text-xs font-semibold border border-red-500/30">Rejected</span>';
+      } else {
+        // Any approved status (Officer, GN, Minister)
+        const displayStatus = app.Status.replace('_', ' ');
+        statusBadge = `<span class="bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-500/30">${displayStatus}</span>`;
+      }
 
-      const actionBtn = isApproved
-        ? '<span class="text-slate-400 text-sm font-medium italic">Reviewed</span>'
-        : `<button onclick="openReviewModal('${app.Application_ID}')" class="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg px-4 py-2 transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]">Review</button>`;
+      const actionBtn = isPending
+        ? `<button onclick="openReviewModal('${app.Application_ID}')" class="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg px-4 py-2 transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]">Review</button>`
+        : '<span class="text-slate-400 text-sm font-medium italic">Reviewed</span>';
 
       return `
         <tr class="hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50">
