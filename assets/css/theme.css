@@ -83,14 +83,21 @@
 [data-theme="dark"] input,
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-  background-color: #1E293B !important;
+  background-color: #0F172A !important;
   color: #F8FAFC !important;
   border: 1px solid #334155 !important;
 }
 
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+  background-color: #1E293B !important;
+  border-color: #3b82f6 !important;
+}
+
 /* Select Option Visibility Fix */
 [data-theme="dark"] select option {
-  background-color: #1E293B;
+  background-color: #0F172A;
   color: #F8FAFC;
 }
 
@@ -135,9 +142,10 @@ a {
 
 /* Theme Toggle Button Styles (Global) */
 .theme-toggle {
-  background: var(--surface-strong);
-  border: 1px solid var(--border);
-  color: var(--primary);
+  /* Hardcoded to match light mode exactly per user request */
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 39, 72, 0.12) !important;
+  color: #0f2748 !important;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -149,7 +157,7 @@ a {
   font-size: 1.1rem;
 }
 .theme-toggle:hover {
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: #eff5fb !important;
+  color: #2f6fed !important;
   transform: translateY(-2px);
 }

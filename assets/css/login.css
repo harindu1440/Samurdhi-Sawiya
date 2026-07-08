@@ -21,16 +21,22 @@
 }
 
 .auth-visual {
-  position: relative;
   flex: 1.1;
   min-height: 640px;
+  background: linear-gradient(150deg, var(--bg-gradient-1), var(--bg-gradient-2));
+  background-color: var(--primary); /* Fallback */
+  color: #fff;
   padding: 48px;
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  color: #fff;
-  background:
-    linear-gradient(150deg, rgba(15, 39, 72, 0.94), rgba(23, 58, 102, 0.94));
+}
+
+[data-theme="dark"] .auth-visual {
+  background-color: var(--bg);
+  background: linear-gradient(150deg, var(--surface-strong), var(--surface));
 }
 
 .auth-visual-overlay {
@@ -167,7 +173,7 @@
   width: 100%;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: #f8fbff;
+  background: var(--surface-strong); /* Replaced hardcoded #f8fbff */
   color: var(--text);
   font: inherit;
   padding: 20px 16px 14px;
@@ -184,7 +190,7 @@
 .field select:focus {
   border-color: rgba(47, 111, 237, 0.5);
   box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.12);
-  background: #fff;
+  background: var(--surface);
 }
 
 .field label {
@@ -205,7 +211,8 @@
   top: -10px;
   font-size: 0.78rem;
   color: var(--accent);
-  background: linear-gradient(180deg, transparent 50%, #fff 50%);
+  background: var(--surface-strong); /* Replaced white gradient */
+  border-radius: 4px;
 }
 
 .field--select::after {
