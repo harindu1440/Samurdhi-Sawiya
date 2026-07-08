@@ -8,8 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const tbody = document.getElementById('applications-tbody');
-  const modal = document.getElementById('application-modal');
-  const closeModalBtn = document.getElementById('close-modal');
+  const modal = document.getElementById('reviewModal');
   const homeVisitForm = document.getElementById('home-visit-form');
 
   let currentApplications = [];
@@ -86,20 +85,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modal.classList.remove('hidden');
     if (typeof gsap !== 'undefined') {
-      gsap.fromTo('.modal-card', 
-        { y: 50, opacity: 0 }, 
-        { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }
+      gsap.fromTo(modal.children[0], 
+        { y: 50, opacity: 0, scale: 0.95 }, 
+        { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out' }
       );
     }
   };
 
   // Close Modal
-  closeModalBtn.addEventListener('click', () => {
+  window.closeReviewModal = () => {
     modal.classList.add('hidden');
-  });
+  };
 
   modal.addEventListener('click', (e) => {
-    if (e.target === modal) modal.classList.add('hidden');
+    if (e.target === modal) {
+      closeReviewModal();
+    }
   });
 
   // 4. Handle Form Submission
