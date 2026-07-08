@@ -111,13 +111,13 @@ async function submitVisit(req, res) {
       
       // Since ALTER TABLE failed due to permissions on the remote DB, we append the photo to remarks safely.
       const finalRemarks = photoFilename 
-        ? \`\${remarks} | [Attached Photo: \${photoFilename}]\` 
+        ? `${remarks} | [Attached Photo: ${photoFilename}]` 
         : remarks;
 
       await conn.execute(
-        \`INSERT INTO \\\`HOME_VISIT\\\` 
+        `INSERT INTO \`HOME_VISIT\` 
           (Application_ID, Officer_ID, Remarks, Recommendation, Date_Visited) 
-         VALUES (?, ?, ?, ?, CURDATE())\`,
+         VALUES (?, ?, ?, ?, CURDATE())`,
         [applicationId, officerId, finalRemarks, recommendation]
       );
     }
