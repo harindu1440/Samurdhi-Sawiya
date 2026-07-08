@@ -397,3 +397,14 @@ button, input, select { font: inherit; }
 [data-theme="dark"] .empty-state {
   color: #94a3b8 !important; /* text-slate-400 */
 }
+/* Fix for Search Box in Dark Mode */
+[data-theme="dark"] .search-box {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+[data-theme="dark"] .search-box input {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .search-box input::placeholder {
+  color: #94a3b8 !important;
+}
