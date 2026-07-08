@@ -49,8 +49,10 @@ async function getDashboard(req, res) {
       pending_applications: pending,
     });
   } catch (err) {
-    console.error('[officerController.getDashboard]', err.message);
-    return res.status(500).json({ status: 'error', message: 'Unable to load dashboard.' });
+    console.error('================ SQL ERROR IN GET DASHBOARD ================');
+    console.error('[officerController.getDashboard] FULL ERROR:', err);
+    console.error('============================================================');
+    return res.status(500).json({ status: 'error', message: 'Unable to load dashboard. Check server console for full SQL error.' });
   }
 }
 
