@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Applicant Dashboard | SamurdhiSaviya</title>
   <meta name="description" content="Applicant dashboard for checking status and tracking payments in SamurdhiSaviya.">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,28 +14,8 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              900: '#1e3a8a', // deep blue
-              800: '#1e40af',
-              700: '#1d4ed8',
-              100: '#dbeafe',
-              50: '#eff6ff',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Custom CSS (Matching Login Theme) -->
+  <link rel="stylesheet" href="assets/css/applicant_dashboard.css">
 
   <!-- GSAP for initial entrance animations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -42,157 +23,126 @@
   <!-- Custom JS -->
   <script src="assets/js/api-client.js" defer></script>
   <script src="assets/js/applicant_dashboard.js" defer></script>
-
-  <style>
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    
-    /* Table hover transition */
-    .table-row-hover { transition: background-color 0.2s ease; }
-    .table-row-hover:hover { background-color: #f8fafc; }
-  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+<body>
 
-  <!-- Header -->
-  <header class="bg-brand-900 text-white shadow-lg z-10 dashboard-header">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition-opacity" aria-label="SamurdhiSaviya home">
-        <span class="text-2xl text-blue-300" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
-        <div class="flex flex-col leading-tight">
-          <span class="font-bold text-lg tracking-tight">SamurdhiSaviya</span>
-          <span class="text-xs text-blue-200 uppercase tracking-widest font-semibold">Applicant Portal</span>
-        </div>
+  <main class="dashboard-shell">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <a class="brand" href="index.html" aria-label="SamurdhiSaviya home">
+        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
+        <span class="brand-text">
+          <strong>SamurdhiSaviya</strong>
+          <small>Applicant Portal</small>
+        </span>
       </a>
 
-      <div class="flex items-center gap-6">
-        <div class="hidden sm:flex items-center gap-2 text-sm text-blue-100">
-          <i class="fa-regular fa-user"></i>
-          <span>Welcome, <strong id="user-name" class="text-white">Applicant</strong></span>
-        </div>
-        <button onclick="logout()" class="text-sm font-semibold text-blue-200 hover:text-white transition-colors flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full hover:bg-white/20">
+      <div class="header-actions">
+        <span class="user-chip">Welcome, <strong id="user-name">Applicant</strong></span>
+        <button onclick="logout()" class="btn-logout">
           <span>Sign Out</span>
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
         </button>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Main Content -->
-  <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 dashboard-content flex flex-col lg:flex-row gap-8">
-    
-    <!-- Left Column: Primary Content -->
-    <div class="flex-1 flex flex-col gap-8">
-      
-      <!-- Welcome Hero -->
-      <section class="dashboard-anim-item">
-        <h1 class="text-3xl font-extrabold text-brand-900 mb-2">My Application Overview</h1>
-        <p class="text-slate-500">Track your welfare benefit status and recent payment disbursements.</p>
-      </section>
+    <div class="dashboard-grid">
+      <!-- Left Column: Primary Content -->
+      <div class="content-main">
+        
+        <!-- Welcome Hero -->
+        <section class="dashboard-hero dashboard-anim-item">
+          <h1>My Application Overview</h1>
+          <p>Track your welfare benefit status and recent payment disbursements.</p>
+        </section>
 
-      <!-- Application Status Widget -->
-      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 dashboard-anim-item relative overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-md">
-        <!-- Decorative background element -->
-        <div class="absolute -right-16 -top-16 text-slate-50 opacity-[0.4] text-[12rem] pointer-events-none">
-          <i class="fa-solid fa-file-shield"></i>
-        </div>
-
-        <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-          <div>
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Current Status</h2>
-            <div class="flex items-center gap-4">
-              <span id="status-badge" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold bg-slate-100 text-slate-500">
-                <i class="fa-solid fa-spinner animate-spin"></i> Loading...
+        <!-- Application Status Widget -->
+        <section class="widget status-widget dashboard-anim-item">
+          <div class="status-header">
+            <div>
+              <div class="status-label">Current Status</div>
+              <span id="status-badge" class="badge badge-default">
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading...
               </span>
+              <p id="status-desc" class="status-desc">
+                Fetching your latest application details...
+              </p>
             </div>
-            <p id="status-desc" class="text-sm text-slate-500 mt-3 max-w-md leading-relaxed">
-              Fetching your latest application details...
-            </p>
+            
+            <div class="app-meta">
+              <div class="status-label">Submitted On</div>
+              <p id="app-date" class="date">--/--/----</p>
+              <p class="id">App ID: <span id="app-id">--</span></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Payment History Widget -->
+        <section class="widget widget-table dashboard-anim-item">
+          <div class="widget-table-header">
+            <h2><i class="fa-solid fa-wallet" style="color:var(--accent);"></i> Recent Payments</h2>
+            <span id="payment-count" class="table-count">0 records</span>
           </div>
           
-          <div class="text-left sm:text-right">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Submitted On</p>
-            <p id="app-date" class="text-lg font-semibold text-slate-700">--/--/----</p>
-            <p class="text-xs text-slate-400 mt-1">App ID: <span id="app-id">--</span></p>
+          <div style="overflow-x: auto;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Reference</th>
+                </tr>
+              </thead>
+              <tbody id="payment-tbody">
+                <!-- Loaded via JS -->
+                <tr>
+                  <td colspan="4" style="text-align:center; padding: 40px; color:var(--muted);">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size:2rem; color:var(--accent); margin-bottom:12px;"></i>
+                    <p style="margin:0;">Loading payment history...</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Payment History Widget -->
-      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden dashboard-anim-item transition-transform duration-300 hover:-translate-y-1 hover:shadow-md">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <h2 class="text-lg font-bold text-slate-800 flex items-center gap-3">
-            <span class="text-brand-700 bg-brand-100 p-2 rounded-lg"><i class="fa-solid fa-wallet"></i></span>
-            Recent Payments
-          </h2>
-          <span id="payment-count" class="text-xs font-semibold text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">0 records</span>
-        </div>
+      </div>
+
+      <!-- Right Column: Side Widgets -->
+      <aside class="content-sidebar">
         
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-semibold">
-                <th class="px-6 py-4">Date</th>
-                <th class="px-6 py-4">Amount</th>
-                <th class="px-6 py-4">Status</th>
-                <th class="px-6 py-4 text-right">Reference</th>
-              </tr>
-            </thead>
-            <tbody id="payment-tbody" class="divide-y divide-slate-100 text-sm">
-              <!-- Loaded via JS -->
-              <tr>
-                <td colspan="4" class="px-6 py-12 text-center text-slate-400">
-                  <i class="fa-solid fa-circle-notch animate-spin text-2xl mb-3 text-brand-700"></i>
-                  <p>Loading payment history...</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-    </div>
-
-    <!-- Right Column: Side Widgets -->
-    <div class="w-full lg:w-80 flex flex-col gap-6">
-      
-      <!-- Profile Mini-Widget -->
-      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 dashboard-anim-item text-center">
-        <div class="w-16 h-16 bg-brand-100 text-brand-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border-4 border-white shadow-sm">
-          <i class="fa-solid fa-user-check"></i>
-        </div>
-        <h3 class="font-bold text-slate-800 text-lg mb-1" id="profile-name">Applicant</h3>
-        <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-4">Registered Citizen</p>
-        <div class="pt-4 border-t border-slate-100 flex justify-between items-center text-sm">
-          <span class="text-slate-500">Declared Income:</span>
-          <span class="font-bold text-slate-700">LKR <span id="profile-income">--</span></span>
-        </div>
-      </section>
-
-      <!-- Lodge a Complaint Widget -->
-      <section class="bg-gradient-to-br from-brand-800 to-brand-900 rounded-2xl shadow-md p-6 text-white dashboard-anim-item relative overflow-hidden group">
-        <div class="absolute -right-4 -bottom-4 text-white opacity-[0.08] text-6xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
-          <i class="fa-solid fa-bullhorn"></i>
-        </div>
-        <div class="relative z-10">
-          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl mb-4 backdrop-blur-sm">
-            <i class="fa-solid fa-message text-white"></i>
+        <!-- Profile Mini-Widget -->
+        <section class="widget profile-widget dashboard-anim-item">
+          <div class="profile-avatar">
+            <i class="fa-solid fa-user-check"></i>
           </div>
-          <h2 class="text-lg font-bold mb-2">Need Assistance?</h2>
-          <p class="text-brand-100 text-sm mb-5 leading-relaxed">
-            Report issues or delays with your application directly to Samurdhi officials.
-          </p>
-          <a href="lodge_complain.html" class="inline-flex items-center gap-2 bg-white text-brand-900 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-50 transition-colors shadow-sm w-full justify-center">
-            Lodge a Complaint <i class="fa-solid fa-arrow-right text-xs"></i>
-          </a>
-        </div>
-      </section>
+          <h3 id="profile-name">Applicant</h3>
+          <p>Registered Citizen</p>
+          <div class="profile-stats">
+            <span>Declared Income:</span>
+            <span>LKR <span id="profile-income">--</span></span>
+          </div>
+        </section>
 
+        <!-- Lodge a Complaint Widget -->
+        <section class="widget complaint-widget dashboard-anim-item">
+          <i class="fa-solid fa-bullhorn bg-icon"></i>
+          <div style="position:relative; z-index:1;">
+            <div class="complaint-icon">
+              <i class="fa-solid fa-message"></i>
+            </div>
+            <h2>Need Assistance?</h2>
+            <p>Report issues or delays with your application directly to Samurdhi officials.</p>
+            <a href="lodge_complain.html" class="btn-primary">
+              Lodge a Complaint <i class="fa-solid fa-arrow-right" style="font-size:0.8rem; margin-left:4px;"></i>
+            </a>
+          </div>
+        </section>
+
+      </aside>
     </div>
-
   </main>
+
 </body>
 </html>

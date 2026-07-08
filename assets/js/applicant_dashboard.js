@@ -24,40 +24,40 @@ document.addEventListener('DOMContentLoaded', async () => {
   const elPaymentCount = document.getElementById('payment-count');
   const elPaymentTbody = document.getElementById('payment-tbody');
 
-  // 3. Helper for Status Colors (Tailwind Classes)
+  // 3. Helper for Status Colors (Vanilla CSS Classes)
   const getStatusStyles = (status) => {
     const s = String(status || '').toLowerCase();
     if (s.includes('pending')) {
       return {
-        classes: 'text-amber-700 bg-amber-100 border border-amber-200',
+        classes: 'badge badge-pending',
         icon: '<i class="fa-solid fa-clock"></i>',
         desc: 'Your application is currently under review by the Grama Niladhari.'
       };
     }
     if (s.includes('gn_approved') || s.includes('gn approved')) {
       return {
-        classes: 'text-blue-700 bg-blue-100 border border-blue-200',
+        classes: 'badge badge-approved', // Using approved style for both
         icon: '<i class="fa-solid fa-file-signature"></i>',
         desc: 'Approved by Grama Niladhari. Awaiting final Samurdhi Officer review.'
       };
     }
     if (s.includes('approved')) {
       return {
-        classes: 'text-emerald-700 bg-emerald-100 border border-emerald-200',
+        classes: 'badge badge-approved',
         icon: '<i class="fa-solid fa-check-circle"></i>',
         desc: 'Congratulations, your application has been fully approved.'
       };
     }
     if (s.includes('rejected')) {
       return {
-        classes: 'text-rose-700 bg-rose-100 border border-rose-200',
+        classes: 'badge badge-rejected',
         icon: '<i class="fa-solid fa-circle-xmark"></i>',
         desc: 'Your application has been rejected. Please lodge a complaint if you need assistance.'
       };
     }
     // Default
     return {
-      classes: 'text-slate-600 bg-slate-100 border border-slate-200',
+      classes: 'badge badge-default',
       icon: '<i class="fa-solid fa-circle-info"></i>',
       desc: 'Status unknown or processing.'
     };
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         elAppDate.textContent = formatDate(app.date);
         elAppId.textContent = `APP-${app.application_id}`;
       } else {
-        elStatusBadge.className = 'inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold text-slate-500 bg-slate-100 border border-slate-200';
+        elStatusBadge.className = 'badge badge-default';
         elStatusBadge.innerHTML = '<i class="fa-solid fa-folder-open"></i> No Application';
         elStatusDesc.textContent = 'We could not find an active welfare application for your account.';
       }
@@ -130,16 +130,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         payments.slice(0, 5).forEach(p => {
           const isPending = p.p_status.toLowerCase() === 'pending';
           const statusBadge = isPending 
-            ? `<span class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-md text-xs font-bold border border-amber-200">Pending</span>`
-            : `<span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md text-xs font-bold border border-emerald-200">Disbursed</span>`;
+            ? `<span class="badge badge-pending badge-sm">Pending</span>`
+            : `<span class="badge badge-approved badge-sm">Disbursed</span>`;
             
           const tr = document.createElement('tr');
-          tr.className = 'table-row-hover border-b border-slate-50 last:border-0';
           tr.innerHTML = `
-            <td class="px-6 py-4 font-medium text-slate-700 whitespace-nowrap">${formatDate(p.date)}</td>
-            <td class="px-6 py-4 font-bold text-slate-900 whitespace-nowrap">LKR ${formatCurrency(p.payment)}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-xs text-slate-400 font-mono">PAY-${p.sp_id.toString().padStart(4, '0')}</td>
+            <td>${formatDate(p.date)}</td>
+            <td class="col-amount">LKR ${formatCurrency(p.payment)}</td>
+            <td>${statusBadge}</td>
+            <td class="col-ref">PAY-${p.sp_id.toString().padStart(4, '0')}</td>
           `;
           elPaymentTbody.appendChild(tr);
         });

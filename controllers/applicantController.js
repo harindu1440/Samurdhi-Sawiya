@@ -35,12 +35,12 @@ async function getDashboard(req, res) {
   try {
     const applicantId = req.user.User_ID;
 
-    // Join APPLICANT with USERS to get Name and Income
+    // Join APPLICANT with USERS to get Name
     const [[applicant]] = await pool.execute(
-      `SELECT u.Username AS Full_Name, a.Monthly_Income 
+      `SELECT u.Username AS Full_Name 
        FROM \`APPLICANT\` a 
-       JOIN \`USERS\` u ON u.User_ID = a.Applicant_ID 
-       WHERE a.Applicant_ID = ? LIMIT 1`,
+       JOIN \`USERS\` u ON u.User_ID = a.User_ID 
+       WHERE a.User_ID = ? LIMIT 1`,
       [applicantId]
     );
 
@@ -48,12 +48,12 @@ async function getDashboard(req, res) {
       return res.status(404).json({ status: 'error', message: 'Applicant record not found.' });
     }
 
-    // Fetch from the new WELFARE_APPLICATION schema
+    // Fetch from the new WELFARE_APPLICATION schema (includes Monthly_Income and Date_Submitted)
     const [[appRow]] = await pool.execute(
-      `SELECT \`Application_ID\`, \`Status\`, \`Date\`
+      `SELECT \`Application_ID\`, \`Status\`, \`Date_Submitted\`, \`Monthly_Income\`
        FROM \`WELFARE_APPLICATION\`
        WHERE \`Applicant_ID\` = ?
-       ORDER BY \`Date\` DESC LIMIT 1`,
+       ORDER BY \`Date_Submitted\` DESC LIMIT 1`,
       [applicantId]
     );
 
@@ -61,13 +61,13 @@ async function getDashboard(req, res) {
       status: 'success',
       name: applicant.Full_Name,
       profile: {
-        monthly_income: applicant.Monthly_Income,
+        monthly_income: appRow ? appRow.Monthly_Income : 0.00,
       },
       latest_application: appRow
         ? {
             application_id: appRow.Application_ID,
             app_status: appRow.Status,
-            date: appRow.Date,
+            date: appRow.Date_Submitted,
           }
         : null,
     });
@@ -86,13 +86,13 @@ async function getPayments(req, res) {
       `SELECT 
         sp.Payment_ID AS sp_id, 
         sp.Status     AS p_status, 
-        sp.Date       AS date, 
+        sp.Payment_Date AS date, 
         sp.Amount     AS payment,
         ma.GN_ID      AS gn_id
        FROM \`SAMURDHI_PAYMENT\` sp
        LEFT JOIN \`MINISTER_APPROVAL\` ma ON ma.Request_ID = sp.Request_ID
        WHERE sp.Applicant_ID = ?
-       ORDER BY sp.Date DESC`,
+       ORDER BY sp.Payment_Date DESC`,
       [applicantId]
     );
 
