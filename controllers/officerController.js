@@ -20,23 +20,23 @@ async function getDashboard(req, res) {
     const [pending] = await pool.execute(`
       SELECT
         wa.Application_ID,
-        wa.Date_Submitted,
+        wa.Date AS Date_Submitted,
         wa.Status,
         wa.Monthly_Income,
         wa.Dependents,
         wa.Reason,
         wa.House_Photo,
-        a.User_ID AS Applicant_ID,
+        a.Applicant_ID,
         a.Full_Name AS applicant_name,
         a.NIC,
         a.Address,
         u.Username,
         u.Phone_Num
       FROM \`WELFARE_APPLICATION\` wa
-      JOIN \`APPLICANT\` a ON a.User_ID = wa.Applicant_ID
-      JOIN \`USERS\` u ON u.User_ID = a.User_ID
+      JOIN \`APPLICANT\` a ON a.Applicant_ID = wa.Applicant_ID
+      JOIN \`USERS\` u ON u.User_ID = a.Applicant_ID
       WHERE wa.Status = 'Pending'
-      ORDER BY wa.Date_Submitted ASC
+      ORDER BY wa.Date ASC
     `);
 
     return res.status(200).json({
