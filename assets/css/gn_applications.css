@@ -1,21 +1,4 @@
-:root {
-  --bg: #eef4fb;
-  --surface: rgba(255, 255, 255, 0.9);
-  --surface-strong: #ffffff;
-  --primary: #0f2748;
-  --accent: #2f6fed;
-  --accent-soft: rgba(47, 111, 237, 0.12);
-  --success: #1f8f5f;
-  --danger: #c0392b;
-  --danger-soft: rgba(192, 57, 43, 0.1);
-  --text: #132033;
-  --muted: #5b677d;
-  --border: rgba(15, 39, 72, 0.12);
-  --shadow: 0 24px 60px rgba(15, 39, 72, 0.14);
-  --radius-xl: 30px;
-  --radius-lg: 22px;
-  --radius-md: 16px;
-}
+/* :root removed - using theme.css */
 
 * {
   box-sizing: border-box;
@@ -25,16 +8,7 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: 'Inter', sans-serif;
-  color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(47, 111, 237, 0.16), transparent 35%),
-    radial-gradient(circle at bottom right, rgba(23, 58, 102, 0.12), transparent 32%),
-    linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
-}
+/* body removed - using theme.css */
 
 a {
   color: inherit;

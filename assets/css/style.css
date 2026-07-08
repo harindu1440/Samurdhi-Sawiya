@@ -1,19 +1,4 @@
-:root {
-  --bg: #f4f8fc;
-  --surface: rgba(255, 255, 255, 0.82);
-  --surface-strong: #ffffff;
-  --primary: #0f2748;
-  --primary-strong: #173a66;
-  --accent: #2f6fed;
-  --accent-soft: rgba(47, 111, 237, 0.14);
-  --text: #152033;
-  --muted: #5c6880;
-  --border: rgba(15, 39, 72, 0.1);
-  --shadow: 0 24px 60px rgba(15, 39, 72, 0.14);
-  --radius-xl: 28px;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-}
+/* :root removed - using theme.css */
 
 * {
   box-sizing: border-box;
@@ -23,16 +8,7 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(47, 111, 237, 0.16), transparent 34%),
-    radial-gradient(circle at right top, rgba(23, 58, 102, 0.12), transparent 28%),
-    linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
-  min-height: 100vh;
-}
+/* body removed - using theme.css */
 
 a {
   color: inherit;
