@@ -47,7 +47,7 @@ const homeVisitStorage = multer.diskStorage({
   destination: path.join(__dirname, '..', 'public', 'uploads', 'home_visits'),
   filename: (_req, file, cb) => {
     const ext  = path.extname(file.originalname).toLowerCase();
-    const name = isit_ + Date.now() + _ + Math.round(Math.random() * 1e6) + ext;
+    const name = `visit_${Date.now()}_${Math.round(Math.random() * 1e6)}${ext}`;
     cb(null, name);
   },
 });
