@@ -7,9 +7,21 @@
 require('dotenv').config();
 
 const path    = require('path');
+const fs      = require('fs');
 const express = require('express');
 const cors    = require('cors');
 const apiRouter = require('./routes/api');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auto-create upload directory on startup.
+// This runs synchronously before the HTTP server is created, so multer always
+// has a valid destination folder — no manual folder creation required.
+// ─────────────────────────────────────────────────────────────────────────────
+const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads', 'houses');
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  console.log(`[startup] Created upload directory: ${UPLOAD_DIR}`);
+}
 
 const app  = express();
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3000;

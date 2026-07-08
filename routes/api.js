@@ -49,8 +49,8 @@ const upload = multer({
 // POST /api/auth/login
 router.post('/auth/login', authController.login);
 
-// POST /api/auth/register  (public — no JWT required)
-router.post('/auth/register', authController.register);
+// POST /api/auth/register  (public — no JWT required, multipart/form-data)
+router.post('/auth/register', upload.single('housePhoto'), authController.register);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ── Applicant routes ──────────────────────────────────────────────────────────
@@ -85,35 +85,35 @@ router.get(
 router.get(
   '/gn/stats',
   authMiddleware,
-  requireRole('Grama Niladhari'),
+  requireRole('Grama_Niladhari'),
   gnController.getStats
 );
 
 router.get(
   '/gn/applications',
   authMiddleware,
-  requireRole('Grama Niladhari'),
+  requireRole('Grama_Niladhari'),
   gnController.getApplications
 );
 
 router.get(
   '/gn/applications/:id',
   authMiddleware,
-  requireRole('Grama Niladhari'),
+  requireRole('Grama_Niladhari'),
   gnController.getApplicationDetail
 );
 
 router.post(
   '/gn/review',
   authMiddleware,
-  requireRole('Grama Niladhari'),
+  requireRole('Grama_Niladhari'),
   gnController.review
 );
 
 router.get(
   '/gn/payments',
   authMiddleware,
-  requireRole('Grama Niladhari'),
+  requireRole('Grama_Niladhari'),
   gnController.getPayments
 );
 
@@ -124,67 +124,67 @@ router.get(
 router.get(
   '/officer/dashboard',
   authMiddleware,
-  requireRole('Samurdhi Officer'),
+  requireRole('Samurdhi_Officer'),
   officerController.getDashboard
 );
 
 router.post(
   '/officer/review',
   authMiddleware,
-  requireRole('Samurdhi Officer'),
+  requireRole('Samurdhi_Officer'),
   officerController.review
 );
 
 router.post(
   '/officer/visit',
   authMiddleware,
-  requireRole('Samurdhi Officer'),
+  requireRole('Samurdhi_Officer'),
   officerController.submitVisit
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ── Admin routes ──────────────────────────────────────────────────────────────
+// ── Minister routes (top-level admin) ─────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────
 
 router.get(
   '/admin/stats',
   authMiddleware,
-  requireRole('Admin'),
+  requireRole('Minister'),
   adminController.getStats
 );
 
 router.get(
   '/admin/users',
   authMiddleware,
-  requireRole('Admin'),
+  requireRole('Minister'),
   adminController.listUsers
 );
 
 router.post(
   '/admin/users',
   authMiddleware,
-  requireRole('Admin'),
+  requireRole('Minister'),
   adminController.createUser
 );
 
 router.put(
   '/admin/users/:id',
   authMiddleware,
-  requireRole('Admin'),
+  requireRole('Minister'),
   adminController.updateUser
 );
 
 router.delete(
   '/admin/users/:id',
   authMiddleware,
-  requireRole('Admin'),
+  requireRole('Minister'),
   adminController.deleteUser
 );
 
 router.get(
   '/admin/reports',
   authMiddleware,
-  requireRole('Admin'),
+  requireRole('Minister'),
   adminController.getReport
 );
 

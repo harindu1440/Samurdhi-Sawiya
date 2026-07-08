@@ -5,27 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Applicant Sign Up | SamurdhiSaviya</title>
-  <meta name="description" content="Create your SamurdhiSaviya applicant account to apply for welfare benefits and track your application status.">
+  <meta name="description" content="Create your SamurdhiSaviya applicant account and submit your welfare benefit application in one step.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/login.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <!-- Extra styles specific to the registration page -->
+
+  <!-- Registration-page specific styles -->
   <style>
+    /* ── Success box ─────────────────────────────────────────────────────────── */
     .success-box {
       margin-bottom: 18px;
       padding: 14px 16px;
       border-radius: 14px;
       border: 1px solid rgba(39, 174, 96, 0.28);
-      background: rgba(39, 174, 96, 0.1);
+      background: rgba(39, 174, 96, 0.10);
       color: #1e8449;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
+    /* ── Password strength bar ───────────────────────────────────────────────── */
     .password-strength {
       height: 4px;
       border-radius: 99px;
@@ -43,18 +47,193 @@
     .strength-weak   { width: 33%; background: #e74c3c; }
     .strength-medium { width: 66%; background: #f39c12; }
     .strength-strong { width: 100%; background: #27ae60; }
+
+    /* ── Two-column grid ─────────────────────────────────────────────────────── */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 18px;
     }
     .full-width {
       grid-column: 1 / -1;
     }
     @media (max-width: 600px) {
       .form-grid { grid-template-columns: 1fr; }
+      .full-width { grid-column: 1; }
+    }
+
+    /* ── Textarea field ──────────────────────────────────────────────────────── */
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: #f8fbff;
+      color: var(--text);
+      font: inherit;
+      font-size: 0.97rem;
+      padding: 20px 16px 10px;
+      outline: none;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .field textarea:focus {
+      border-color: rgba(47, 111, 237, 0.5);
+      box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.12);
+      background: #fff;
+    }
+
+    /* Floating label for textarea — lifts when focused or has content */
+    .field textarea:focus + label,
+    .field textarea:not(:placeholder-shown) + label {
+      top: -10px;
+      font-size: 0.78rem;
+      color: var(--accent);
+      background: linear-gradient(180deg, transparent 50%, #fff 50%);
+    }
+
+    /* ── Date input — always show label above ────────────────────────────────── */
+    .field input[type="date"] {
+      /* Force browsers to show placeholder space so label lifts */
+      color: var(--text);
+    }
+    /* Label is always lifted for date inputs to avoid overlap with browser chrome */
+    .field--date label {
+      top: -10px;
+      font-size: 0.78rem;
+      color: var(--accent);
+      background: linear-gradient(180deg, transparent 50%, #fff 50%);
+    }
+
+    /* ── Select chevron wrapper ───────────────────────────────────────────────── */
+    .field--select::after {
+      content: '\f078';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 0.75rem;
+    }
+
+    /* ── Section divider ─────────────────────────────────────────────────────── */
+    .form-section-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 8px 0 2px;
+    }
+    .form-section-header .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .form-section-header .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .form-section-desc {
+      grid-column: 1 / -1;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin: 0 0 4px;
+    }
+
+    /* ── File upload input (house photo) ────────────────────────────────── */
+    .file-upload-wrapper {
+      grid-column: 1 / -1;
+    }
+    .file-upload-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 110px;
+      padding: 22px 18px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md);
+      background: #f8fbff;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.22s ease, background 0.22s ease, color 0.22s ease;
+      text-align: center;
+    }
+    .file-upload-label:hover,
+    .file-upload-label.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .file-upload-label .upload-icon {
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+    .file-upload-label .upload-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .file-upload-label .upload-hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .file-upload-label .upload-chosen {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 2px;
+      word-break: break-all;
+    }
+    /* The actual <input type="file"> is visually hidden */
+    #housePhoto {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ── Number input — hide spin arrows ─────────────────────────────────────── */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    /* ── LKR currency prefix on monthly income ───────────────────────────────── */
+    .field--currency {
+      position: relative;
+    }
+    .field--currency .currency-tag {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      pointer-events: none;
+      letter-spacing: 0.04em;
+    }
+    .field--currency input {
+      padding-left: 52px !important;
     }
   </style>
+
   <script src="assets/js/register.js" defer></script>
 </head>
 <body>
@@ -68,13 +247,14 @@
           <span class="auth-badge">Applicant Self-Registration</span>
           <h1>Your welfare journey starts here.</h1>
           <p>
-            Create your SamurdhiSaviya account to submit benefit applications,
-            track approval progress, and view payment records — all in one place.
+            Create your SamurdhiSaviya account and submit your benefit application
+            in a single step — track approval progress and view payment records, all in one place.
           </p>
           <ul class="auth-points">
             <li><i class="fa-solid fa-file-circle-check"></i> Apply for Samurdhi benefits</li>
             <li><i class="fa-solid fa-magnifying-glass-chart"></i> Track your application in real time</li>
             <li><i class="fa-solid fa-lock"></i> Secured with end-to-end encryption</li>
+            <li><i class="fa-solid fa-bolt-lightning"></i> Registration &amp; application in one step</li>
           </ul>
         </div>
       </aside>
@@ -87,71 +267,147 @@
           </div>
           <div>
             <h2>Create your account</h2>
-            <p>Fill in the details below to register as an Applicant.</p>
+            <p>Fill in your personal details and application information below.</p>
           </div>
         </div>
 
-        <!-- Success message (hidden by default) -->
+        <!-- Success message — hidden by default via the `hidden` attribute -->
         <div id="success-box" class="success-box" aria-live="polite" hidden>
           <i class="fa-solid fa-circle-check"></i>
           <span id="success-message">Registration successful! Redirecting…</span>
         </div>
 
-        <!-- Error message (hidden by default) -->
+        <!-- Error message — hidden by default via the `hidden` attribute -->
         <div id="error-box" class="error-box" aria-live="polite" hidden></div>
 
-        <form id="register-form" class="auth-form" novalidate>
+        <form id="register-form" class="auth-form" novalidate enctype="multipart/form-data">
           <div class="form-grid">
-            
-            <!-- Full Name (Full Width) -->
+
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!--  SECTION 1 — PERSONAL INFORMATION                             -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <div class="form-section-header">
+              <span class="section-badge">
+                <i class="fa-solid fa-id-card"></i>
+                Personal Information
+              </span>
+              <span class="section-line" aria-hidden="true"></span>
+            </div>
+
+            <!-- Full Name (full width) -->
             <div class="field full-width">
-              <input type="text" id="full_name" name="full_name" autocomplete="name" placeholder=" " required>
+              <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                autocomplete="name"
+                placeholder=" "
+                required
+                maxlength="255"
+              >
               <label for="full_name">Full Name as per NIC</label>
             </div>
 
             <!-- NIC Number -->
             <div class="field">
-              <input type="text" id="nic" name="nic" placeholder=" " required maxlength="20">
+              <input
+                type="text"
+                id="nic"
+                name="nic"
+                placeholder=" "
+                required
+                maxlength="20"
+                autocomplete="off"
+              >
               <label for="nic">NIC Number</label>
             </div>
 
-            <!-- Date of Birth -->
-            <div class="field">
-              <input type="date" id="dob" name="dob" placeholder=" " required>
+            <!-- Date of Birth — label always floated to avoid browser chrome overlap -->
+            <div class="field field--date">
+              <input
+                type="date"
+                id="dob"
+                name="dob"
+                required
+              >
               <label for="dob">Date of Birth</label>
             </div>
 
-            <!-- Gender -->
-            <div class="field">
+            <!-- Gender (proper select with chevron) -->
+            <div class="field field--select">
               <select id="gender" name="gender" required>
                 <option value="" disabled selected hidden></option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
+                <option value="Other">Other</option>
               </select>
               <label for="gender">Gender</label>
             </div>
 
             <!-- Phone Number -->
             <div class="field">
-              <input type="tel" id="phone_num" name="phone_num" autocomplete="tel" placeholder=" " pattern="[0-9+]{7,20}">
+              <input
+                type="tel"
+                id="phone_num"
+                name="phone_num"
+                autocomplete="tel"
+                placeholder=" "
+                pattern="[0-9+]{7,20}"
+                maxlength="20"
+              >
               <label for="phone_num">Phone Number (optional)</label>
             </div>
 
-            <!-- Address (Full Width) -->
+            <!-- Permanent Address (full-width textarea) -->
             <div class="field full-width">
-              <textarea id="address" name="address" placeholder=" " required rows="2" style="resize: vertical;"></textarea>
+              <textarea
+                id="address"
+                name="address"
+                placeholder=" "
+                required
+                rows="3"
+                maxlength="500"
+              ></textarea>
               <label for="address">Permanent Address</label>
             </div>
 
-            <!-- Username (Full Width) -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!--  SECTION 2 — ACCOUNT CREDENTIALS                              -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <div class="form-section-header">
+              <span class="section-badge">
+                <i class="fa-solid fa-key"></i>
+                Account Credentials
+              </span>
+              <span class="section-line" aria-hidden="true"></span>
+            </div>
+
+            <!-- Username (full width) -->
             <div class="field full-width">
-              <input type="text" id="username" name="username" autocomplete="username" placeholder=" " required minlength="3" maxlength="100">
+              <input
+                type="text"
+                id="username"
+                name="username"
+                autocomplete="username"
+                placeholder=" "
+                required
+                minlength="3"
+                maxlength="100"
+              >
               <label for="username">Create a Username</label>
             </div>
 
             <!-- Password -->
             <div class="field">
-              <input type="password" id="password" name="password" autocomplete="new-password" placeholder=" " required minlength="8">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="new-password"
+                placeholder=" "
+                required
+                minlength="8"
+              >
               <label for="password">Password</label>
               <!-- Live strength indicator -->
               <div class="password-strength" id="strength-track" aria-hidden="true">
@@ -161,15 +417,105 @@
 
             <!-- Confirm Password -->
             <div class="field">
-              <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" placeholder=" " required>
+              <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                autocomplete="new-password"
+                placeholder=" "
+                required
+              >
               <label for="confirm_password">Confirm Password</label>
             </div>
 
-          </div>
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!--  SECTION 3 — APPLICATION DETAILS                              -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <div class="form-section-header">
+              <span class="section-badge">
+                <i class="fa-solid fa-file-lines"></i>
+                Application Details
+              </span>
+              <span class="section-line" aria-hidden="true"></span>
+            </div>
+            <p class="form-section-desc">
+              Your welfare application will be submitted simultaneously with your registration.
+              Please provide accurate information to ensure a fair assessment.
+            </p>
+
+            <!-- Monthly Income (LKR) -->
+            <div class="field field--currency">
+              <span class="currency-tag">LKR</span>
+              <input
+                type="number"
+                id="monthly_income"
+                name="monthly_income"
+                placeholder=" "
+                required
+                min="0"
+                step="0.01"
+              >
+              <label for="monthly_income">Monthly Household Income</label>
+            </div>
+
+            <!-- Number of Dependents -->
+            <div class="field">
+              <input
+                type="number"
+                id="num_dependents"
+                name="num_dependents"
+                placeholder=" "
+                required
+                min="0"
+                max="20"
+                step="1"
+              >
+              <label for="num_dependents">Number of Dependents</label>
+            </div>
+
+            <!-- House Photo Upload (full-width) -->
+            <div class="file-upload-wrapper">
+              <input
+                type="file"
+                id="housePhoto"
+                name="housePhoto"
+                accept="image/jpeg,image/png,image/jpg"
+                required
+              >
+              <label
+                for="housePhoto"
+                class="file-upload-label"
+                id="housePhoto-label"
+                role="button"
+                aria-label="Upload a photo of your house"
+              >
+                <span class="upload-icon" aria-hidden="true">
+                  <i class="fa-solid fa-house-chimney-window"></i>
+                </span>
+                <span class="upload-title">Upload House Photo</span>
+                <span class="upload-hint">Click to browse or drag &amp; drop &mdash; JPEG or PNG, max 5&nbsp;MB</span>
+                <span class="upload-chosen" id="housePhoto-chosen" hidden></span>
+              </label>
+            </div>
+
+            <!-- Reason for Application (full-width textarea) -->
+            <div class="field full-width">
+              <textarea
+                id="reason"
+                name="reason"
+                placeholder=" "
+                required
+                rows="4"
+                maxlength="1000"
+              ></textarea>
+              <label for="reason">Reason for Application</label>
+            </div>
+
+          </div><!-- /.form-grid -->
 
           <button type="submit" class="submit-button" id="register-btn">
-            <span>Create Account</span>
-            <i class="fa-solid fa-arrow-right"></i>
+            <span>Register &amp; Submit Application</span>
+            <i class="fa-solid fa-paper-plane"></i>
           </button>
         </form>
 
@@ -181,7 +527,7 @@
         </p>
 
         <p class="auth-footer-note">
-          Registration is available for Applicants only. Officers are added by admins.
+          Registration is available for Applicants only. Officers and GN accounts are managed by admins.
         </p>
       </section>
 
