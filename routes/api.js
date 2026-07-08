@@ -43,6 +43,21 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
 });
 
+const homeVisitStorage = multer.diskStorage({
+  destination: path.join(__dirname, '..', 'public', 'uploads', 'home_visits'),
+  filename: (_req, file, cb) => {
+    const ext  = path.extname(file.originalname).toLowerCase();
+    const name = isit_ + Date.now() + _ + Math.round(Math.random() * 1e6) + ext;
+    cb(null, name);
+  },
+});
+
+const uploadHomeVisit = multer({
+  storage: homeVisitStorage,
+  fileFilter: uploadFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ── Public routes ─────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────
@@ -140,6 +155,7 @@ router.post(
   '/officer/visit',
   authMiddleware,
   requireRole('Samurdhi_Officer'),
+  uploadHomeVisit.single('home_visit_photo'),
   officerController.submitVisit
 );
 

@@ -6,52 +6,154 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Officer Dashboard | SamurdhiSaviya</title>
   <meta name="description" content="Samurdhi officer dashboard for managing field visits and approvals.">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/gn_dashboard.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-
-  <!-- Global Theme CSS and JS -->
+  
   <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/admin_dashboard.css">
+  <link rel="stylesheet" href="assets/css/officer_dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  
   <script src="assets/js/theme.js"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/officer_dashboard.js" defer></script>
 </head>
 <body>
-  <main class="gn-shell">
-    <header class="gn-header">
-      <a class="brand" href="index.html" aria-label="SamurdhiSaviya home">
-        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
-        <span class="brand-text">
+  <div class="admin-layout" data-officer-dashboard>
+    
+    <aside class="sidebar" aria-label="Officer navigation">
+      <a class="brand" href="officer_dashboard.html">
+        <img src="assets/images/Emblem of Sri Lanka.png" alt="National Emblem" class="sidebar-emblem" onerror="this.style.display='none'" style="width: 48px; height: auto;">
+        <span class="brand-text" style="margin-left: 12px;">
           <strong>SamurdhiSaviya</strong>
           <small>Officer Portal</small>
         </span>
       </a>
 
-      <div class="user-chip">Welcome, Samurdhi Officer</div>
-    </header>
+      <nav class="nav-links">
+        <a class="nav-link active" href="officer_dashboard.html" data-page="officer_dashboard"><i class="fa-solid fa-file-signature"></i> Applications</a>
+        <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </nav>
 
-    <section class="gn-hero">
-      <p class="eyebrow">Officer dashboard</p>
-      <h1>Manage field visits and review workflows from one place.</h1>
-      <p class="hero-copy">
-        Continue to the visit record screen or move through the approval workflow as required.
-      </p>
-    </section>
+      <div class="sidebar-footer">
+        <span class="footer-label">Signed in as</span>
+        <strong id="officer-name">Officer</strong>
+      </div>
+    </aside>
 
-    <section class="metrics-grid" aria-label="Officer actions">
-      <a class="metric-card" href="record_visit.html?applicant_id=1">
-        <span class="metric-icon"><i class="fa-solid fa-house-medical"></i></span>
-        <p>Record Home Visit</p>
-        <strong>Visit</strong>
-      </a>
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Officer Dashboard</p>
+          <h1>Pending Applications</h1>
+          <p class="topbar-copy">Review welfare applications and record your home visit assessments.</p>
+        </div>
+      </header>
 
-      <a class="metric-card" href="gn_applications.html">
-        <span class="metric-icon"><i class="fa-solid fa-file-circle-check"></i></span>
-        <p>View Division Queue</p>
-        <strong>Review</strong>
-      </a>
-    </section>
-  </main>
+      <section class="panel dark:bg-[#1e293b] dark:border dark:border-slate-700 dark:text-slate-200 mt-6" aria-label="Applications table">
+        <div class="table-wrap">
+          <table class="users-table w-full">
+            <thead>
+              <tr>
+                <th>APP ID</th>
+                <th>APPLICANT NAME</th>
+                <th>DATE SUBMITTED</th>
+                <th>INCOME</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="applications-tbody">
+              <tr>
+                <td colspan="6" class="empty-state">Loading applications...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Detailed Application Modal Overlay -->
+  <div class="modal-backdrop hidden" id="application-modal">
+    <div class="modal-card glass-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" style="max-width: 900px; width: 95%;">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Application Review</p>
+          <h2 id="modal-title">Review Details & Home Visit</h2>
+        </div>
+        <button type="button" class="icon-button" id="close-modal" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding: 24px; max-height: 70vh; overflow-y: auto;">
+        
+        <!-- Applicant Details Grid -->
+        <div class="details-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+          
+          <div class="detail-section dark:bg-[#0f172a] p-4 rounded-lg border border-slate-700">
+            <h3 class="text-blue-400 font-semibold mb-4 border-b border-slate-700 pb-2">Applicant Info</h3>
+            <p><strong>Name:</strong> <span id="detail-name"></span></p>
+            <p><strong>NIC:</strong> <span id="detail-nic"></span></p>
+            <p><strong>Phone:</strong> <span id="detail-phone"></span></p>
+            <p><strong>Address:</strong> <span id="detail-address"></span></p>
+          </div>
+
+          <div class="detail-section dark:bg-[#0f172a] p-4 rounded-lg border border-slate-700">
+            <h3 class="text-blue-400 font-semibold mb-4 border-b border-slate-700 pb-2">Application Data</h3>
+            <p><strong>App ID:</strong> <span id="detail-appid"></span></p>
+            <p><strong>Monthly Income:</strong> LKR <span id="detail-income"></span></p>
+            <p><strong>Dependents:</strong> <span id="detail-dependents"></span></p>
+            <p><strong>Reason:</strong> <span id="detail-reason"></span></p>
+          </div>
+          
+          <div class="detail-section full-width dark:bg-[#0f172a] p-4 rounded-lg border border-slate-700" style="grid-column: 1 / -1;">
+            <h3 class="text-blue-400 font-semibold mb-4 border-b border-slate-700 pb-2">Uploaded House Photo</h3>
+            <div class="photo-container flex justify-center bg-black rounded-lg overflow-hidden min-h-[200px]">
+              <img id="detail-house-photo" src="" alt="House Photo" class="max-h-[400px] object-contain" onerror="this.style.display='none'">
+              <span id="detail-no-photo" class="text-slate-400 p-8 hidden">No photo provided</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Home Visit Assessment Form -->
+        <div class="assessment-section dark:bg-[#0B1121] p-6 rounded-xl border border-slate-700 mt-6">
+          <h3 class="text-emerald-400 font-bold mb-4 text-lg"><i class="fa-solid fa-house-medical"></i> Home Visit Assessment</h3>
+          
+          <form id="home-visit-form" novalidate>
+            <input type="hidden" id="visit-app-id" name="Application_ID">
+            
+            <label class="block mb-4">
+              <span class="block mb-2 font-medium">Officer Notes / Remarks</span>
+              <textarea id="officer-notes" name="OfficerNotes" rows="4" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:border-blue-500 transition-colors" placeholder="Enter your detailed observations here..." required></textarea>
+            </label>
+
+            <label class="block mb-6">
+              <span class="block mb-2 font-medium">Home Visit Photo (Real-time proof)</span>
+              <input type="file" id="home-visit-photo" name="home_visit_photo" accept="image/*" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-slate-200 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+            </label>
+
+            <div class="modal-actions flex justify-end gap-4 border-t border-slate-700 pt-6">
+              <button type="submit" data-action="Pending" class="px-6 py-2 rounded-lg font-semibold bg-yellow-500/20 text-yellow-500 border border-yellow-500/50 hover:bg-yellow-500/30 transition-colors">
+                <i class="fa-solid fa-clock-rotate-left"></i> Needs Update
+              </button>
+              <button type="submit" data-action="Reject" class="px-6 py-2 rounded-lg font-semibold bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500/30 transition-colors">
+                <i class="fa-solid fa-ban"></i> Reject
+              </button>
+              <button type="submit" data-action="Approve" class="px-6 py-2 rounded-lg font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                <i class="fa-solid fa-check"></i> Approve (Forward)
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
-

@@ -218,6 +218,8 @@ CREATE TABLE `HOME_VISIT` (
                    COMMENT 'FK → SAMURDHI_OFFICER(User_ID). Officer who conducted the visit.',
   `Remarks`        TEXT         DEFAULT NULL
                    COMMENT 'Field observations recorded by the officer.',
+  `Home_Visit_Photo` VARCHAR(255) DEFAULT NULL
+                   COMMENT 'Stored filename of the home visit photograph.',
   `Recommendation` VARCHAR(100) NOT NULL
                    COMMENT 'e.g. Highly Recommended / Recommended / Not Recommended.',
   `Date_Visited`   DATE         NOT NULL
