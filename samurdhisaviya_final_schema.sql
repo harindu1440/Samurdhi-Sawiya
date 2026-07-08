@@ -104,6 +104,10 @@ CREATE TABLE `APPLICANT` (
 CREATE TABLE `SAMURDHI_OFFICER` (
   `User_ID`   INT  NOT NULL
               COMMENT 'PK = FK → USERS(User_ID).',
+  `Name`      VARCHAR(255) NOT NULL
+              COMMENT 'Full name of the officer.',
+  `Division`  VARCHAR(255) NOT NULL
+              COMMENT 'Assigned division or territory.',
   PRIMARY KEY (`User_ID`),
   CONSTRAINT  `fk_officer_user`
     FOREIGN KEY (`User_ID`)
@@ -122,6 +126,10 @@ CREATE TABLE `SAMURDHI_OFFICER` (
 CREATE TABLE `GRAMA_NILADHARI` (
   `User_ID`   INT  NOT NULL
               COMMENT 'PK = FK → USERS(User_ID).',
+  `Name`      VARCHAR(255) NOT NULL
+              COMMENT 'Full name of the Grama Niladhari.',
+  `Division`  VARCHAR(255) NOT NULL
+              COMMENT 'Assigned GN division.',
   PRIMARY KEY (`User_ID`),
   CONSTRAINT  `fk_gn_user`
     FOREIGN KEY (`User_ID`)

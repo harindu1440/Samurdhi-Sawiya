@@ -35,22 +35,24 @@ async function listUsers(req, res) {
       SELECT
         'Grama Niladhari'  AS role,
         u.User_ID          AS user_id,
-        u.Username         AS full_name,
+        gn.Name            AS full_name,
+        u.Username         AS username,
         gn.Division        AS territory,
         u.Phone_Num        AS phone_num,
         1                  AS password_set
       FROM \`GRAMA_NILADHARI\` gn
-      JOIN \`USERS\` u ON u.User_ID = gn.GN_ID
+      JOIN \`USERS\` u ON u.User_ID = gn.User_ID
       UNION ALL
       SELECT
         'Samurdhi Officer' AS role,
         u.User_ID          AS user_id,
-        u.Username         AS full_name,
-        so.Area            AS territory,
+        so.Name            AS full_name,
+        u.Username         AS username,
+        so.Division        AS territory,
         u.Phone_Num        AS phone_num,
         1                  AS password_set
       FROM \`SAMURDHI_OFFICER\` so
-      JOIN \`USERS\` u ON u.User_ID = so.Officer_ID
+      JOIN \`USERS\` u ON u.User_ID = so.User_ID
       ORDER BY role ASC, full_name ASC
     `);
 
@@ -60,6 +62,7 @@ async function listUsers(req, res) {
         role:         u.role,
         user_id:      u.user_id,
         full_name:    u.full_name,
+        username:     u.username,
         territory:    u.territory,
         phone_num:    u.phone_num,
         password_set: Boolean(u.password_set),
@@ -73,10 +76,10 @@ async function listUsers(req, res) {
 
 function tableConfig(role) {
   if (role === 'Grama Niladhari') {
-    return { dbRole: 'Grama_Niladhari', table: 'GRAMA_NILADHARI', idCol: 'GN_ID', territoryCol: 'Division' };
+    return { dbRole: 'Grama_Niladhari', table: 'GRAMA_NILADHARI', idCol: 'User_ID', nameCol: 'Name', territoryCol: 'Division' };
   }
   if (role === 'Samurdhi Officer') {
-    return { dbRole: 'Samurdhi_Officer', table: 'SAMURDHI_OFFICER', idCol: 'Officer_ID', territoryCol: 'Area' };
+    return { dbRole: 'Samurdhi_Officer', table: 'SAMURDHI_OFFICER', idCol: 'User_ID', nameCol: 'Name', territoryCol: 'Division' };
   }
   return null;
 }
@@ -86,6 +89,7 @@ async function createUser(req, res) {
   try {
     const role            = String(req.body?.role            || '').trim();
     const fullName        = String(req.body?.full_name       || '').trim();
+    const username        = String(req.body?.username        || '').trim();
     const territory       = String(req.body?.territory       || '').trim();
     const phoneNum        = String(req.body?.phone_num       || '').trim();
     const defaultPassword = String(req.body?.default_password || '').trim();
@@ -97,7 +101,8 @@ async function createUser(req, res) {
     }
 
     const errors = [];
-    if (!fullName || fullName.length > 255)          errors.push('Full name/Username is required (max 255 chars).');
+    if (!fullName || fullName.length > 255)          errors.push('Full name is required (max 255 chars).');
+    if (!username || username.length > 100)          errors.push('Username is required (max 100 chars).');
     if (!territory || territory.length > 255)         errors.push('Territory/Division is required.');
     if (!/^[0-9+]{7,15}$/.test(phoneNum))            errors.push('Phone number must be 7-15 digits.');
     if (!defaultPassword || defaultPassword.length < 8) errors.push('Password must be at least 8 characters.');
@@ -110,11 +115,11 @@ async function createUser(req, res) {
     // Check unique username
     const [[existing]] = await conn.execute(
       `SELECT 1 FROM \`USERS\` WHERE \`Username\` = ? LIMIT 1`,
-      [fullName]
+      [username]
     );
     if (existing) {
       conn.release();
-      return res.status(409).json({ status: 'error', message: 'Username (Full Name) already exists.' });
+      return res.status(409).json({ status: 'error', message: 'Username already exists.' });
     }
 
     const hash = await bcrypt.hash(defaultPassword, 12);
@@ -124,14 +129,14 @@ async function createUser(req, res) {
     // 1. Insert USERS superclass
     const [userResult] = await conn.execute(
       `INSERT INTO \`USERS\` (\`Username\`, \`Password\`, \`Role\`, \`Phone_Num\`) VALUES (?, ?, ?, ?)`,
-      [fullName, hash, config.dbRole, phoneNum]
+      [username, hash, config.dbRole, phoneNum]
     );
     const newUserId = userResult.insertId;
 
     // 2. Insert subclass
     await conn.execute(
-      `INSERT INTO \`${config.table}\` (\`${config.idCol}\`, \`${config.territoryCol}\`) VALUES (?, ?)`,
-      [newUserId, territory]
+      `INSERT INTO \`${config.table}\` (\`${config.idCol}\`, \`${config.nameCol}\`, \`${config.territoryCol}\`) VALUES (?, ?, ?)`,
+      [newUserId, fullName, territory]
     );
 
     await conn.commit();
@@ -144,6 +149,7 @@ async function createUser(req, res) {
         role,
         user_id:      newUserId,
         full_name:    fullName,
+        username,
         territory,
         phone_num:    phoneNum,
         password_set: true,
@@ -163,6 +169,7 @@ async function updateUser(req, res) {
     const userId          = parseInt(req.params.id, 10);
     const role            = String(req.body?.role            || '').trim();
     const fullName        = String(req.body?.full_name       || '').trim();
+    const username        = String(req.body?.username        || '').trim();
     const territory       = String(req.body?.territory       || '').trim();
     const phoneNum        = String(req.body?.phone_num       || '').trim();
     const defaultPassword = String(req.body?.default_password || '').trim();
@@ -180,6 +187,7 @@ async function updateUser(req, res) {
 
     const errors = [];
     if (!fullName || fullName.length > 255)          errors.push('Full name is required.');
+    if (!username || username.length > 100)          errors.push('Username is required.');
     if (!territory || territory.length > 255)         errors.push('Territory/Division is required.');
     if (!/^[0-9+]{7,15}$/.test(phoneNum))            errors.push('Phone number must be 7-15 digits.');
     if (defaultPassword && defaultPassword.length < 8) errors.push('New password must be at least 8 characters.');
@@ -192,7 +200,7 @@ async function updateUser(req, res) {
     await conn.beginTransaction();
 
     const userFields = ['`Username` = ?', '`Phone_Num` = ?'];
-    const userParams = [fullName, phoneNum];
+    const userParams = [username, phoneNum];
 
     if (defaultPassword) {
       const hash = await bcrypt.hash(defaultPassword, 12);
@@ -213,8 +221,8 @@ async function updateUser(req, res) {
     }
 
     await conn.execute(
-      `UPDATE \`${config.table}\` SET \`${config.territoryCol}\` = ? WHERE \`${config.idCol}\` = ?`,
-      [territory, userId]
+      `UPDATE \`${config.table}\` SET \`${config.nameCol}\` = ?, \`${config.territoryCol}\` = ? WHERE \`${config.idCol}\` = ?`,
+      [fullName, territory, userId]
     );
 
     await conn.commit();
@@ -227,6 +235,7 @@ async function updateUser(req, res) {
         role,
         user_id:      userId,
         full_name:    fullName,
+        username,
         territory,
         phone_num:    phoneNum,
         password_set: true,

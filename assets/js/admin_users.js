@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const userIdInput           = document.getElementById('user-id');
   const formActionInput       = document.getElementById('form-action');
   const fullNameInput         = document.getElementById('full-name');
+  const usernameInput         = document.getElementById('username');
   const territoryInput        = document.getElementById('territory');
   const phoneInput            = document.getElementById('phone-num');
   const passwordInput         = document.getElementById('default-password');
@@ -56,6 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     userRoleSelect.value      = user ? user.role : 'Grama Niladhari';
     userRoleSelect.disabled   = mode === 'update';
     fullNameInput.value       = user?.full_name  || '';
+    usernameInput.value       = user?.username   || '';
     territoryInput.value      = user?.territory  || '';
     phoneInput.value          = user?.phone_num  || '';
     passwordInput.value       = '';
@@ -166,6 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const payload = {
       role:             userRoleSelect?.value    || 'Grama Niladhari',
       full_name:        fullNameInput?.value     || '',
+      username:         usernameInput?.value     || '',
       territory:        territoryInput?.value    || '',
       phone_num:        phoneInput?.value        || '',
       default_password: passwordInput?.value     || '',
