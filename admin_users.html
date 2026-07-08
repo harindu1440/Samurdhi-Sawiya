@@ -33,8 +33,9 @@
       <nav class="nav-links">
         <a class="nav-link" href="admin_dashboard.html"><i class="fa-solid fa-chart-column"></i> Overview</a>
         <a class="nav-link active" href="admin_users.html"><i class="fa-solid fa-users-gear"></i> User Management</a>
-        <a class="nav-link" href="gn_dashboard.html"><i class="fa-solid fa-map-location-dot"></i> GN Portal</a>
-        <a class="nav-link" href="applicant_dashboard.html"><i class="fa-solid fa-users"></i> Applicant Portal</a>
+        <a class="nav-link" href="admin_approvals.html"><i class="fa-solid fa-file-signature"></i> Applications</a>
+        <a class="nav-link" href="reports.html"><i class="fa-solid fa-file-export"></i> Reports</a>
+        <a class="nav-link" href="applicant_payments.html"><i class="fa-solid fa-coins"></i> Payment History</a>
         <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
       </nav>
 
@@ -63,7 +64,7 @@
         </div>
       </header>
 
-      <section class="panel" aria-label="Users table">
+      <section class="panel dark:bg-[#1e293b] dark:border dark:border-slate-700 dark:text-slate-200" aria-label="Users table">
         <div class="panel-header">
           <div>
             <p class="eyebrow">Accounts</p>
@@ -73,21 +74,21 @@
         </div>
 
         <div class="table-wrap">
-          <table class="users-table">
-            <thead>
+          <table class="users-table w-full">
+            <thead class="dark:bg-slate-900">
               <tr>
-                <th scope="col">Role</th>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Division / Area</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Password</th>
-                <th scope="col">Actions</th>
+                <th scope="col" class="dark:border-b dark:border-slate-700">Role</th>
+                <th scope="col" class="dark:border-b dark:border-slate-700">ID</th>
+                <th scope="col" class="dark:border-b dark:border-slate-700">Name</th>
+                <th scope="col" class="dark:border-b dark:border-slate-700">Division / Area</th>
+                <th scope="col" class="dark:border-b dark:border-slate-700">Phone</th>
+                <th scope="col" class="dark:border-b dark:border-slate-700">Password</th>
+                <th scope="col" class="dark:border-b dark:border-slate-700">Actions</th>
               </tr>
             </thead>
             <tbody id="users-body">
-              <tr>
-                <td colspan="7" class="empty-state">Loading users...</td>
+              <tr class="dark:hover:bg-slate-700/50 transition-colors">
+                <td colspan="7" class="empty-state dark:text-slate-400">Loading users...</td>
               </tr>
             </tbody>
           </table>
