@@ -76,9 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // ── Store JWT and user info in localStorage ────────────────────────────
-      localStorage.setItem('ss_token', data.token);
-      localStorage.setItem('ss_role',  data.role);
-      localStorage.setItem('ss_name',  data.name);
+      localStorage.setItem('token',   data.token);
+      localStorage.setItem('role',    data.role);
+      localStorage.setItem('name',    data.name);
 
       // ── Redirect to role-specific dashboard ───────────────────────────────
       window.location.href = data.redirect || 'index.html';

@@ -31,7 +31,7 @@ function decodeJwtPayload(token) {
  * @returns {{ id, role, name, token }} or redirects to login.html
  */
 function getSession(requiredRole) {
-  const token = localStorage.getItem('ss_token');
+  const token = localStorage.getItem('token');
   if (!token) {
     window.location.replace('login.html');
     return null;
@@ -52,15 +52,16 @@ function getSession(requiredRole) {
   }
 
   const allowed = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
-  if (!allowed.includes(payload.role)) {
+  // Backend sets User_ID and Role (capital R) in the JWT payload
+  if (!allowed.includes(payload.Role)) {
     window.location.replace('login.html');
     return null;
   }
 
   return {
-    id:    payload.id,
-    role:  payload.role,
-    name:  payload.name || localStorage.getItem('ss_name') || '',
+    id:    payload.User_ID,
+    role:  payload.Role,
+    name:  payload.name || localStorage.getItem('name') || '',
     token,
   };
 }
@@ -74,7 +75,7 @@ function getSession(requiredRole) {
  * @returns {Promise<any>} parsed JSON body
  */
 async function authFetch(url, options = {}) {
-  const token = localStorage.getItem('ss_token');
+  const token = localStorage.getItem('token');
 
   const headers = {
     'Content-Type': 'application/json',
