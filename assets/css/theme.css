@@ -38,8 +38,8 @@
 
 [data-theme="dark"] {
   /* Colors - Dark Mode */
-  --bg: #090e17;
-  --surface: rgba(15, 23, 42, 0.88);
+  --bg: #0f172a; /* bg-slate-900 */
+  --surface: #1e293b; /* bg-slate-800 */
   --surface-strong: #0f172a;
   
   --primary: #f8fafc;
@@ -48,15 +48,15 @@
   --accent: #3b82f6;
   --accent-soft: rgba(59, 130, 246, 0.2);
   
-  --text: #f1f5f9;
-  --muted: #94a3b8;
+  --text: #f1f5f9; /* text-slate-100 */
+  --muted: #94a3b8; /* text-slate-400 */
   
-  --border: rgba(255, 255, 255, 0.08);
+  --border: #334155; /* border-slate-700 */
   
   --danger: #ef4444;
   --danger-soft: rgba(239, 68, 68, 0.15);
   
-  --shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Glowing/soft shadow */
 
   /* Gradients */
   --bg-gradient-1: rgba(59, 130, 246, 0.15);

@@ -34,6 +34,7 @@
   <nav class="top-nav">
     <div class="nav-container">
       <a class="brand" href="index.html" aria-label="SamurdhiSaviya home">
+        <img src="assets/images/emblem.png" alt="National Emblem" class="nav-emblem" onerror="this.style.display='none'">
         <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
         <span class="brand-text">
           <strong>SamurdhiSaviya</strong>
@@ -126,12 +127,13 @@
       
       <!-- Profile Mini-Widget -->
       <div class="widget profile-widget dashboard-anim-item">
-        <div class="profile-avatar">
+        <img src="assets/images/emblem.png" alt="" class="profile-emblem-bg" onerror="this.style.display='none'">
+        <div class="profile-avatar" style="position:relative; z-index:1;">
           <i class="fa-solid fa-user-check"></i>
         </div>
-        <h3 id="profile-name">Applicant</h3>
-        <p>Registered Citizen</p>
-        <div class="profile-stats">
+        <h3 id="profile-name" style="position:relative; z-index:1;">Applicant</h3>
+        <p style="position:relative; z-index:1;">Registered Citizen</p>
+        <div class="profile-stats" style="position:relative; z-index:1;">
           <span class="stat-label">Declared Income</span>
           <span class="stat-val">LKR <span id="profile-income">--</span></span>
         </div>

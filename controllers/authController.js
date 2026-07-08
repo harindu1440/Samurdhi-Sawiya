@@ -9,7 +9,7 @@ const ROLE_REDIRECTS = {
   'Applicant':        'applicant_dashboard.html',
   'Grama_Niladhari':  'gn_dashboard.html',
   'Samurdhi_Officer': 'officer_dashboard.html',
-  'Minister':         'admin_dashboard.html',
+  'Minister':         'minister_dashboard.html',
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
