@@ -37,12 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     tbody.innerHTML = apps.map(app => `
-      <tr class="hover:bg-slate-800/50 transition-colors border-b border-slate-700/50">
-        <td class="px-6 py-4 text-slate-200">#${app.Application_ID}</td>
-        <td class="px-6 py-4 text-slate-200 font-semibold">${app.applicant_name}</td>
-        <td class="px-6 py-4 text-slate-200">${app.Date_Submitted ? app.Date_Submitted.substring(0, 10) : 'N/A'}</td>
-        <td class="px-6 py-4 text-slate-200">LKR ${Number(app.Monthly_Income).toLocaleString()}</td>
-        <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/20 text-yellow-500 border border-yellow-500/30">Pending Review</span></td>
+      <tr class="hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50">
+        <td class="px-6 py-4 text-slate-800 dark:text-slate-200">#${app.Application_ID}</td>
+        <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-semibold">${app.applicant_name}</td>
+        <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Date_Submitted ? app.Date_Submitted.substring(0, 10) : 'N/A'}</td>
+        <td class="px-6 py-4 text-slate-800 dark:text-slate-200">LKR ${Number(app.Monthly_Income).toLocaleString()}</td>
+        <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/20 text-yellow-700 dark:text-yellow-500 border border-yellow-500/30">Pending Review</span></td>
         <td class="px-6 py-4">
           <button onclick="openReviewModal('${app.Application_ID}')" class="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg px-4 py-2 transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]">
             Review
