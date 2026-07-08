@@ -53,19 +53,19 @@
       </header>
 
       <section class="panel dark:bg-[#1e293b] dark:border dark:border-slate-700 dark:text-slate-200 mt-6" aria-label="Applications table">
-        <div class="table-wrap">
-          <table class="users-table w-full">
-            <thead>
+        <div class="table-wrap w-full overflow-x-auto rounded-lg shadow-md border border-slate-700/50">
+          <table class="users-table w-full text-left border-collapse">
+            <thead class="bg-slate-900/80">
               <tr>
-                <th>APP ID</th>
-                <th>APPLICANT NAME</th>
-                <th>DATE SUBMITTED</th>
-                <th>INCOME</th>
-                <th>STATUS</th>
-                <th>ACTION</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">APP ID</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">APPLICANT NAME</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">DATE SUBMITTED</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">INCOME</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">STATUS</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">ACTION</th>
               </tr>
             </thead>
-            <tbody id="applications-tbody">
+            <tbody id="applications-tbody" class="divide-y divide-slate-700/50">
               <tr>
                 <td colspan="6" class="empty-state">Loading applications...</td>
               </tr>
