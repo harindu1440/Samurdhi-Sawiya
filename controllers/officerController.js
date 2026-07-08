@@ -22,16 +22,16 @@ async function getDashboard(req, res) {
         wa.Application_ID,
         wa.Date AS Date_Submitted,
         wa.Status,
-        wa.Monthly_Income,
-        wa.Dependents,
-        wa.Reason,
-        wa.House_Photo,
+        a.Monthly_Income,
+        NULL AS Dependents,
+        'N/A (Update DB)' AS Reason,
+        NULL AS House_Photo,
         a.Applicant_ID,
-        a.Full_Name AS applicant_name,
-        a.NIC,
-        a.Address,
+        u.Username AS applicant_name,
+        'N/A' AS NIC,
+        'N/A' AS Address,
         u.Username,
-        u.Phone_Num
+        NULL AS Phone_Num
       FROM \`WELFARE_APPLICATION\` wa
       JOIN \`APPLICANT\` a ON a.Applicant_ID = wa.Applicant_ID
       JOIN \`USERS\` u ON u.User_ID = a.Applicant_ID
