@@ -29,6 +29,14 @@
       gap: 10px;
     }
 
+    /*
+      CRITICAL: The HTML `hidden` attribute sets display:none, but any CSS
+      `display` rule on the same element overrides it due to specificity.
+      This selector restores the correct behaviour for ALL hidden elements.
+    */
+    [hidden] { display: none !important; }
+
+
     /* ── Password strength bar ───────────────────────────────────────────────── */
     .password-strength {
       height: 4px;
@@ -222,7 +230,8 @@
     .field--currency .currency-tag {
       position: absolute;
       left: 14px;
-      bottom: 14px;
+      top: 50%;
+      transform: translateY(-50%);
       font-size: 0.8rem;
       font-weight: 700;
       color: var(--muted);
@@ -231,6 +240,144 @@
     }
     .field--currency input {
       padding-left: 52px !important;
+    }
+    /*
+      Always lift the label above for currency fields — the LKR tag occupies
+      the left side of the input body, so the label must never sit there.
+      Matches the same pattern used for .field--date label.
+    */
+    .field--currency label {
+      top: -10px;
+      font-size: 0.78rem;
+      color: var(--accent);
+      background: linear-gradient(180deg, transparent 50%, #fff 50%);
+    }
+
+    /* ==========================================================================
+       LEFT PANEL REDESIGN — animated step cards
+       ========================================================================== */
+
+    /* Override login.css: make the visual panel a proper flex column
+       so content distributes between top (heading) and bottom (points) */
+    .auth-visual {
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px 48px 52px;
+    }
+
+    /* Top block: badge + title + subtitle */
+    .panel-top {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Middle animated carousel viewport */
+    .panel-carousel {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      margin: 28px 0;
+      /* mask edges for a soft scroll fade */
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+    }
+
+    /* The scrolling track — duplicated so the loop is seamless */
+    .carousel-track {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: panelScroll 14s linear infinite;
+    }
+    .carousel-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes panelScroll {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
+    /* Individual step card */
+    .step-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+      transition: background 0.25s ease, transform 0.25s ease;
+      cursor: default;
+    }
+    .step-card:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateX(4px);
+    }
+
+    .step-card-icon {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.16);
+      display: grid;
+      place-items: center;
+      font-size: 1.15rem;
+      color: #fff;
+    }
+
+    .step-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .step-card-title {
+      font-weight: 700;
+      font-size: 0.93rem;
+      color: #fff;
+      line-height: 1.25;
+    }
+    .step-card-desc {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.72);
+      line-height: 1.5;
+    }
+    .step-card-step {
+      display: inline-block;
+      margin-bottom: 4px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #9fd0ff;
+    }
+
+    /* Bottom auth-points strip */
+    .auth-points {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Responsive: hide carousel on very small heights */
+    @media (max-height: 700px) {
+      .panel-carousel { display: none; }
+      .auth-visual { justify-content: flex-end; }
+    }
+    @media (max-width: 980px) {
+      .auth-visual {
+        padding: 36px 28px;
+        min-height: 440px;
+      }
+      .panel-carousel { margin: 20px 0; }
+    }
+    @media (max-width: 640px) {
+      .auth-visual { padding: 28px 20px; min-height: 340px; }
+      .panel-carousel { display: none; }
     }
   </style>
 
@@ -243,21 +390,125 @@
       <!-- ── Left decorative panel ─────────────────────────────────────────── -->
       <aside class="auth-visual" aria-hidden="true">
         <div class="auth-visual-overlay"></div>
-        <div class="auth-visual-content">
+
+        <!-- TOP: Badge + Heading + Subtitle -->
+        <div class="panel-top">
           <span class="auth-badge">Applicant Self-Registration</span>
-          <h1>Your welfare journey starts here.</h1>
+          <h1>Your welfare journey<br>starts here.</h1>
           <p>
-            Create your SamurdhiSaviya account and submit your benefit application
-            in a single step — track approval progress and view payment records, all in one place.
+            Register and submit your Samurdhi benefit application
+            in one seamless step.
           </p>
-          <ul class="auth-points">
-            <li><i class="fa-solid fa-file-circle-check"></i> Apply for Samurdhi benefits</li>
-            <li><i class="fa-solid fa-magnifying-glass-chart"></i> Track your application in real time</li>
-            <li><i class="fa-solid fa-lock"></i> Secured with end-to-end encryption</li>
-            <li><i class="fa-solid fa-bolt-lightning"></i> Registration &amp; application in one step</li>
-          </ul>
         </div>
+
+        <!-- MIDDLE: Auto-scrolling step cards carousel -->
+        <div class="panel-carousel" aria-hidden="true">
+          <div class="carousel-track">
+
+            <!-- Original 5 cards -->
+            <div class="step-card">
+              <span class="step-card-icon"><i class="fa-solid fa-user-pen"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 1</span>
+                <span class="step-card-title">Submit Details &amp; House Photo</span>
+                <span class="step-card-desc">Register with your NIC, address, income, and upload a photo of your home.</span>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-card-icon"><i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 2</span>
+                <span class="step-card-title">Samurdhi Officer Home Visit</span>
+                <span class="step-card-desc">An officer visits your home and records an official recommendation.</span>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-card-icon"><i class="fa-solid fa-stamp"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 3</span>
+                <span class="step-card-title">Grama Niladhari &amp; Officer Verification</span>
+                <span class="step-card-desc">Your GN reviews the application and forwards it for ministerial approval.</span>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-card-icon"><i class="fa-solid fa-landmark-flag"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 4</span>
+                <span class="step-card-title">Minister Final Approval</span>
+                <span class="step-card-desc">The Minister reviews and grants or rejects the welfare benefit request.</span>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-card-icon"><i class="fa-solid fa-sack-dollar"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 5</span>
+                <span class="step-card-title">Receive Samurdhi Benefits Securely</span>
+                <span class="step-card-desc">Approved payments are disbursed directly and tracked in your dashboard.</span>
+              </div>
+            </div>
+
+            <!-- Exact duplicate set — creates the seamless infinite scroll loop -->
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><i class="fa-solid fa-user-pen"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 1</span>
+                <span class="step-card-title">Submit Details &amp; House Photo</span>
+                <span class="step-card-desc">Register with your NIC, address, income, and upload a photo of your home.</span>
+              </div>
+            </div>
+
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 2</span>
+                <span class="step-card-title">Samurdhi Officer Home Visit</span>
+                <span class="step-card-desc">An officer visits your home and records an official recommendation.</span>
+              </div>
+            </div>
+
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><i class="fa-solid fa-stamp"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 3</span>
+                <span class="step-card-title">Grama Niladhari &amp; Officer Verification</span>
+                <span class="step-card-desc">Your GN reviews the application and forwards it for ministerial approval.</span>
+              </div>
+            </div>
+
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><i class="fa-solid fa-landmark-flag"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 4</span>
+                <span class="step-card-title">Minister Final Approval</span>
+                <span class="step-card-desc">The Minister reviews and grants or rejects the welfare benefit request.</span>
+              </div>
+            </div>
+
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><i class="fa-solid fa-sack-dollar"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 5</span>
+                <span class="step-card-title">Receive Samurdhi Benefits Securely</span>
+                <span class="step-card-desc">Approved payments are disbursed directly and tracked in your dashboard.</span>
+              </div>
+            </div>
+
+          </div><!-- /.carousel-track -->
+        </div><!-- /.panel-carousel -->
+
+        <!-- BOTTOM: Trust signals strip -->
+        <ul class="auth-points">
+          <li><i class="fa-solid fa-shield-halved"></i> Government-verified &amp; secured system</li>
+          <li><i class="fa-solid fa-bolt-lightning"></i> Register &amp; apply in a single step</li>
+          <li><i class="fa-solid fa-magnifying-glass-chart"></i> Real-time application tracking</li>
+        </ul>
+
       </aside>
+
 
       <!-- ── Right form panel ───────────────────────────────────────────────── -->
       <section class="auth-card">
