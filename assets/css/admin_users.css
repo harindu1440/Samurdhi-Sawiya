@@ -364,3 +364,36 @@ button, input, select { font: inherit; }
 [data-theme="dark"] #cancel-modal:hover {
   background: rgba(239, 68, 68, 0.2) !important;
 }
+
+/* Fix for Dark Mode Table UI */
+[data-theme="dark"] .panel {
+  background: rgba(30, 41, 59, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .table-wrap {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .users-table thead th {
+  background: rgba(15, 23, 42, 0.9) !important; /* dark:bg-slate-900 */
+  color: #94a3b8 !important; /* text-slate-400 */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .users-table tbody td {
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
+  color: #e2e8f0 !important; /* text-slate-200 */
+}
+
+[data-theme="dark"] .users-table tbody tr:hover {
+  background: rgba(51, 65, 85, 0.5) !important; /* hover:bg-slate-700/50 */
+}
+
+[data-theme="dark"] .empty-state {
+  color: #94a3b8 !important; /* text-slate-400 */
+}
