@@ -21,21 +21,21 @@
 </head>
 <body>
   <div class="admin-layout" data-admin-users>
-    <aside class="sidebar" aria-label="Minister navigation">
+        <aside class="sidebar" aria-label="Minister navigation">
       <a class="brand" href="admin_dashboard.html">
-        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
-        <span class="brand-text">
+        <img src="assets/images/Emblem of Sri Lanka.png" alt="National Emblem" class="sidebar-emblem" onerror="this.style.display='none'" style="width: 48px; height: auto;">
+        <span class="brand-text" style="margin-left: 12px;">
           <strong>SamurdhiSaviya</strong>
           <small>Minister Control Center</small>
         </span>
       </a>
 
       <nav class="nav-links">
-        <a class="nav-link" href="admin_dashboard.html"><i class="fa-solid fa-chart-column"></i> Overview</a>
-        <a class="nav-link active" href="admin_users.html"><i class="fa-solid fa-users-gear"></i> User Management</a>
-        <a class="nav-link" href="admin_approvals.html"><i class="fa-solid fa-file-signature"></i> Applications</a>
-        <a class="nav-link" href="reports.html"><i class="fa-solid fa-file-export"></i> Reports</a>
-        <a class="nav-link" href="applicant_payments.html"><i class="fa-solid fa-coins"></i> Payment History</a>
+        <a class="nav-link" href="admin_dashboard.html" data-page="admin_dashboard"><i class="fa-solid fa-chart-column"></i> Overview</a>
+        <a class="nav-link active" href="admin_users.html" data-page="admin_users"><i class="fa-solid fa-users-gear"></i> User Management</a>
+        <a class="nav-link" href="admin_approvals.html" data-page="admin_approvals"><i class="fa-solid fa-file-signature"></i> Applications</a>
+        <a class="nav-link" href="reports.html" data-page="reports"><i class="fa-solid fa-file-export"></i> Reports</a>
+        <a class="nav-link" href="applicant_payments.html" data-page="applicant_payments"><i class="fa-solid fa-coins"></i> Payment History</a>
         <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
       </nav>
 
@@ -53,10 +53,12 @@
           <p class="topbar-copy">Create, update, and remove role-based accounts without leaving the dashboard. Changes apply instantly to the grid below.</p>
         </div>
         <div class="actions">
-          <label class="search-box" for="user-search">
-            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-            <input type="search" id="user-search" placeholder="Search by name, phone, or ID" onkeyup="filterUsers()" autocomplete="off">
-          </label>
+          <div class="relative w-full max-w-md">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <i class="fa-solid fa-magnifying-glass text-slate-400" aria-hidden="true"></i>
+            </div>
+            <input type="search" id="user-search" class="w-full bg-slate-800 border border-slate-700 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 rounded-lg pl-10 px-4 py-2 outline-none transition-all" placeholder="Search by name, phone, or ID" onkeyup="filterUsers()" autocomplete="off">
+          </div>
           <button type="button" class="primary-button" id="open-create-modal">
             <i class="fa-solid fa-user-plus"></i>
             Add User
@@ -97,7 +99,7 @@
     </main>
   </div>
 
-  <div class="modal-backdrop" id="user-modal" hidden>
+  <div class="modal-backdrop hidden" id="user-modal">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="user-modal-title">
       <div class="modal-header">
         <div>
