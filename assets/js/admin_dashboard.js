@@ -25,10 +25,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   try {
-    const session = getSession('Admin');
+    const session = getSession('Minister');
     if (!session) return;
 
-    if (adminNameNode) adminNameNode.textContent = session.name || 'Admin';
+    if (adminNameNode) adminNameNode.textContent = session.name || 'Minister';
 
     const data = await authFetch('/api/admin/stats');
     if (!data || data.status !== 'success') return;

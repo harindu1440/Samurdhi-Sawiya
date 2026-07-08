@@ -328,7 +328,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 INSERT INTO `USERS` (`Username`, `Password`, `Role`, `Phone_Num`)
 VALUES (
   'minister_admin',
-  '$2a$12$B8GcQB7eqILPvl4KoAMYWuq.Gr3X3PXLQ2MKEU2F5T3U7AGNiMRIa',
+  '$2a$12$jPBVFDZV.qzuz.sAIzA5wOcjAkHgXIWvaRBD6xE6x9BtcmwPv9wSK',
   'Minister',
   NULL
 );

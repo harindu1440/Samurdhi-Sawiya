@@ -120,10 +120,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Init ──────────────────────────────────────────────────────────────────
   try {
-    const session = getSession('Admin');
+    const session = getSession('Minister');
     if (!session) return;
 
-    if (adminNameNode) adminNameNode.textContent = session.name || 'Admin';
+    if (adminNameNode) adminNameNode.textContent = session.name || 'Minister';
 
     if (typeof gsap !== 'undefined') {
       gsap.from('.sidebar', { duration: 0.8, x: -28, opacity: 0, ease: 'power3.out' });

@@ -207,10 +207,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Init ──────────────────────────────────────────────────────────────────
   try {
-    const session = getSession('Admin');
+    const session = getSession('Minister');
     if (!session) return;
 
-    if (adminNameNode) adminNameNode.textContent = session.name || 'Admin';
+    if (adminNameNode) adminNameNode.textContent = session.name || 'Minister';
 
     await fetchUsers();
 
