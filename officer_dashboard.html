@@ -64,8 +64,19 @@
         </div>
       </header>
 
-      <section class="panel bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 mt-6" aria-label="Applications table">
-        <div class="table-wrap w-full overflow-x-auto rounded-lg shadow-md border border-slate-200 dark:border-slate-700/50">
+      <section class="panel bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 mt-6 rounded-xl" aria-label="Applications table">
+        
+        <!-- Search Bar -->
+        <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div class="relative w-full md:w-1/3">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <i class="fa-solid fa-search text-slate-400"></i>
+            </div>
+            <input type="text" id="searchInput" class="bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none block w-full pl-10 p-2.5 transition-colors" placeholder="Search by App ID, Name, or NIC...">
+          </div>
+        </div>
+
+        <div class="table-wrap w-full overflow-x-auto">
           <table class="users-table w-full text-left border-collapse">
             <thead class="bg-slate-100 dark:bg-slate-900/80">
               <tr>
