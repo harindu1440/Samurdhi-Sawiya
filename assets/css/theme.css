@@ -37,9 +37,9 @@
 }
 
 [data-theme="dark"] {
-  /* Colors - Dark Mode */
-  --bg: #0f172a; /* bg-slate-900 */
-  --surface: #1e293b; /* bg-slate-800 */
+  /* Colors - Dark Mode (Tactical Obsidian/Slate) */
+  --bg: #0B1121;
+  --surface: rgba(30, 41, 59, 0.5); /* translucent slate */
   --surface-strong: #0f172a;
   
   --primary: #f8fafc;
@@ -48,20 +48,67 @@
   --accent: #3b82f6;
   --accent-soft: rgba(59, 130, 246, 0.2);
   
-  --text: #f1f5f9; /* text-slate-100 */
-  --muted: #94a3b8; /* text-slate-400 */
+  --text: #F8FAFC;
+  --muted: #94a3b8;
   
-  --border: #334155; /* border-slate-700 */
+  --border: rgba(255, 255, 255, 0.08);
   
   --danger: #ef4444;
   --danger-soft: rgba(239, 68, 68, 0.15);
   
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Glowing/soft shadow */
+  --shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 
   /* Gradients */
-  --bg-gradient-1: rgba(59, 130, 246, 0.15);
+  --bg-gradient-1: rgba(59, 130, 246, 0.12);
   --bg-gradient-2: rgba(30, 58, 138, 0.15);
   --bg-gradient-top: #0a0f1a;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GLOBAL DARK MODE COMPONENT FIXES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Glassmorphism Card Styling (Targets widgets, auth-card, and standard panels) */
+[data-theme="dark"] .widget,
+[data-theme="dark"] .auth-card,
+[data-theme="dark"] .card {
+  background: var(--surface) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Global Form Inputs Fix (High Contrast) */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background-color: #1E293B !important;
+  color: #F8FAFC !important;
+  border: 1px solid #334155 !important;
+}
+
+/* Select Option Visibility Fix */
+[data-theme="dark"] select option {
+  background-color: #1E293B;
+  color: #F8FAFC;
+}
+
+/* National Emblem Blending */
+[data-theme="dark"] img.emblem,
+[data-theme="dark"] .nav-emblem {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15)) brightness(0.95) !important;
+}
+
+[data-theme="dark"] .profile-emblem-bg {
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1)) brightness(1.2) !important;
+  opacity: 0.15 !important;
+}
+
+/* Accent Glow for SVG Icons in Dark Mode (High-tech feel) */
+[data-theme="dark"] .fa-solid,
+[data-theme="dark"] svg {
+  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.4));
 }
 
 /* Base Body Styles */
