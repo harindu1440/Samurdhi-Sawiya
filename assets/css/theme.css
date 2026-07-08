@@ -14,6 +14,10 @@
   
   --accent: #2f6fed;
   --accent-soft: rgba(47, 111, 237, 0.12);
+
+  /* Stable brand colors that do not invert in dark mode */
+  --brand-primary: #0f2748;
+  --brand-accent: #2f6fed;
   
   --text: #132033;
   --muted: #5c6880;
