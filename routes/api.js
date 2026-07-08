@@ -12,6 +12,7 @@ const applicantController = require('../controllers/applicantController');
 const gnController        = require('../controllers/gnController');
 const officerController   = require('../controllers/officerController');
 const adminController     = require('../controllers/adminController');
+const ministerController  = require('../controllers/ministerController');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Multer — house photo upload
@@ -186,6 +187,24 @@ router.get(
   authMiddleware,
   requireRole('Minister'),
   adminController.getReport
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MINISTER ROUTES (Requires 'Minister' role)
+// ─────────────────────────────────────────────────────────────────────────────
+
+router.get(
+  '/minister/approvals',
+  authMiddleware,
+  requireRole('Minister'),
+  ministerController.getApprovals
+);
+
+router.post(
+  '/minister/approvals/:id/action',
+  authMiddleware,
+  requireRole('Minister'),
+  ministerController.actionApproval
 );
 
 // ─────────────────────────────────────────────────────────────────────────────

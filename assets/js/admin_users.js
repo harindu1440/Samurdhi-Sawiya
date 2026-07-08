@@ -62,14 +62,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     passwordInput.required    = mode === 'create';
     if (modalTitle) modalTitle.textContent = mode === 'create' ? 'Add user' : 'Edit user';
     updateModalFields();
-    userModal.hidden = false;
+    userModal.classList.remove('hidden');
     if (typeof gsap !== 'undefined') {
       gsap.fromTo('.modal-card', { scale: 0.95, y: 12, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 0.35, ease: 'power3.out' });
     }
   };
 
   const closeModal = () => {
-    if (userModal) userModal.hidden = true;
+    if (userModal) userModal.classList.add('hidden');
     if (userRoleSelect) userRoleSelect.disabled = false;
   };
 

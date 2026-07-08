@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Minister Approval Queue | SamurdhiSaviya</title>
+  <meta name="description" content="Minister Approval Queue for reviewing and approving welfare applications.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin_approvals.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/admin_approvals.js" defer></script>
+
+  <!-- Global Theme CSS and JS -->
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <script src="assets/js/theme.js"></script>
+</head>
+<body>
+  <div class="admin-layout" data-admin-approvals>
+    <aside class="sidebar" aria-label="Minister navigation">
+      <a class="brand" href="admin_dashboard.html">
+        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+        <span class="brand-text">
+          <strong>SamurdhiSaviya</strong>
+          <small>Minister Control Center</small>
+        </span>
+      </a>
+
+      <nav class="nav-links">
+        <a class="nav-link" href="admin_dashboard.html"><i class="fa-solid fa-chart-column"></i> Overview</a>
+        <a class="nav-link active" href="admin_approvals.html"><i class="fa-solid fa-check-to-slot"></i> Approval Queue</a>
+        <a class="nav-link" href="admin_users.html"><i class="fa-solid fa-users-gear"></i> User Management</a>
+        <a class="nav-link" href="reports.html"><i class="fa-solid fa-file-export"></i> Reports</a>
+        <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="footer-label">Signed in as</span>
+        <strong id="admin-name">Minister</strong>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Minister Actions</p>
+          <h1>Approval Queue</h1>
+          <p class="topbar-copy">Review field-verified welfare applications and initiate payments.</p>
+        </div>
+        <div class="status-chip">Role locked: Minister</div>
+      </header>
+
+      <section class="approvals-section">
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="approvals-table">
+              <thead>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Applicant Name</th>
+                  <th>NIC</th>
+                  <th>Date Submitted</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="approvals-tbody">
+                <!-- Data injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Detailed Approval Modal -->
+  <div id="approval-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+    <div class="modal-content glass-modal">
+      <header class="modal-header">
+        <h2>Application Details</h2>
+        <button id="close-modal-btn" class="icon-btn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      </header>
+      <div class="modal-body" id="approval-details-container">
+        <!-- Content injected by JS -->
+      </div>
+      <footer class="modal-actions">
+        <button id="reject-btn" class="btn btn-danger">Reject</button>
+        <button id="approve-btn" class="btn btn-success">Approve & Initiate Payment</button>
+      </footer>
+    </div>
+  </div>
+
+</body>
+</html>

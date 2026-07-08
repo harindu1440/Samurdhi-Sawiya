@@ -324,3 +324,43 @@ button, input, select { font: inherit; }
   .primary-button,
   .secondary-button { width: 100%; }
 }
+
+/* Hidden Class for Modal Overriding Grid */
+.hidden {
+  display: none !important;
+}
+
+/* Premium Glassmorphism Dark Mode for Admin Users */
+[data-theme="dark"] body {
+  background-color: #0B1121 !important;
+}
+
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] .users-card {
+  background: rgba(30, 41, 59, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .sidebar {
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .modal-card {
+  background: rgba(15, 23, 42, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
+}
+
+/* Fix for Cancel Button in Dark Mode */
+[data-theme="dark"] #cancel-modal {
+  background: transparent !important;
+  border: 1px solid #ef4444 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] #cancel-modal:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+}
