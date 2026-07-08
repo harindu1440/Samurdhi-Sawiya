@@ -1,6 +1,12 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Enforce session and get user info
+  const session = getSession('Samurdhi_Officer');
+  if (session) {
+    document.getElementById('officer-name').textContent = session.Username || 'Officer';
+  }
+
   const tbody = document.getElementById('applications-tbody');
   const modal = document.getElementById('application-modal');
   const closeModalBtn = document.getElementById('close-modal');
@@ -11,14 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Fetch pending applications
   async function loadDashboard() {
     try {
-      const res = await api.get('/officer/dashboard');
-      if (res.status === 'success') {
+      const res = await authFetch('/api/officer/dashboard');
+      if (res && res.status === 'success') {
         currentApplications = res.pending_applications || [];
         renderTable(currentApplications);
+      } else {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Failed to load applications from server.</td></tr>';
       }
     } catch (err) {
-      console.error(err);
-      tbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Failed to load applications.</td></tr>';
+      console.error('Fetch Error:', err);
+      tbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Failed to load applications. Network error.</td></tr>';
     }
   }
 
@@ -121,11 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.disabled = true;
 
     try {
-      // POST with FormData uses multipart/form-data implicitly via Fetch API
-      const res = await api.post('/officer/visit', formData, false); // assuming your api client can handle FormData if 3rd arg is false for JSON stringify, but standard api.js usually stringifies.
-      
-      // WAIT: I need to use native fetch if the `api.js` doesn't support FormData directly. 
-      // Most wrappers stringify by default. Let's write native fetch to be safe.
+      // Use native fetch to bypass JSON stringification for FormData
       const token = localStorage.getItem('token');
       const response = await fetch('/api/officer/visit', {
         method: 'POST',
