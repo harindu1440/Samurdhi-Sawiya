@@ -127,7 +127,7 @@ async function submitVisit(req, res) {
 
     return res.status(200).json({
       status: 'success',
-      message: \`Application successfully updated to \${newStatus}.\`,
+      message: `Application successfully updated to ${newStatus}.`,
     });
   } catch (err) {
     await conn.rollback();
