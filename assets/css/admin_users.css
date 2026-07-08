@@ -429,3 +429,11 @@ button, input, select { font: inherit; }
 [data-theme="dark"] .search-box i {
   color: #94a3b8 !important;
 }
+
+/* Force search input to be completely transparent without border to counter global input styles */
+[data-theme="dark"] .search-box input {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
