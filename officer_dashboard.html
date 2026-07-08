@@ -79,15 +79,15 @@
 
   <!-- Detailed Application Modal Overlay -->
   <div id="reviewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-    <div class="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative p-8">
+    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative p-8 text-slate-800 dark:text-slate-200">
       
-      <button type="button" class="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors" id="close-modal" aria-label="Close modal" onclick="closeReviewModal()">
+      <button type="button" class="absolute top-6 right-6 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" id="close-modal" aria-label="Close modal" onclick="closeReviewModal()">
         <i class="fa-solid fa-xmark fa-xl"></i>
       </button>
 
       <div class="modal-header mb-6">
-        <p class="text-blue-400 text-sm font-semibold uppercase tracking-wider mb-1">Application Review</p>
-        <h2 id="modal-title" class="text-2xl font-bold text-white">Review Details & Home Visit</h2>
+        <p class="text-blue-600 dark:text-blue-400 text-sm font-semibold uppercase tracking-wider mb-1">Application Review</p>
+        <h2 id="modal-title" class="text-2xl font-bold text-slate-900 dark:text-white">Review Details & Home Visit</h2>
       </div>
 
       <div class="modal-body">
@@ -95,54 +95,54 @@
         <!-- Applicant Details Grid -->
         <div class="details-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
           
-          <div class="detail-section dark:bg-[#0f172a] p-4 rounded-lg border border-slate-700">
-            <h3 class="text-blue-400 font-semibold mb-4 border-b border-slate-700 pb-2">Applicant Info</h3>
+          <div class="detail-section bg-slate-50 dark:bg-[#0f172a] p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+            <h3 class="text-blue-600 dark:text-blue-400 font-semibold mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">Applicant Info</h3>
             <p><strong>Name:</strong> <span id="detail-name"></span></p>
             <p><strong>NIC:</strong> <span id="detail-nic"></span></p>
             <p><strong>Phone:</strong> <span id="detail-phone"></span></p>
             <p><strong>Address:</strong> <span id="detail-address"></span></p>
           </div>
 
-          <div class="detail-section dark:bg-[#0f172a] p-4 rounded-lg border border-slate-700">
-            <h3 class="text-blue-400 font-semibold mb-4 border-b border-slate-700 pb-2">Application Data</h3>
+          <div class="detail-section bg-slate-50 dark:bg-[#0f172a] p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+            <h3 class="text-blue-600 dark:text-blue-400 font-semibold mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">Application Data</h3>
             <p><strong>App ID:</strong> <span id="detail-appid"></span></p>
             <p><strong>Monthly Income:</strong> LKR <span id="detail-income"></span></p>
             <p><strong>Dependents:</strong> <span id="detail-dependents"></span></p>
             <p><strong>Reason:</strong> <span id="detail-reason"></span></p>
           </div>
           
-          <div class="detail-section full-width dark:bg-[#0f172a] p-4 rounded-lg border border-slate-700" style="grid-column: 1 / -1;">
-            <h3 class="text-blue-400 font-semibold mb-4 border-b border-slate-700 pb-2">Uploaded House Photo</h3>
-            <div class="photo-container flex justify-center bg-black rounded-lg overflow-hidden min-h-[200px]">
+          <div class="detail-section full-width bg-slate-50 dark:bg-[#0f172a] p-4 rounded-lg border border-slate-200 dark:border-slate-700" style="grid-column: 1 / -1;">
+            <h3 class="text-blue-600 dark:text-blue-400 font-semibold mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">Uploaded House Photo</h3>
+            <div class="photo-container flex justify-center bg-slate-200 dark:bg-black rounded-lg overflow-hidden min-h-[200px]">
               <img id="detail-house-photo" src="" alt="House Photo" class="max-h-[400px] object-contain" onerror="this.style.display='none'">
-              <span id="detail-no-photo" class="text-slate-400 p-8 hidden">No photo provided</span>
+              <span id="detail-no-photo" class="text-slate-500 dark:text-slate-400 p-8 hidden">No photo provided</span>
             </div>
           </div>
 
         </div>
 
         <!-- Home Visit Assessment Form -->
-        <div class="assessment-section dark:bg-[#0B1121] p-6 rounded-xl border border-slate-700 mt-6">
-          <h3 class="text-emerald-400 font-bold mb-4 text-lg"><i class="fa-solid fa-house-medical"></i> Home Visit Assessment</h3>
+        <div class="assessment-section bg-slate-50 dark:bg-[#0B1121] p-6 rounded-xl border border-slate-200 dark:border-slate-700 mt-6">
+          <h3 class="text-emerald-600 dark:text-emerald-400 font-bold mb-4 text-lg"><i class="fa-solid fa-house-medical"></i> Home Visit Assessment</h3>
           
           <form id="home-visit-form" novalidate>
             <input type="hidden" id="visit-app-id" name="Application_ID">
             
             <label class="block mb-4">
-              <span class="block mb-2 font-medium">Officer Notes / Remarks</span>
-              <textarea id="officer-notes" name="OfficerNotes" rows="4" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:border-blue-500 transition-colors" placeholder="Enter your detailed observations here..." required></textarea>
+              <span class="block mb-2 font-medium text-slate-800 dark:text-slate-200">Officer Notes / Remarks</span>
+              <textarea id="officer-notes" name="OfficerNotes" rows="4" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg p-3 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500 transition-colors" placeholder="Enter your detailed observations here..." required></textarea>
             </label>
 
             <label class="block mb-6">
-              <span class="block mb-2 font-medium">Home Visit Photo (Real-time proof)</span>
-              <input type="file" id="home-visit-photo" name="home_visit_photo" accept="image/*" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-slate-200 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+              <span class="block mb-2 font-medium text-slate-800 dark:text-slate-200">Home Visit Photo (Real-time proof)</span>
+              <input type="file" id="home-visit-photo" name="home_visit_photo" accept="image/*" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg p-2 text-slate-800 dark:text-slate-200 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
             </label>
 
-            <div class="modal-actions flex justify-end gap-4 border-t border-slate-700 pt-6">
-              <button type="submit" data-action="Pending" class="px-6 py-2 rounded-lg font-semibold bg-yellow-500/20 text-yellow-500 border border-yellow-500/50 hover:bg-yellow-500/30 transition-colors">
+            <div class="modal-actions flex justify-end gap-4 border-t border-slate-200 dark:border-slate-700 pt-6 mt-6">
+              <button type="submit" data-action="Pending" class="px-6 py-2 rounded-lg font-semibold bg-yellow-500/20 text-yellow-600 dark:text-yellow-500 border border-yellow-500/50 hover:bg-yellow-500/30 transition-colors">
                 <i class="fa-solid fa-clock-rotate-left"></i> Needs Update
               </button>
-              <button type="submit" data-action="Reject" class="px-6 py-2 rounded-lg font-semibold bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500/30 transition-colors">
+              <button type="submit" data-action="Reject" class="px-6 py-2 rounded-lg font-semibold bg-red-500/20 text-red-600 dark:text-red-500 border border-red-500/50 hover:bg-red-500/30 transition-colors">
                 <i class="fa-solid fa-ban"></i> Reject
               </button>
               <button type="submit" data-action="Approve" class="px-6 py-2 rounded-lg font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
