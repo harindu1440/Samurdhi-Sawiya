@@ -356,14 +356,14 @@ async function getPayments(req, res) {
     const [payments] = await pool.execute(`
       SELECT
         sp.Payment_ID,
-        sp.Date,
+        sp.Payment_Date AS Date,
         sp.Amount,
         sp.Status,
         a.Full_Name AS applicant_name,
         a.NIC
       FROM \`SAMURDHI_PAYMENT\` sp
       JOIN \`APPLICANT\` a ON a.User_ID = sp.Applicant_ID
-      ORDER BY sp.Date DESC
+      ORDER BY sp.Payment_Date DESC
       LIMIT 200
     `);
 

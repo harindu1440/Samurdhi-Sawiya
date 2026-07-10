@@ -88,7 +88,7 @@ async function actionApproval(req, res) {
 
       // Insert SAMURDHI_PAYMENT using the assigned monthly amount
       await conn.execute(
-        "INSERT INTO SAMURDHI_PAYMENT (Request_ID, Applicant_ID, Amount, Status, Date) VALUES (?, ?, ?, 'Pending', CURDATE())",
+        "INSERT INTO SAMURDHI_PAYMENT (Request_ID, Applicant_ID, Amount, Status, Payment_Date) VALUES (?, ?, ?, 'Pending', CURDATE())",
         [id, wa.Applicant_ID, amount]
       );
 
