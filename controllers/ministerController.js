@@ -28,7 +28,7 @@ async function getApprovals(req, res) {
       JOIN WELFARE_APPLICATION wa ON ma.Application_ID = wa.Application_ID
       JOIN APPLICANT a ON wa.Applicant_ID = a.User_ID
       JOIN HOME_VISIT hv ON wa.Application_ID = hv.Application_ID
-      WHERE wa.Status = 'Officer_Approved' AND ma.Final_Status = 'Pending'
+      WHERE wa.Status = 'GN_Approved' AND ma.Final_Status = 'Pending'
       ORDER BY wa.Date_Submitted ASC;
     `;
     const [rows] = await pool.execute(sql);

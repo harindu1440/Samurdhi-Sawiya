@@ -71,6 +71,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       photoHtml = `<img src="/uploads/houses/${app.House_Photo}" class="house-photo-preview" alt="House Photo" />`;
     }
 
+    // Extract home visit photo from remarks if present
+    let rawRemarks = app.Officer_Remarks || 'None';
+    let visitPhotoHtml = '';
+    
+    const photoMatch = rawRemarks.match(/\|\s*\[Attached Photo:\s*([^\]]+)\]/);
+    if (photoMatch) {
+      const visitPhotoName = photoMatch[1];
+      rawRemarks = rawRemarks.replace(photoMatch[0], '').trim();
+      visitPhotoHtml = `<div class="photo-container mt-2">
+                          <img src="/uploads/home_visits/${visitPhotoName}" class="house-photo-preview" alt="Home Visit Photo" onerror="this.style.display='none'" />
+                        </div>`;
+    }
+
     detailsContainer.innerHTML = `
       <div class="details-grid">
         <div class="detail-section">
@@ -83,14 +96,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
         <div class="detail-section">
           <h3>Welfare Data</h3>
-          <p><strong>Income:</strong> LKR ${app.Monthly_Income}</p>
+          <p><strong>Income:</strong> LKR ${Number(app.Monthly_Income).toLocaleString()}</p>
           <p><strong>Dependents:</strong> ${app.Dependents}</p>
           <p><strong>Reason:</strong> ${app.Reason}</p>
         </div>
         <div class="detail-section full-width">
           <h3>Officer's Home Visit Report</h3>
-          <p class="officer-notes"><strong>Notes:</strong> ${app.Officer_Remarks || 'None'}</p>
+          <p class="officer-notes"><strong>Notes:</strong> ${rawRemarks}</p>
           <p class="officer-recommendation"><strong>Recommendation:</strong> ${app.Recommendation}</p>
+          ${visitPhotoHtml}
         </div>
         <div class="detail-section full-width">
           <h3>House Photograph</h3>
