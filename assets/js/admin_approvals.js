@@ -150,6 +150,22 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         </div>
 
+        <!-- Payment Assignment -->
+        <div class="bg-slate-50 dark:bg-[#0B1121] p-5 rounded-xl border border-slate-200 dark:border-slate-700 md:col-span-2 shadow-inner">
+          <h3 class="text-sm font-bold text-amber-500 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
+            <i class="fa-solid fa-coins mr-2"></i>Assign Monthly Payment Amount
+          </h3>
+          <div class="flex flex-col md:flex-row items-center gap-4">
+            <p class="text-sm text-slate-700 dark:text-slate-300 flex-1">
+              Please determine and assign the monthly Samurdhi payment amount for this beneficiary based on the officer's field report and declared income.
+            </p>
+            <div class="relative w-full md:w-1/3">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 font-bold">LKR</span>
+              <input type="number" id="assigned-payment-amount" class="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. 5000" min="1000" step="500">
+            </div>
+          </div>
+        </div>
+
       </div>
     `;
 
@@ -175,6 +191,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function handleAction(action) {
     if (!currentRequestId) return;
 
+    let payload = { action };
+
+    // If approving, validate that the Minister entered a payment amount
+    if (action === 'Approve') {
+      const amountInput = document.getElementById('assigned-payment-amount');
+      const amount = amountInput ? parseFloat(amountInput.value) : 0;
+      
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid monthly payment amount to assign to this beneficiary.');
+        return;
+      }
+      payload.amount = amount;
+    }
+
     if (!confirm(`Are you sure you want to ${action.toUpperCase()} this application?`)) {
       return;
     }
@@ -182,7 +212,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const response = await authFetch(`/api/minister/approvals/${currentRequestId}/action`, {
         method: 'POST',
-        body: JSON.stringify({ action })
+        body: JSON.stringify(payload)
       });
 
       alert(response.message || `Application ${action}d successfully.`);

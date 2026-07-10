@@ -45,10 +45,14 @@ async function getApprovals(req, res) {
 // ─────────────────────────────────────────────────────────────────────────────
 async function actionApproval(req, res) {
   const { id } = req.params; // ma.Request_ID
-  const { action } = req.body; // 'Approve' or 'Reject'
+  const { action, amount } = req.body; // 'Approve' or 'Reject', and amount
 
   if (!action || !['Approve', 'Reject'].includes(action)) {
     return res.status(400).json({ status: 'error', message: 'Invalid action.' });
+  }
+
+  if (action === 'Approve' && (!amount || amount <= 0)) {
+    return res.status(400).json({ status: 'error', message: 'A valid payment amount must be assigned to approve this application.' });
   }
 
   const conn = await pool.getConnection();
@@ -82,14 +86,16 @@ async function actionApproval(req, res) {
         [req.user.User_ID, id]
       );
 
-      // Calculate Payment Amount (simple formula for demonstration: based on dependents or fixed)
-      const baseAmount = 5000.00;
-      const amount = baseAmount + (wa.Dependents * 1000.00);
-
-      // Insert SAMURDHI_PAYMENT
+      // Insert SAMURDHI_PAYMENT using the assigned monthly amount
       await conn.execute(
-        "INSERT INTO SAMURDHI_PAYMENT (Request_ID, Applicant_ID, Amount, Status, Payment_Date) VALUES (?, ?, ?, 'Pending', CURDATE())",
+        "INSERT INTO SAMURDHI_PAYMENT (Request_ID, Applicant_ID, Amount, Status, Date) VALUES (?, ?, ?, 'Pending', CURDATE())",
         [id, wa.Applicant_ID, amount]
+      );
+
+      // Create a notification for the Applicant that they were approved
+      await conn.execute(
+        "INSERT INTO NOTIFICATION (User_ID, Message) VALUES (?, ?)",
+        [wa.Applicant_ID, `Your Samurdhi Welfare Application has been officially approved! You have been assigned a monthly payment of LKR ${amount}.`]
       );
 
     } else if (action === 'Reject') {
