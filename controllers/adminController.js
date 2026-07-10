@@ -351,4 +351,30 @@ async function getReport(req, res) {
   }
 }
 
-module.exports = { getStats, listUsers, createUser, updateUser, deleteUser, getReport };
+async function getPayments(req, res) {
+  try {
+    const [payments] = await pool.execute(`
+      SELECT
+        sp.Payment_ID,
+        sp.Date,
+        sp.Amount,
+        sp.Status,
+        a.Full_Name AS applicant_name,
+        a.NIC
+      FROM \`SAMURDHI_PAYMENT\` sp
+      JOIN \`APPLICANT\` a ON a.User_ID = sp.Applicant_ID
+      ORDER BY sp.Date DESC
+      LIMIT 200
+    `);
+
+    return res.status(200).json({
+      status: 'success',
+      data: payments,
+    });
+  } catch (err) {
+    console.error('[adminController.getPayments]', err.message);
+    return res.status(500).json({ status: 'error', message: 'Unable to load payment history.' });
+  }
+}
+
+module.exports = { getStats, listUsers, createUser, updateUser, deleteUser, getReport, getPayments };

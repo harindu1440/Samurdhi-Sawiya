@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>System Payment History | SamurdhiSaviya</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  
+  <!-- Global Theme CSS and JS -->
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/admin_dashboard.css">
+  
+  <!-- Tailwind CSS for premium utility classes on table and modal -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/theme.js"></script>
+</head>
+<body>
+  <div class="admin-layout" data-admin-payments>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Minister navigation">
+      <a class="brand" href="admin_dashboard.html">
+        <img src="assets/images/Emblem of Sri Lanka.png" alt="National Emblem" class="sidebar-emblem" onerror="this.style.display='none'" style="width: 48px; height: auto;">
+        <span class="brand-text" style="margin-left: 12px;">
+          <strong>SamurdhiSaviya</strong>
+          <small>Minister Control Center</small>
+        </span>
+      </a>
+
+      <nav class="nav-links">
+        <a class="nav-link" href="admin_dashboard.html"><i class="fa-solid fa-chart-column"></i> Overview</a>
+        <a class="nav-link" href="admin_users.html"><i class="fa-solid fa-users-gear"></i> User Management</a>
+        <a class="nav-link" href="admin_approvals.html"><i class="fa-solid fa-file-signature"></i> Applications</a>
+        <a class="nav-link" href="reports.html"><i class="fa-solid fa-file-export"></i> Reports</a>
+        <a class="nav-link active" href="admin_payments.html"><i class="fa-solid fa-coins"></i> Payment History</a>
+        <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="footer-label">Signed in as</span>
+        <strong id="admin-name">Minister</strong>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Finance Dashboard</p>
+          <h1>Global Payment Records</h1>
+          <p class="topbar-copy">View all historical Samurdhi payments disbursed to beneficiaries.</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle theme">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+          </button>
+          <div class="status-chip bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">Finance View</div>
+        </div>
+      </header>
+
+      <!-- Applications Table Panel -->
+      <section class="panel bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 mt-6 rounded-xl overflow-hidden shadow-xl" aria-label="Payment History Table">
+        <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-[#0f172a]/50">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800 dark:text-white m-0">Recent Disbursements</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 m-0 mt-1">Real-time ledger of all Samurdhi beneficiary transactions.</p>
+          </div>
+        </div>
+
+        <div class="table-wrap w-full overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-100 dark:bg-slate-900/80">
+              <tr>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">PAYMENT ID</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">BENEFICIARY NAME</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">NIC</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">DATE</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">AMOUNT</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="payments-tbody" class="divide-y divide-slate-200 dark:divide-slate-700/50">
+              <tr>
+                <td colspan="6" class="text-center py-10 text-slate-400 text-sm"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading payment history...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/admin_payments.js" defer></script>
+</body>
+</html>

@@ -219,6 +219,13 @@ router.get(
   adminController.getReport
 );
 
+router.get(
+  '/admin/payments',
+  authMiddleware,
+  requireRole('Minister'),
+  adminController.getPayments
+);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // MINISTER ROUTES (Requires 'Minister' role)
 // ─────────────────────────────────────────────────────────────────────────────
