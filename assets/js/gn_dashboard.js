@@ -129,28 +129,41 @@ document.addEventListener('DOMContentLoaded', () => {
     dDependents.textContent = app.Dependents || '0';
     dReason.textContent     = app.Reason || 'N/A';
 
+    // Officer Info
+    let rawRemarks = app.officer_remarks || 'No remarks provided.';
+    let visitPhotoExtracted = null;
+
+    // The officer dashboard appends the photo filename to the remarks because the DB column couldn't be added
+    const photoMatch = rawRemarks.match(/\|\s*\[Attached Photo:\s*([^\]]+)\]/);
+    if (photoMatch) {
+      visitPhotoExtracted = photoMatch[1];
+      rawRemarks = rawRemarks.replace(photoMatch[0], '').trim();
+    }
+
+    dOffRemarks.textContent = rawRemarks;
+    dOffRec.textContent = app.officer_recommendation || 'No Recommendation';
+
     // Photos
     if (app.House_Photo) {
       dHousePhoto.src = `/uploads/houses/${app.House_Photo}`;
       dHousePhoto.classList.remove('hidden');
+      dHousePhoto.style.display = 'block'; // Reset display in case it was hidden by onerror
       dNoHousePhoto.classList.add('hidden');
     } else {
       dHousePhoto.classList.add('hidden');
       dNoHousePhoto.classList.remove('hidden');
     }
 
-    if (app.Home_Visit_Photo) {
-      dVisitPhoto.src = `/uploads/home_visits/${app.Home_Visit_Photo}`;
+    if (visitPhotoExtracted || app.Home_Visit_Photo) {
+      const finalVisitPhoto = visitPhotoExtracted || app.Home_Visit_Photo;
+      dVisitPhoto.src = `/uploads/home_visits/${finalVisitPhoto}`;
       dVisitPhoto.classList.remove('hidden');
+      dVisitPhoto.style.display = 'block'; // Reset display in case it was hidden by onerror
       dNoVisitPhoto.classList.add('hidden');
     } else {
       dVisitPhoto.classList.add('hidden');
       dNoVisitPhoto.classList.remove('hidden');
     }
-
-    // Officer Info
-    dOffRemarks.textContent = app.officer_remarks || 'No remarks provided.';
-    dOffRec.textContent = app.officer_recommendation || 'No Recommendation';
 
     // Show modal
     modal.classList.remove('hidden');

@@ -17,10 +17,16 @@ const apiRouter = require('./routes/api');
 // This runs synchronously before the HTTP server is created, so multer always
 // has a valid destination folder — no manual folder creation required.
 // ─────────────────────────────────────────────────────────────────────────────
-const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads', 'houses');
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-  console.log(`[startup] Created upload directory: ${UPLOAD_DIR}`);
+const UPLOAD_DIR_HOUSES = path.join(__dirname, 'public', 'uploads', 'houses');
+if (!fs.existsSync(UPLOAD_DIR_HOUSES)) {
+  fs.mkdirSync(UPLOAD_DIR_HOUSES, { recursive: true });
+  console.log(`[startup] Created upload directory: ${UPLOAD_DIR_HOUSES}`);
+}
+
+const UPLOAD_DIR_VISITS = path.join(__dirname, 'public', 'uploads', 'home_visits');
+if (!fs.existsSync(UPLOAD_DIR_VISITS)) {
+  fs.mkdirSync(UPLOAD_DIR_VISITS, { recursive: true });
+  console.log(`[startup] Created upload directory: ${UPLOAD_DIR_VISITS}`);
 }
 
 const app  = express();
