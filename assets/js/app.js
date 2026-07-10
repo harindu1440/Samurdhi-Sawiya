@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     try {
-      const session = getSession('Grama Niladhari');
+      const session = getSession('Grama_Niladhari');
       if (!session) return;
 
       if (userNameNode) userNameNode.textContent = session.name || 'Grama Niladhari';
