@@ -37,13 +37,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       tbody.innerHTML = '';
       data.data.forEach(app => {
         const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50';
         tr.innerHTML = `
-          <td>#REQ-${app.Request_ID}</td>
-          <td>${app.Full_Name}</td>
-          <td>${app.NIC}</td>
-          <td>${new Date().toLocaleDateString()}</td> <!-- Can use wa.Date_Submitted if added to fetch -->
-          <td>
-            <button class="btn btn-sm btn-primary view-btn" data-app='${JSON.stringify(app)}'>Review</button>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-medium">#REQ-${app.Request_ID}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-bold">${app.Full_Name}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.NIC}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${new Date().toLocaleDateString()}</td>
+          <td class="px-6 py-4">
+            <button class="view-btn bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-all shadow-[0_0_10px_rgba(79,70,229,0.4)]" data-app='${JSON.stringify(app)}'>
+              Review
+            </button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -66,52 +69,87 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentRequestId = app.Request_ID;
     
     // Construct HTML for the details view
-    let photoHtml = '<p class="text-muted">No photo uploaded.</p>';
+    let photoHtml = '<div class="text-slate-500 dark:text-slate-400 p-8 text-center text-sm">No house photo uploaded.</div>';
     if (app.House_Photo) {
-      photoHtml = `<img src="/uploads/houses/${app.House_Photo}" class="house-photo-preview" alt="House Photo" />`;
+      photoHtml = `<img src="/uploads/houses/${app.House_Photo}" class="max-h-[300px] object-contain mx-auto" alt="House Photo" onerror="this.style.display='none'" />`;
     }
 
     // Extract home visit photo from remarks if present
     let rawRemarks = app.Officer_Remarks || 'None';
-    let visitPhotoHtml = '';
+    let visitPhotoHtml = '<div class="text-slate-500 dark:text-slate-400 p-6 text-center text-sm">No visit photo uploaded.</div>';
     
     const photoMatch = rawRemarks.match(/\|\s*\[Attached Photo:\s*([^\]]+)\]/);
     if (photoMatch) {
       const visitPhotoName = photoMatch[1];
       rawRemarks = rawRemarks.replace(photoMatch[0], '').trim();
-      visitPhotoHtml = `<div class="photo-container mt-2">
-                          <img src="/uploads/home_visits/${visitPhotoName}" class="house-photo-preview" alt="Home Visit Photo" onerror="this.style.display='none'" />
-                        </div>`;
+      visitPhotoHtml = `<img src="/uploads/home_visits/${visitPhotoName}" class="max-h-[200px] object-contain mx-auto" alt="Home Visit Photo" onerror="this.style.display='none'" />`;
     }
 
     detailsContainer.innerHTML = `
-      <div class="details-grid">
-        <div class="detail-section">
-          <h3>Applicant Details</h3>
-          <p><strong>Name:</strong> ${app.Full_Name}</p>
-          <p><strong>NIC:</strong> ${app.NIC}</p>
-          <p><strong>Address:</strong> ${app.Address}</p>
-          <p><strong>DOB:</strong> ${new Date(app.DOB).toLocaleDateString()}</p>
-          <p><strong>Gender:</strong> ${app.Gender}</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+        
+        <!-- Applicant Profile -->
+        <div class="bg-slate-50 dark:bg-[#0B1121] p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+          <h3 class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
+            <i class="fa-regular fa-id-card mr-2"></i>Applicant Profile
+          </h3>
+          <div class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+            <p><strong>Name:</strong> ${app.Full_Name}</p>
+            <p><strong>NIC:</strong> ${app.NIC}</p>
+            <p><strong>Address:</strong> ${app.Address}</p>
+            <p><strong>DOB:</strong> ${new Date(app.DOB).toLocaleDateString()} &nbsp; | &nbsp; <strong>Gender:</strong> ${app.Gender}</p>
+          </div>
         </div>
-        <div class="detail-section">
-          <h3>Welfare Data</h3>
-          <p><strong>Income:</strong> LKR ${Number(app.Monthly_Income).toLocaleString()}</p>
-          <p><strong>Dependents:</strong> ${app.Dependents}</p>
-          <p><strong>Reason:</strong> ${app.Reason}</p>
+
+        <!-- Welfare Request Data -->
+        <div class="bg-slate-50 dark:bg-[#0B1121] p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+          <h3 class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
+            <i class="fa-solid fa-file-invoice mr-2"></i>Welfare Request Data
+          </h3>
+          <div class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+            <p><strong>Req ID:</strong> #${app.Request_ID}</p>
+            <p><strong>App ID:</strong> #${app.Application_ID}</p>
+            <p><strong>Declared Income:</strong> LKR ${Number(app.Monthly_Income).toLocaleString()}</p>
+            <p><strong>Dependents:</strong> ${app.Dependents}</p>
+            <p><strong>Reason:</strong> ${app.Reason}</p>
+          </div>
         </div>
-        <div class="detail-section full-width">
-          <h3>Officer's Home Visit Report</h3>
-          <p class="officer-notes"><strong>Notes:</strong> ${rawRemarks}</p>
-          <p class="officer-recommendation"><strong>Recommendation:</strong> ${app.Recommendation}</p>
-          ${visitPhotoHtml}
+
+        <!-- Officer's Field Report -->
+        <div class="bg-slate-50 dark:bg-[#0B1121] p-5 rounded-xl border border-slate-200 dark:border-slate-700 md:col-span-2">
+          <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
+            <i class="fa-solid fa-clipboard-check mr-2"></i>Officer's Field Report
+          </h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed italic mb-4 bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                "${rawRemarks}"
+              </p>
+              <p class="text-sm text-slate-700 dark:text-slate-300">
+                <strong>Recommendation:</strong> 
+                <span class="ml-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+                  ${app.Recommendation}
+                </span>
+              </p>
+            </div>
+            
+            <div class="bg-slate-200 dark:bg-black rounded-lg overflow-hidden flex items-center justify-center border border-slate-300 dark:border-slate-800 min-h-[140px]">
+              ${visitPhotoHtml}
+            </div>
+          </div>
         </div>
-        <div class="detail-section full-width">
-          <h3>House Photograph</h3>
-          <div class="photo-container">
+
+        <!-- House Photograph -->
+        <div class="bg-slate-50 dark:bg-[#0B1121] p-5 rounded-xl border border-slate-200 dark:border-slate-700 md:col-span-2">
+          <h3 class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
+            <i class="fa-solid fa-house mr-2"></i>House Photograph
+          </h3>
+          <div class="bg-slate-200 dark:bg-black rounded-lg overflow-hidden flex items-center justify-center border border-slate-300 dark:border-slate-800 min-h-[200px] w-full">
             ${photoHtml}
           </div>
         </div>
+
       </div>
     `;
 
