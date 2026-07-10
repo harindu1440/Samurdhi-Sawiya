@@ -99,6 +99,13 @@ router.get(
 // ─────────────────────────────────────────────────────────────────────────────
 
 router.get(
+  '/gn/dashboard',
+  authMiddleware,
+  requireRole('Grama_Niladhari'),
+  gnController.getDashboard
+);
+
+router.get(
   '/gn/stats',
   authMiddleware,
   requireRole('Grama_Niladhari'),
@@ -117,6 +124,13 @@ router.get(
   authMiddleware,
   requireRole('Grama_Niladhari'),
   gnController.getApplicationDetail
+);
+
+router.post(
+  '/gn/action',
+  authMiddleware,
+  requireRole('Grama_Niladhari'),
+  gnController.action
 );
 
 router.post(

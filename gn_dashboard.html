@@ -5,92 +5,237 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Grama Niladhari Dashboard | SamurdhiSaviya</title>
-  <meta name="description" content="Grama Niladhari dashboard for reviewing pending applications and monitoring welfare administration.">
+  <meta name="description" content="Grama Niladhari dashboard for reviewing officer-approved applications and managing the welfare workflow.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/gn_dashboard.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="assets/js/api-client.js" defer></script>
-  <script src="assets/js/app.js" defer></script>
 
   <!-- Global Theme CSS and JS -->
   <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/admin_dashboard.css">
+  <link rel="stylesheet" href="assets/css/gn_dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <!-- Tailwind CSS for utility classes on the new table/modal -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="assets/js/theme.js"></script>
+
+  <style>
+    /* Hide scrollbar but keep scroll functionality */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
 <body>
-  <main class="gn-shell" data-gn-dashboard>
-    <header class="gn-header">
-      <a class="brand" href="index.html" aria-label="SamurdhiSaviya home">
-        <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
-        <span class="brand-text">
+  <div class="admin-layout" data-gn-dashboard>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="GN navigation">
+      <a class="brand" href="gn_dashboard.html">
+        <img src="assets/images/Emblem of Sri Lanka.png" alt="National Emblem" class="sidebar-emblem" onerror="this.style.display='none'" style="width:48px;height:auto;">
+        <span class="brand-text" style="margin-left:12px;">
           <strong>SamurdhiSaviya</strong>
-          <small>Grama Niladhari Portal</small>
+          <small>GN Portal</small>
         </span>
       </a>
 
-      <div class="user-chip">
-        Welcome, <span id="user-name">Grama Niladhari</span>
+      <nav class="nav-links">
+        <a class="nav-link active" href="gn_dashboard.html"><i class="fa-solid fa-table-list"></i> Applications</a>
+        <a class="nav-link" href="gn_applications.html"><i class="fa-solid fa-file-lines"></i> All Records</a>
+        <a class="nav-link" href="gn_payments_view.html"><i class="fa-solid fa-coins"></i> Payments</a>
+        <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="footer-label">Signed in as</span>
+        <strong id="gn-name">Grama Niladhari</strong>
       </div>
-    </header>
+    </aside>
 
-    <section class="gn-hero">
-      <p class="eyebrow">Grama Niladhari dashboard</p>
-      <h1>Monitor and verify pending applications with full visibility.</h1>
-      <p class="hero-copy">
-        Review incoming requests, track approval workload, and keep the local welfare workflow moving efficiently.
-      </p>
-    </section>
-
-    <section class="metrics-grid" aria-label="Dashboard metrics">
-      <article class="metric-card">
-        <span class="metric-icon"><i class="fa-solid fa-folder-open"></i></span>
-        <p>Total Applications</p>
-        <strong id="total-applications">0</strong>
-      </article>
-
-      <article class="metric-card">
-        <span class="metric-icon"><i class="fa-solid fa-hourglass-half"></i></span>
-        <p>Pending GN Approvals</p>
-        <strong id="pending-gn-approvals">0</strong>
-      </article>
-
-      <a class="metric-card" href="gn_payments_view.html">
-        <span class="metric-icon"><i class="fa-solid fa-coins"></i></span>
-        <p>Payment Overview</p>
-        <strong>Open</strong>
-      </a>
-    </section>
-
-    <section class="table-section" aria-label="Pending applications table">
-      <div class="table-header">
+    <!-- Main Content -->
+    <main class="content">
+      <header class="topbar">
         <div>
-          <p class="eyebrow">Pending review queue</p>
-          <h2>Applications awaiting GN action</h2>
+          <p class="eyebrow">Grama Niladhari Dashboard</p>
+          <h1>Applications Review</h1>
+          <p class="topbar-copy">Review officer-approved applications and forward eligible ones to the Minister.</p>
         </div>
+        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle theme" title="Toggle light/dark mode">
+          <i class="fa-solid fa-circle-half-stroke"></i>
+        </button>
+      </header>
+
+      <!-- Metrics Grid -->
+      <div class="metrics-grid" id="metrics-grid">
+        <article class="metric-card">
+          <span class="metric-icon"><i class="fa-solid fa-folder-open"></i></span>
+          <p>Total Applications</p>
+          <strong id="stat-total">—</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon" style="background:linear-gradient(135deg,#d97706,#f59e0b)"><i class="fa-solid fa-hourglass-half"></i></span>
+          <p>Awaiting GN Review</p>
+          <strong id="stat-pending">—</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa-solid fa-check-double"></i></span>
+          <p>Forwarded to Minister</p>
+          <strong id="stat-approved">—</strong>
+        </article>
       </div>
 
-      <div class="table-wrap">
-        <table class="pending-table">
-          <thead>
-            <tr>
-              <th scope="col">Application ID</th>
-              <th scope="col">Applicant Name</th>
-              <th scope="col">Submitted Date</th>
-              <th scope="col">Status</th>
-              <th scope="col">Monthly Income</th>
-            </tr>
-          </thead>
-          <tbody id="pending-applications-body">
-            <tr>
-              <td colspan="5" class="empty-state">Loading pending applications...</td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Applications Table Panel -->
+      <section class="panel bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 mt-6 rounded-xl" aria-label="Applications table">
+
+        <!-- Search Bar -->
+        <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div>
+            <p class="eyebrow" style="margin-bottom:4px;">Officer-Approved Queue</p>
+            <h2 style="margin:0;font-size:1.1rem;font-weight:700;">Applications Awaiting GN Action</h2>
+          </div>
+          <div class="relative w-full md:w-72">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <i class="fa-solid fa-search text-slate-400"></i>
+            </div>
+            <input type="text" id="searchInput"
+              class="bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none block w-full pl-10 p-2.5 transition-colors"
+              placeholder="Search by App ID, Name, or NIC...">
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrap w-full overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-100 dark:bg-slate-900/80">
+              <tr>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">APP ID</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">APPLICANT NAME</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">DATE SUBMITTED</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">INCOME</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">STATUS</th>
+                <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="applications-tbody" class="divide-y divide-slate-200 dark:divide-slate-700/50">
+              <tr>
+                <td colspan="6" class="text-center py-10 text-slate-400 text-sm">Loading applications...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ══════════ REVIEW MODAL ══════════ -->
+  <div id="reviewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto no-scrollbar relative p-8 text-slate-800 dark:text-slate-200">
+
+      <!-- Close Button -->
+      <button type="button" class="absolute top-6 right-6 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" onclick="closeReviewModal()" aria-label="Close modal">
+        <i class="fa-solid fa-xmark fa-xl"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="mb-6">
+        <p class="text-blue-600 dark:text-blue-400 text-sm font-semibold uppercase tracking-wider mb-1">GN Application Review</p>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Review Details & Decision</h2>
       </div>
-    </section>
-  </main>
+
+      <div class="modal-body">
+
+        <!-- ── Section 1: Applicant Details ── -->
+        <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">
+          <i class="fa-solid fa-user mr-2"></i>Applicant Information
+        </h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+
+          <div class="bg-slate-50 dark:bg-[#0f172a] p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+            <h4 class="text-blue-600 dark:text-blue-400 font-semibold mb-3 text-sm">Personal Info</h4>
+            <p class="text-sm mb-1"><strong>Name:</strong> <span id="d-name"></span></p>
+            <p class="text-sm mb-1"><strong>NIC:</strong> <span id="d-nic"></span></p>
+            <p class="text-sm mb-1"><strong>Phone:</strong> <span id="d-phone"></span></p>
+            <p class="text-sm"><strong>Address:</strong> <span id="d-address"></span></p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-[#0f172a] p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+            <h4 class="text-blue-600 dark:text-blue-400 font-semibold mb-3 text-sm">Application Data</h4>
+            <p class="text-sm mb-1"><strong>App ID:</strong> <span id="d-appid"></span></p>
+            <p class="text-sm mb-1"><strong>Monthly Income:</strong> LKR <span id="d-income"></span></p>
+            <p class="text-sm mb-1"><strong>Dependents:</strong> <span id="d-dependents"></span></p>
+            <p class="text-sm"><strong>Reason:</strong> <span id="d-reason"></span></p>
+          </div>
+
+          <!-- House Photo Full Width -->
+          <div class="bg-slate-50 dark:bg-[#0f172a] p-4 rounded-lg border border-slate-200 dark:border-slate-700" style="grid-column:1/-1">
+            <h4 class="text-blue-600 dark:text-blue-400 font-semibold mb-3 text-sm">Applicant's Uploaded House Photo</h4>
+            <div class="flex justify-center bg-slate-200 dark:bg-black rounded-lg overflow-hidden min-h-[160px] items-center">
+              <img id="d-house-photo" src="" alt="House Photo" class="max-h-[320px] object-contain" onerror="this.style.display='none'">
+              <span id="d-no-house-photo" class="text-slate-500 dark:text-slate-400 p-8 hidden">No house photo uploaded</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 2: Officer Assessment ── -->
+        <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">
+          <i class="fa-solid fa-house-medical mr-2"></i>Samurdhi Officer's Field Assessment
+        </h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+
+          <div class="bg-slate-50 dark:bg-[#0f172a] p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+            <h4 class="text-emerald-600 dark:text-emerald-400 font-semibold mb-3 text-sm">Officer's Remarks</h4>
+            <p id="d-officer-remarks" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed italic"></p>
+            <p class="mt-2 text-sm"><strong>Recommendation:</strong>
+              <span id="d-officer-recommendation" class="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-500/30"></span>
+            </p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-[#0f172a] p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+            <h4 class="text-emerald-600 dark:text-emerald-400 font-semibold mb-3 text-sm">Home Visit Photo</h4>
+            <div class="flex justify-center bg-slate-200 dark:bg-black rounded-lg overflow-hidden min-h-[120px] items-center">
+              <img id="d-visit-photo" src="" alt="Home Visit Photo" class="max-h-[200px] object-contain" onerror="this.style.display='none'">
+              <span id="d-no-visit-photo" class="text-slate-500 dark:text-slate-400 p-4 text-sm hidden">No visit photo uploaded</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 3: GN Action ── -->
+        <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">
+          <i class="fa-solid fa-stamp mr-2"></i>GN Decision
+        </h3>
+        <div class="bg-slate-50 dark:bg-[#0B1121] p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+          <form id="gn-review-form" novalidate>
+            <input type="hidden" id="gn-app-id">
+            <label class="block mb-4">
+              <span class="block mb-2 font-medium text-sm text-slate-800 dark:text-slate-200">GN Remarks / Reason for Decision</span>
+              <textarea id="gn-remarks" rows="4"
+                class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg p-3 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500 transition-colors text-sm"
+                placeholder="Enter your official remarks or reason for returning/rejecting..."></textarea>
+            </label>
+
+            <div class="flex justify-end gap-3 flex-wrap border-t border-slate-200 dark:border-slate-700 pt-5 mt-2">
+              <button type="button" id="btn-return"
+                class="px-5 py-2.5 rounded-lg font-semibold text-sm bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border border-yellow-500/50 hover:bg-yellow-500/30 transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-rotate-left"></i> Return to Officer
+              </button>
+              <button type="button" id="btn-reject"
+                class="px-5 py-2.5 rounded-lg font-semibold text-sm bg-red-500/20 text-red-700 dark:text-red-400 border border-red-500/50 hover:bg-red-500/30 transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-ban"></i> Reject
+              </button>
+              <button type="button" id="btn-approve"
+                class="px-5 py-2.5 rounded-lg font-semibold text-sm bg-emerald-600 hover:bg-emerald-700 text-white transition-colors shadow-[0_0_15px_rgba(16,185,129,0.35)] flex items-center gap-2">
+                <i class="fa-solid fa-check"></i> Approve & Forward
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div><!-- /.modal-body -->
+    </div>
+  </div>
+
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/gn_dashboard.js" defer></script>
 </body>
 </html>
-
