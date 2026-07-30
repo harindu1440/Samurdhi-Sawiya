@@ -99,6 +99,8 @@ async function register(req, res) {
     const dob      = String(req.body?.DOB        || '').trim() || null;
     const gender   = String(req.body?.Gender     || '').trim() || null;
     const phoneNum = String(req.body?.Phone_Num  || '').trim() || null;
+    const division = String(req.body?.Division   || '').trim();
+    const gnDivision = String(req.body?.GN_Division || '').trim();
     const address  = String(req.body?.Address    || '').trim();
 
     // Section 2: Credentials
@@ -124,6 +126,12 @@ async function register(req, res) {
 
     if (!nic || nic.length > 20)
       validationErrors.push('NIC number is required (max 20 characters).');
+
+    if (!division || division.length > 255)
+      validationErrors.push('Division is required (max 255 characters).');
+
+    if (!gnDivision || gnDivision.length > 255)
+      validationErrors.push('GN Division is required (max 255 characters).');
 
     if (!address)
       validationErrors.push('Address is required.');
@@ -189,9 +197,9 @@ async function register(req, res) {
     // Q2 — Insert APPLICANT subclass row (same PK as USERS; no Monthly_Income in final schema)
     await conn.execute(
       `INSERT INTO \`APPLICANT\`
-         (\`User_ID\`, \`Full_Name\`, \`NIC\`, \`Address\`, \`DOB\`, \`Gender\`)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [newUserId, fullName, nic || null, address, dob, gender]
+         (\`User_ID\`, \`Full_Name\`, \`NIC\`, \`Address\`, \`DOB\`, \`Gender\`, \`Division\`, \`GN_Division\`)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [newUserId, fullName, nic || null, address, dob, gender, division, gnDivision]
     );
 
     // Q3 — Immediately create a WELFARE_APPLICATION tied to the new applicant

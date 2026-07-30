@@ -85,6 +85,12 @@ CREATE TABLE `APPLICANT` (
   `Gender`    ENUM('Male', 'Female')
               DEFAULT NULL
               COMMENT 'Gender as declared during registration.',
+  `Division`  VARCHAR(255)
+              DEFAULT NULL
+              COMMENT 'Divisional Secretariat.',
+  `GN_Division` VARCHAR(255)
+              DEFAULT NULL
+              COMMENT 'Grama Niladhari Division.',
   PRIMARY KEY (`User_ID`),
   UNIQUE KEY  `uq_applicant_nic` (`NIC`),
   CONSTRAINT  `fk_applicant_user`

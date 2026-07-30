@@ -4,6 +4,28 @@
 // Does NOT require api-client.js — this is a fully public page.
 // ─────────────────────────────────────────────────────────────────────────────
 
+const locationData = {
+  'Akmeemana': ['Akmeemana', 'Pinnaduwa', 'Koggala', 'Meegoda', 'Walahanduwa'],
+  'Ambalangoda': ['Ambalangoda Town', 'Maha Ambalangoda', 'Polwatta', 'Kaluwadumulla', 'Patabendimulla'],
+  'Baddegama': ['Baddegama', 'Hikkaduwa Road', 'Sandarawala', 'Gammeddegoda', 'Majana'],
+  'Balapitiya': ['Balapitiya', 'Wathurawila', 'Brahmanawattha', 'Hegalla', 'Ahungalla'],
+  'Benthota': ['Benthota', 'Induruwa', 'Haburugala', 'Athuruwella', 'Miriswatta'],
+  'Bope-Poddala': ['Bope', 'Poddala', 'Wakwella', 'Uluwitike', 'Narawala'],
+  'Elpitiya': ['Elpitiya', 'Igala', 'Wallambagala', 'Awiththawa', 'Kahaduwa'],
+  'Galle Four Gravets': ['Fort', 'Mahamodara', 'Dadalla', 'Karapitiya', 'Milidduwa', 'Gintota'],
+  'Gonapinuwala': ['Gonapinuwala', 'Uragasmanhandiya', 'Magedara'],
+  'Habaraduwa': ['Unawatuna', 'Talpe', 'Koggala', 'Ahangama', 'Kathaluwa', 'Harumalgoda'],
+  'Hikkaduwa': ['Hikkaduwa', 'Narigama', 'Dodanduwa', 'Thiranagama', 'Patuwatha'],
+  'Imaduwa': ['Imaduwa', 'Kodagoda', 'Kodikara', 'Mawella'],
+  'Karandeniya': ['Karandeniya', 'Uragaha', 'Kurundugahahetekma'],
+  'Nagoda': ['Nagoda', 'Yatalamatta', 'Mapalagama', 'Udugama'],
+  'Neluwa': ['Neluwa', 'Thawalama', 'Lankagama', 'Dellawa'],
+  'Niyagama': ['Niyagama', 'Mattaka', 'Pitigala'],
+  'Thawalama': ['Thawalama', 'Opatha', 'Hiniduma', 'Udugama'],
+  'Welivitiya-Divitura': ['Welivitiya', 'Divitura', 'Ampegama'],
+  'Yakkalamulla': ['Yakkalamulla', 'Nakiyadeniya', 'Magedara', 'Karagoda']
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   const form            = document.getElementById('register-form');
   const errorBox        = document.getElementById('error-box');
@@ -15,8 +37,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const housePhotoInput = document.getElementById('housePhoto');
   const housePhotoLabel = document.getElementById('housePhoto-label');
   const housePhotoChosen = document.getElementById('housePhoto-chosen');
+  const divisionSelect  = document.getElementById('division');
+  const gnDivisionSelect = document.getElementById('gnDivision');
 
   if (!form) return;
+
+  // Populate division dropdown
+  if (divisionSelect) {
+    Object.keys(locationData).forEach(div => {
+      const option = document.createElement('option');
+      option.value = div;
+      option.textContent = div;
+      divisionSelect.appendChild(option);
+    });
+
+    // Change event for division -> gnDivision
+    divisionSelect.addEventListener('change', (e) => {
+      const selectedDiv = e.target.value;
+      
+      // Reset gnDivision
+      gnDivisionSelect.innerHTML = '<option value="" disabled selected hidden>Select GN Division</option>';
+      gnDivisionSelect.disabled = true;
+
+      if (selectedDiv && locationData[selectedDiv]) {
+        locationData[selectedDiv].forEach(gn => {
+          const option = document.createElement('option');
+          option.value = gn;
+          option.textContent = gn;
+          gnDivisionSelect.appendChild(option);
+        });
+        gnDivisionSelect.disabled = false;
+      }
+    });
+  }
 
   // ── GSAP entrance animations ──────────────────────────────────────────────
   if (typeof gsap !== 'undefined') {
@@ -135,6 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const dob         = String(form.dob.value          || '').trim();
     const gender      = String(form.gender.value       || '').trim();
     const phoneNum    = String(form.phone_num.value    || '').trim();
+    const division    = String(form.division.value     || '').trim();
+    const gnDivision  = String(form.gnDivision.value   || '').trim();
     const address     = String(form.address.value      || '').trim();
 
     // ── Section 2: Account Credentials ──────────────────────────────────────
@@ -166,6 +221,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (!gender) {
       showError('Please select your gender.');
+      return;
+    }
+    if (!division) {
+      showError('Please select a division.');
+      return;
+    }
+    if (!gnDivision) {
+      showError('Please select a GN division.');
       return;
     }
     if (!address) {
@@ -247,6 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('DOB',        dob);
       formData.append('Gender',     gender);
       if (phoneNum) formData.append('Phone_Num', phoneNum);
+      formData.append('Division',   division);
+      formData.append('GN_Division', gnDivision);
       formData.append('Address',    address);
 
       // Credentials
