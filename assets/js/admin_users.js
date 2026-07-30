@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <td>${escapeHtml(u.role)}</td>
         <td>${escapeHtml(u.user_id)}</td>
         <td>${escapeHtml(u.full_name)}</td>
-        <td>${escapeHtml(u.territory)}</td>
+        <td>${escapeHtml(u.division)} / ${escapeHtml(u.gn_division)}</td>
         <td>${escapeHtml(u.phone_num)}</td>
         <td><span class="password-badge ${u.password_set ? 'set' : 'unset'}">${u.password_set ? 'Set' : 'Missing'}</span></td>
         <td>
