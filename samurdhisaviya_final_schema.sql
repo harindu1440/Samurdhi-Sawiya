@@ -114,6 +114,9 @@ CREATE TABLE `SAMURDHI_OFFICER` (
               COMMENT 'Full name of the officer.',
   `Division`  VARCHAR(255) NOT NULL
               COMMENT 'Assigned division or territory.',
+  `GN_Division` VARCHAR(255)
+              DEFAULT NULL
+              COMMENT 'Assigned GN division.',
   PRIMARY KEY (`User_ID`),
   CONSTRAINT  `fk_officer_user`
     FOREIGN KEY (`User_ID`)
@@ -136,6 +139,9 @@ CREATE TABLE `GRAMA_NILADHARI` (
               COMMENT 'Full name of the Grama Niladhari.',
   `Division`  VARCHAR(255) NOT NULL
               COMMENT 'Assigned GN division.',
+  `GN_Division` VARCHAR(255)
+              DEFAULT NULL
+              COMMENT 'Specific GN territory.',
   PRIMARY KEY (`User_ID`),
   CONSTRAINT  `fk_gn_user`
     FOREIGN KEY (`User_ID`)

@@ -37,7 +37,8 @@ async function listUsers(req, res) {
         u.User_ID          AS user_id,
         gn.Name            AS full_name,
         u.Username         AS username,
-        gn.Division        AS territory,
+        gn.Division        AS division,
+        gn.GN_Division     AS gn_division,
         u.Phone_Num        AS phone_num,
         1                  AS password_set
       FROM \`GRAMA_NILADHARI\` gn
@@ -48,7 +49,8 @@ async function listUsers(req, res) {
         u.User_ID          AS user_id,
         so.Name            AS full_name,
         u.Username         AS username,
-        so.Division        AS territory,
+        so.Division        AS division,
+        so.GN_Division     AS gn_division,
         u.Phone_Num        AS phone_num,
         1                  AS password_set
       FROM \`SAMURDHI_OFFICER\` so
@@ -63,7 +65,8 @@ async function listUsers(req, res) {
         user_id:      u.user_id,
         full_name:    u.full_name,
         username:     u.username,
-        territory:    u.territory,
+        division:     u.division,
+        gn_division:  u.gn_division,
         phone_num:    u.phone_num,
         password_set: Boolean(u.password_set),
       })),
@@ -90,7 +93,8 @@ async function createUser(req, res) {
     const role            = String(req.body?.role            || '').trim();
     const fullName        = String(req.body?.full_name       || '').trim();
     const username        = String(req.body?.username        || '').trim();
-    const territory       = String(req.body?.territory       || '').trim();
+    const division        = String(req.body?.division        || '').trim();
+    const gnDivision      = String(req.body?.gnDivision      || '').trim();
     const phoneNum        = String(req.body?.phone_num       || '').trim();
     const defaultPassword = String(req.body?.default_password || '').trim();
 
@@ -103,7 +107,8 @@ async function createUser(req, res) {
     const errors = [];
     if (!fullName || fullName.length > 255)          errors.push('Full name is required (max 255 chars).');
     if (!username || username.length > 100)          errors.push('Username is required (max 100 chars).');
-    if (!territory || territory.length > 255)         errors.push('Territory/Division is required.');
+    if (!division || division.length > 255)          errors.push('Division is required.');
+    if (!gnDivision || gnDivision.length > 255)      errors.push('GN Division is required.');
     if (!/^[0-9+]{7,15}$/.test(phoneNum))            errors.push('Phone number must be 7-15 digits.');
     if (!defaultPassword || defaultPassword.length < 8) errors.push('Password must be at least 8 characters.');
 
@@ -135,8 +140,8 @@ async function createUser(req, res) {
 
     // 2. Insert subclass
     await conn.execute(
-      `INSERT INTO \`${config.table}\` (\`${config.idCol}\`, \`${config.nameCol}\`, \`${config.territoryCol}\`) VALUES (?, ?, ?)`,
-      [newUserId, fullName, territory]
+      `INSERT INTO \`${config.table}\` (\`${config.idCol}\`, \`${config.nameCol}\`, \`Division\`, \`GN_Division\`) VALUES (?, ?, ?, ?)`,
+      [newUserId, fullName, division, gnDivision]
     );
 
     await conn.commit();
@@ -150,7 +155,8 @@ async function createUser(req, res) {
         user_id:      newUserId,
         full_name:    fullName,
         username,
-        territory,
+        division,
+        gn_division:  gnDivision,
         phone_num:    phoneNum,
         password_set: true,
       },
@@ -170,7 +176,8 @@ async function updateUser(req, res) {
     const role            = String(req.body?.role            || '').trim();
     const fullName        = String(req.body?.full_name       || '').trim();
     const username        = String(req.body?.username        || '').trim();
-    const territory       = String(req.body?.territory       || '').trim();
+    const division        = String(req.body?.division        || '').trim();
+    const gnDivision      = String(req.body?.gnDivision      || '').trim();
     const phoneNum        = String(req.body?.phone_num       || '').trim();
     const defaultPassword = String(req.body?.default_password || '').trim();
 
@@ -188,7 +195,8 @@ async function updateUser(req, res) {
     const errors = [];
     if (!fullName || fullName.length > 255)          errors.push('Full name is required.');
     if (!username || username.length > 100)          errors.push('Username is required.');
-    if (!territory || territory.length > 255)         errors.push('Territory/Division is required.');
+    if (!division || division.length > 255)          errors.push('Division is required.');
+    if (!gnDivision || gnDivision.length > 255)      errors.push('GN Division is required.');
     if (!/^[0-9+]{7,15}$/.test(phoneNum))            errors.push('Phone number must be 7-15 digits.');
     if (defaultPassword && defaultPassword.length < 8) errors.push('New password must be at least 8 characters.');
 
@@ -221,8 +229,8 @@ async function updateUser(req, res) {
     }
 
     await conn.execute(
-      `UPDATE \`${config.table}\` SET \`${config.nameCol}\` = ?, \`${config.territoryCol}\` = ? WHERE \`${config.idCol}\` = ?`,
-      [fullName, territory, userId]
+      `UPDATE \`${config.table}\` SET \`${config.nameCol}\` = ?, \`Division\` = ?, \`GN_Division\` = ? WHERE \`${config.idCol}\` = ?`,
+      [fullName, division, gnDivision, userId]
     );
 
     await conn.commit();
@@ -236,7 +244,8 @@ async function updateUser(req, res) {
         user_id:      userId,
         full_name:    fullName,
         username,
-        territory,
+        division,
+        gn_division:  gnDivision,
         phone_num:    phoneNum,
         password_set: true,
       },

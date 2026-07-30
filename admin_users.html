@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +11,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/admin_users.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
   <script src="assets/js/api-client.js" defer></script>
   <script src="assets/js/admin_users.js" defer></script>
 
@@ -19,11 +22,13 @@
   <link rel="stylesheet" href="assets/css/theme.css">
   <script src="assets/js/theme.js"></script>
 </head>
+
 <body>
   <div class="admin-layout" data-admin-users>
-        <aside class="sidebar" aria-label="Minister navigation">
+    <aside class="sidebar" aria-label="Minister navigation">
       <a class="brand" href="admin_dashboard.html">
-        <img src="assets/images/Emblem of Sri Lanka.png" alt="National Emblem" class="sidebar-emblem" onerror="this.style.display='none'" style="width: 48px; height: auto;">
+        <img src="assets/images/Emblem of Sri Lanka.png" alt="National Emblem" class="sidebar-emblem"
+          onerror="this.style.display='none'" style="width: 48px; height: auto;">
         <span class="brand-text" style="margin-left: 12px;">
           <strong>SamurdhiSaviya</strong>
           <small>Minister Control Center</small>
@@ -31,11 +36,15 @@
       </a>
 
       <nav class="nav-links">
-        <a class="nav-link" href="admin_dashboard.html" data-page="admin_dashboard"><i class="fa-solid fa-chart-column"></i> Overview</a>
-        <a class="nav-link active" href="admin_users.html" data-page="admin_users"><i class="fa-solid fa-users-gear"></i> User Management</a>
-        <a class="nav-link" href="admin_approvals.html" data-page="admin_approvals"><i class="fa-solid fa-file-signature"></i> Applications</a>
+        <a class="nav-link" href="admin_dashboard.html" data-page="admin_dashboard"><i
+            class="fa-solid fa-chart-column"></i> Overview</a>
+        <a class="nav-link active" href="admin_users.html" data-page="admin_users"><i
+            class="fa-solid fa-users-gear"></i> User Management</a>
+        <a class="nav-link" href="admin_approvals.html" data-page="admin_approvals"><i
+            class="fa-solid fa-file-signature"></i> Applications</a>
         <a class="nav-link" href="reports.html" data-page="reports"><i class="fa-solid fa-file-export"></i> Reports</a>
-        <a class="nav-link" href="admin_payments.html" data-page="applicant_payments"><i class="fa-solid fa-coins"></i> Payment History</a>
+        <a class="nav-link" href="admin_payments.html" data-page="applicant_payments"><i class="fa-solid fa-coins"></i>
+          Payment History</a>
         <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
       </nav>
 
@@ -50,12 +59,14 @@
         <div>
           <p class="eyebrow">Minister User Administration</p>
           <h1>Manage GN and officer accounts securely.</h1>
-          <p class="topbar-copy">Create, update, and remove role-based accounts without leaving the dashboard. Changes apply instantly to the grid below.</p>
+          <p class="topbar-copy">Create, update, and remove role-based accounts without leaving the dashboard. Changes
+            apply instantly to the grid below.</p>
         </div>
         <div class="actions">
           <label class="search-box" for="user-search">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-            <input type="search" id="user-search" placeholder="Search by name, phone, or ID" onkeyup="filterUsers()" autocomplete="off">
+            <input type="search" id="user-search" placeholder="Search by name, phone, or ID" onkeyup="filterUsers()"
+              autocomplete="off">
           </label>
           <button type="button" class="primary-button" id="open-create-modal">
             <i class="fa-solid fa-user-plus"></i>
@@ -64,7 +75,8 @@
         </div>
       </header>
 
-      <section class="panel dark:bg-[#1e293b] dark:border dark:border-slate-700 dark:text-slate-200" aria-label="Users table">
+      <section class="panel dark:bg-[#1e293b] dark:border dark:border-slate-700 dark:text-slate-200"
+        aria-label="Users table">
         <div class="panel-header">
           <div>
             <p class="eyebrow">Accounts</p>
@@ -127,8 +139,17 @@
         </label>
 
         <label>
-          <span id="territory-label">Division</span>
-          <input type="text" name="territory" id="territory" maxlength="255" required>
+          <span>Division</span>
+          <select id="userDivision" name="division" class="bg-slate-800 border-slate-700 text-slate-200 rounded-lg w-full px-4 py-2" required>
+            <option value="" disabled selected hidden>Select Division</option>
+          </select>
+        </label>
+
+        <label>
+          <span>GN Division</span>
+          <select id="userGnDivision" name="gnDivision" class="bg-slate-800 border-slate-700 text-slate-200 rounded-lg w-full px-4 py-2" required disabled>
+            <option value="" disabled selected hidden>Select GN Division</option>
+          </select>
         </label>
 
         <label>
@@ -159,5 +180,5 @@
     </div>
   </div>
 </body>
-</html>
 
+</html>

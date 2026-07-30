@@ -4,6 +4,28 @@
 // Requires api-client.js to be loaded first.
 // ─────────────────────────────────────────────────────────────────────────────
 
+const locationData = {
+  'Akmeemana': ['Akmeemana', 'Pinnaduwa', 'Koggala', 'Meegoda', 'Walahanduwa'],
+  'Ambalangoda': ['Ambalangoda Town', 'Maha Ambalangoda', 'Polwatta', 'Kaluwadumulla', 'Patabendimulla'],
+  'Baddegama': ['Baddegama', 'Hikkaduwa Road', 'Sandarawala', 'Gammeddegoda', 'Majana'],
+  'Balapitiya': ['Balapitiya', 'Wathurawila', 'Brahmanawattha', 'Hegalla', 'Ahungalla'],
+  'Benthota': ['Benthota', 'Induruwa', 'Haburugala', 'Athuruwella', 'Miriswatta'],
+  'Bope-Poddala': ['Bope', 'Poddala', 'Wakwella', 'Uluwitike', 'Narawala'],
+  'Elpitiya': ['Elpitiya', 'Igala', 'Wallambagala', 'Awiththawa', 'Kahaduwa'],
+  'Galle Four Gravets': ['Fort', 'Mahamodara', 'Dadalla', 'Karapitiya', 'Milidduwa', 'Gintota'],
+  'Gonapinuwala': ['Gonapinuwala', 'Uragasmanhandiya', 'Magedara'],
+  'Habaraduwa': ['Unawatuna', 'Talpe', 'Koggala', 'Ahangama', 'Kathaluwa', 'Harumalgoda'],
+  'Hikkaduwa': ['Hikkaduwa', 'Narigama', 'Dodanduwa', 'Thiranagama', 'Patuwatha'],
+  'Imaduwa': ['Imaduwa', 'Kodagoda', 'Kodikara', 'Mawella'],
+  'Karandeniya': ['Karandeniya', 'Uragaha', 'Kurundugahahetekma'],
+  'Nagoda': ['Nagoda', 'Yatalamatta', 'Mapalagama', 'Udugama'],
+  'Neluwa': ['Neluwa', 'Thawalama', 'Lankagama', 'Dellawa'],
+  'Niyagama': ['Niyagama', 'Mattaka', 'Pitigala'],
+  'Thawalama': ['Thawalama', 'Opatha', 'Hiniduma', 'Udugama'],
+  'Welivitiya-Divitura': ['Welivitiya', 'Divitura', 'Ampegama'],
+  'Yakkalamulla': ['Yakkalamulla', 'Nakiyadeniya', 'Magedara', 'Karagoda']
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
   const dashboard             = document.querySelector('[data-admin-users]');
   const adminNameNode         = document.getElementById('admin-name');
@@ -17,14 +39,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const closeModalButton      = document.getElementById('close-modal');
   const cancelModalButton     = document.getElementById('cancel-modal');
   const userRoleSelect        = document.getElementById('user-role');
-  const territoryLabel        = document.getElementById('territory-label');
   const passwordLabel         = document.getElementById('password-label');
   const passwordNote          = document.getElementById('password-note');
   const userIdInput           = document.getElementById('user-id');
   const formActionInput       = document.getElementById('form-action');
   const fullNameInput         = document.getElementById('full-name');
   const usernameInput         = document.getElementById('username');
-  const territoryInput        = document.getElementById('territory');
+  const userDivisionSelect    = document.getElementById('userDivision');
+  const userGnDivisionSelect  = document.getElementById('userGnDivision');
   const phoneInput            = document.getElementById('phone-num');
   const passwordInput         = document.getElementById('default-password');
   const submitButton          = document.getElementById('submit-user');
@@ -37,16 +59,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
-  const getTerritoryLabel = (role) => (role === 'Grama Niladhari' ? 'Division' : 'Area');
+  // Populate division dropdown
+  if (userDivisionSelect) {
+    Object.keys(locationData).forEach(div => {
+      const option = document.createElement('option');
+      option.value = div;
+      option.textContent = div;
+      userDivisionSelect.appendChild(option);
+    });
+
+    // Change event for division -> gnDivision
+    userDivisionSelect.addEventListener('change', (e) => {
+      const selectedDiv = e.target.value;
+      
+      // Reset gnDivision
+      userGnDivisionSelect.innerHTML = '<option value="" disabled selected hidden>Select GN Division</option>';
+      userGnDivisionSelect.disabled = true;
+
+      if (selectedDiv && locationData[selectedDiv]) {
+        locationData[selectedDiv].forEach(gn => {
+          const option = document.createElement('option');
+          option.value = gn;
+          option.textContent = gn;
+          userGnDivisionSelect.appendChild(option);
+        });
+        userGnDivisionSelect.disabled = false;
+      }
+    });
+  }
 
   const updateModalFields = () => {
-    const role  = String(userRoleSelect?.value || 'Grama Niladhari');
-    const label = getTerritoryLabel(role);
     const isUpdate = formActionInput?.value === 'update';
-    if (territoryLabel) territoryLabel.textContent = label;
     if (passwordLabel)  passwordLabel.textContent  = isUpdate ? 'Reset Password (optional)' : 'Default Password';
     if (passwordNote)   passwordNote.textContent   = isUpdate ? 'Leave blank to keep the current password.' : 'Default password is required when creating a new account.';
-    if (territoryInput) territoryInput.placeholder = label;
   };
 
   const openModal = (mode, user = null) => {
@@ -58,7 +103,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     userRoleSelect.disabled   = mode === 'update';
     fullNameInput.value       = user?.full_name  || '';
     usernameInput.value       = user?.username   || '';
-    territoryInput.value      = user?.territory  || '';
+    if (userDivisionSelect) userDivisionSelect.value = user?.division || '';
+    if (userDivisionSelect) userDivisionSelect.dispatchEvent(new Event('change'));
+    if (userGnDivisionSelect) userGnDivisionSelect.value = user?.gn_division || '';
     phoneInput.value          = user?.phone_num  || '';
     passwordInput.value       = '';
     passwordInput.required    = mode === 'create';
@@ -108,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const query = String(userSearch?.value || '').trim().toLowerCase();
     if (!query) return [...usersCache];
     return usersCache.filter((u) =>
-      [u.role, u.user_id, u.full_name, u.territory, u.phone_num]
+      [u.role, u.user_id, u.full_name, u.division, u.gn_division, u.phone_num]
         .some((f) => String(f || '').toLowerCase().includes(query))
     );
   };
@@ -169,7 +216,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       role:             userRoleSelect?.value    || 'Grama Niladhari',
       full_name:        fullNameInput?.value     || '',
       username:         usernameInput?.value     || '',
-      territory:        territoryInput?.value    || '',
+      division:         userDivisionSelect?.value || '',
+      gnDivision:       userGnDivisionSelect?.value || '',
       phone_num:        phoneInput?.value        || '',
       default_password: passwordInput?.value     || '',
     };
