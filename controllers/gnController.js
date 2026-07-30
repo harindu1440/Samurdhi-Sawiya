@@ -8,6 +8,20 @@ const pool = require('../config/db');
 // ─────────────────────────────────────────────────────────────────────────────
 async function getDashboard(req, res) {
   try {
+    const gnId = req.user.User_ID;
+
+    // Fetch this specific GN's assigned location
+    const [[gnProfile]] = await pool.execute(
+      'SELECT `Division`, `GN_Division` FROM `GRAMA_NILADHARI` WHERE `User_ID` = ? LIMIT 1',
+      [gnId]
+    );
+
+    if (!gnProfile) {
+      return res.status(403).json({ status: 'error', message: 'GN profile not found.' });
+    }
+
+    const { Division, GN_Division } = gnProfile;
+
     // Aggregate stats
     const [[totals]] = await pool.execute(`
       SELECT
@@ -39,9 +53,11 @@ async function getDashboard(req, res) {
       JOIN \`APPLICANT\` a ON a.User_ID = wa.Applicant_ID
       JOIN \`USERS\`     u ON u.User_ID = a.User_ID
       LEFT JOIN \`HOME_VISIT\` hv ON hv.Application_ID = wa.Application_ID
-      WHERE wa.Status = 'Officer_Approved'
+      WHERE (wa.Status = 'Officer_Approved' OR wa.Status = 'GN_Reviewed')
+        AND a.Division = ?
+        AND a.GN_Division = ?
       ORDER BY wa.Date_Submitted ASC
-    `);
+    `, [Division, GN_Division]);
 
     return res.status(200).json({
       status: 'success',

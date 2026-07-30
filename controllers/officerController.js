@@ -7,6 +7,20 @@ const pool = require('../config/db');
 
 async function getDashboard(req, res) {
   try {
+    const officerId = req.user.User_ID;
+
+    // Retrieve the specific officer's assigned location
+    const [[officer]] = await pool.execute(
+      'SELECT `Division`, `GN_Division` FROM `SAMURDHI_OFFICER` WHERE `User_ID` = ? LIMIT 1',
+      [officerId]
+    );
+
+    if (!officer) {
+      return res.status(403).json({ status: 'error', message: 'Officer profile not found.' });
+    }
+
+    const { Division, GN_Division } = officer;
+
     // Total applications in the system
     const [[totals]] = await pool.execute(`
       SELECT
@@ -35,10 +49,11 @@ async function getDashboard(req, res) {
       FROM \`WELFARE_APPLICATION\` wa
       JOIN \`APPLICANT\` a ON a.User_ID = wa.Applicant_ID
       JOIN \`USERS\` u ON u.User_ID = a.User_ID
-      ORDER BY 
-        CASE WHEN wa.Status = 'Pending' THEN 1 ELSE 2 END ASC,
-        wa.Date_Submitted ASC
-    `);
+      WHERE wa.Status = 'Pending'
+        AND a.Division = ?
+        AND a.GN_Division = ?
+      ORDER BY wa.Date_Submitted ASC
+    `, [Division, GN_Division]);
 
     return res.status(200).json({
       status: 'success',
