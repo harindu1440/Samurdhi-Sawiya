@@ -18,10 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTab = 'pending';
 
   // Initialize Register Applicant iframe URL
-  if (session && session.User_ID) {
+  if (session && session.id) {
     const registerIframe = document.getElementById('register-iframe');
     if (registerIframe) {
-      registerIframe.src = `register.html?mode=officer&officer_id=${session.User_ID}`;
+      registerIframe.src = `register.html?mode=officer&officer_id=${session.id}`;
     }
   }
 
