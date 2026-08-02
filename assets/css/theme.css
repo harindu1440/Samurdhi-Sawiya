@@ -1,81 +1,52 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   GLOBAL THEME CSS
-   Handles Light and Dark mode variables for the entire system.
+   GLOBAL THEME
    ───────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* Colors - Light Mode */
-  --bg: #eff5fb;
-  --surface: rgba(255, 255, 255, 0.88);
-  --surface-strong: #ffffff;
-  
-  --primary: #0f2748;
-  --primary-strong: #173a66;
-  
-  --accent: #2f6fed;
-  --accent-soft: rgba(47, 111, 237, 0.12);
-
-  /* Stable brand colors that do not invert in dark mode */
-  --brand-primary: #0f2748;
-  --brand-accent: #2f6fed;
-  
-  --text: #132033;
-  --muted: #5c6880;
-  
-  --border: rgba(15, 39, 72, 0.12);
-  
-  --danger: #c0392b;
-  --danger-soft: rgba(192, 57, 43, 0.1);
-  
-  --shadow: 0 30px 80px rgba(15, 39, 72, 0.18);
-
-  /* Gradients */
-  --bg-gradient-1: rgba(47, 111, 237, 0.18);
-  --bg-gradient-2: rgba(23, 58, 102, 0.14);
-  --bg-gradient-top: #f8fbff;
-  
-  /* Shapes */
-  --radius-xl: 30px;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-}
-
-[data-theme="dark"] {
   /* Colors - Dark Mode (Tactical Obsidian/Slate) */
   --bg: #0B1121;
   --surface: rgba(30, 41, 59, 0.5); /* translucent slate */
   --surface-strong: #0f172a;
-  
+
   --primary: #f8fafc;
   --primary-strong: #e2e8f0;
-  
+
   --accent: #3b82f6;
   --accent-soft: rgba(59, 130, 246, 0.2);
-  
+
+  /* Stable brand colors */
+  --brand-primary: #0f2748;
+  --brand-accent: #2f6fed;
+
   --text: #F8FAFC;
   --muted: #94a3b8;
-  
+  --text-main: #F8FAFC;
+  --text-muted: #94a3b8;
+
   --border: rgba(255, 255, 255, 0.08);
-  
+
   --danger: #ef4444;
   --danger-soft: rgba(239, 68, 68, 0.15);
-  
+
   --shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 
   /* Gradients */
   --bg-gradient-1: rgba(59, 130, 246, 0.12);
   --bg-gradient-2: rgba(30, 58, 138, 0.15);
   --bg-gradient-top: #0a0f1a;
+
+  /* Shapes */
+  --radius-xl: 30px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   GLOBAL DARK MODE COMPONENT FIXES
+   GLOBAL COMPONENT FIXES (Now Default)
    ───────────────────────────────────────────────────────────────────────────── */
 
 /* Glassmorphism Card Styling (Targets widgets, auth-card, and standard panels) */
-[data-theme="dark"] .widget,
-[data-theme="dark"] .auth-card,
-[data-theme="dark"] .card {
+.widget, .auth-card, .card {
   background: var(--surface) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -84,36 +55,41 @@
 }
 
 /* Global Form Inputs Fix (High Contrast) */
-[data-theme="dark"] input,
-[data-theme="dark"] select,
-[data-theme="dark"] textarea {
+input, select, textarea {
   background-color: #0F172A !important;
   color: #F8FAFC !important;
   border: 1px solid #334155 !important;
 }
 
-[data-theme="dark"] input:focus,
-[data-theme="dark"] select:focus,
-[data-theme="dark"] textarea:focus {
+input:focus, select:focus, textarea:focus {
   background-color: #1E293B !important;
   border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
 }
 
-/* Select Option Visibility Fix */
-[data-theme="dark"] select option {
-  background-color: #0F172A;
-  color: #F8FAFC;
+/* Table Styles Fix */
+table {
+  color: #F8FAFC !important;
+}
+th {
+  background: rgba(255,255,255,0.05) !important;
+  color: #94a3b8 !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+td {
+  border-bottom: 1px solid var(--border) !important;
+}
+tr:hover td {
+  background: rgba(255,255,255,0.02) !important;
 }
 
-/* National Emblem Blending */
-[data-theme="dark"] img.emblem,
-[data-theme="dark"] .nav-emblem {
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15)) brightness(0.95) !important;
+/* Emblems Fix */
+img.emblem, .nav-emblem {
+  filter: brightness(0) invert(1) opacity(0.8) !important;
 }
-
-[data-theme="dark"] .profile-emblem-bg {
-  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1)) brightness(1.2) !important;
-  opacity: 0.15 !important;
+.profile-emblem-bg {
+  opacity: 0.1 !important;
+  filter: grayscale(100%) invert(1) !important;
 }
 
 /* Base Body Styles */
@@ -131,20 +107,7 @@ body {
   z-index: 1;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 50vw;
-  height: 50vh;
-  background: url('../images/emblem.png') no-repeat center center;
-  background-size: contain;
-  opacity: 0.05;
-  z-index: -1;
-  pointer-events: none;
-}
+
 
 a {
   color: inherit;
@@ -171,8 +134,136 @@ a {
   transition: all 0.2s ease;
   font-size: 1.1rem;
 }
+
 .theme-toggle:hover {
   background: #eff5fb !important;
   color: #2f6fed !important;
   transform: translateY(-2px);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GLOBAL BACKGROUND EFFECTS & TYPOGRAPHY
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.bg-noise {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  opacity: 0.03;
+}
+
+.aurora-light {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -3;
+  pointer-events: none;
+  opacity: 0.4;
+  animation: floatOrb 20s infinite alternate ease-in-out;
+}
+
+.light-1 {
+  width: 600px;
+  height: 600px;
+  top: -200px;
+  left: -200px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+}
+
+.light-2 {
+  width: 500px;
+  height: 500px;
+  bottom: -100px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+  animation-duration: 25s;
+  animation-direction: alternate-reverse;
+}
+
+.light-3 {
+  width: 700px;
+  height: 700px;
+  top: 40%;
+  left: 30%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+  animation-duration: 30s;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(100px, 50px) scale(1.1); }
+  100% { transform: translate(-50px, 100px) scale(0.9); }
+}
+
+#mouse-spotlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.bg-floating-logo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  max-width: 900px;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.03;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bg-floating-logo img {
+  width: 100%;
+  height: auto;
+  filter: grayscale(100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--text-main, #fff) 0%, var(--accent, #3b82f6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   UTILITIES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981; /* Green accent */
+  border-radius: 50%;
+  position: relative;
+  display: inline-block;
+}
+
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: #10b981;
+  border-radius: 50%;
+  animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.5); opacity: 0.8; }
+  100% { transform: scale(2.5); opacity: 0; }
 }

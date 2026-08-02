@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Applicant Dashboard | SamurdhiSaviya</title>
   <meta name="description" content="Applicant dashboard for checking status and tracking payments in SamurdhiSaviya.">
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
   <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+
   <!-- Global Theme & Dashboard CSS -->
   <link rel="stylesheet" href="assets/css/theme.css">
   <link rel="stylesheet" href="assets/css/applicant_dashboard.css">
 
-  <!-- Global Theme JS (Runs immediately to prevent flash) -->
+  <!-- GSAP for animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- Global Theme JS (Handles background injection & GSAP) -->
   <script src="assets/js/theme.js"></script>
 
-  <!-- GSAP for initial entrance animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  
   <!-- Custom JS -->
   <script src="assets/js/api-client.js" defer></script>
   <script src="assets/js/applicant_dashboard.js" defer></script>
@@ -35,76 +37,96 @@
       top: 130%;
       right: 0;
       width: 320px;
-      background: var(--surface-strong);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
       box-shadow: var(--shadow);
       padding: 16px;
       z-index: 100;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(20px);
     }
+
     .notification-dropdown.active {
       display: block;
       animation: fadeIn 0.2s ease;
     }
+
     .notification-item {
       padding: 12px;
       border-radius: 12px;
-      background: var(--surface);
-      border-left: 4px solid var(--accent);
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid var(--accent-primary);
       margin-bottom: 8px;
     }
-    .notification-item:last-child {
-      margin-bottom: 0;
+
+    .notification-item.success {
+      border-left-color: #10b981;
     }
-    .notification-item.success { border-left-color: #10b981; }
-    .notification-item.error { border-left-color: #ef4444; }
-    .notification-message { font-size: 0.9rem; color: var(--text); line-height: 1.4; margin: 0 0 4px; }
-    .notification-date { font-size: 0.75rem; color: var(--muted); margin: 0; }
-    .notification-empty { font-size: 0.9rem; color: var(--muted); text-align: center; padding: 12px 0; }
+
+    .notification-item.error {
+      border-left-color: #ef4444;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin: 0 0 4px;
+    }
+
+    .notification-date {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .notification-empty {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 12px 0;
+    }
   </style>
 </head>
-<body>
+
+<body class="dark-theme">
 
   <!-- Top Navigation Bar -->
   <nav class="top-nav">
     <div class="nav-container">
-      <a class="brand" href="index.html" aria-label="SamurdhiSaviya home" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <img src="assets/images/logo.png" alt="Samurdhi Logo" style="height: 42px; width: auto; object-fit: contain;">
-          
-        </div>
+      <a class="brand" href="index.html" aria-label="SamurdhiSaviya home"
+        style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+        <img src="assets/images/logo.png" alt="Samurdhi Logo"
+          style="height: 42px; width: auto; object-fit: contain; filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.4));">
         <span class="brand-text" style="display: flex; flex-direction: column; line-height: 1.2;">
-          <strong style="font-size: 1.1rem; color: var(--text);">SamurdhiSaviya</strong>
-          <small style="font-size: 0.75rem; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700;">APPLICANT PORTAL</small>
+          <strong style="font-size: 1.1rem; color: var(--text-main);">SamurdhiSaviya</strong>
+          <small
+            style="font-size: 0.75rem; color: var(--accent-primary); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 800;">APPLICANT
+            PORTAL</small>
         </span>
       </a>
 
       <div class="nav-actions">
-        <!-- Theme Toggle Button -->
-        <button id="theme-toggle-btn" class="theme-toggle" aria-label="Toggle Theme">
-          <i class="fa-solid fa-moon"></i>
-        </button>
-
         <!-- Notification Bell -->
         <div style="position: relative;">
           <button id="notification-btn" class="theme-toggle" aria-label="Notifications" style="position: relative;">
             <i class="fa-solid fa-bell"></i>
-            <span id="notification-badge" style="display: none; position: absolute; top: 0px; right: 0px; width: 12px; height: 12px; background: #ef4444; border-radius: 50%; border: 2px solid var(--surface-strong);"></span>
+            <span id="notification-badge"
+              style="display: none; position: absolute; top: 0px; right: 0px; width: 12px; height: 12px; background: #ef4444; border-radius: 50%;"></span>
           </button>
           <div id="notification-dropdown" class="notification-dropdown">
-            <h4 style="margin: 0 0 12px; color: var(--primary); font-size: 1rem;">Notifications</h4>
+            <h4 style="margin: 0 0 12px; color: var(--text-main); font-size: 1rem;">Notifications</h4>
             <div id="notification-list">
               <div class="notification-empty">No new notifications</div>
             </div>
           </div>
         </div>
 
-        <span class="user-chip hidden-mobile" style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2;">
+        <span class="user-chip hidden-mobile"
+          style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2;">
           <span>Welcome, <strong id="user-name">Applicant</strong></span>
-          <small id="user-division" style="font-size: 0.75rem; color: var(--accent);">Division</small>
+          <small id="user-division" style="font-size: 0.75rem; color: var(--accent-primary);">Division</small>
         </span>
-        <button onclick="logout()" class="btn-logout">
+        <button onclick="logout()" class="btn-logout magnetic-btn">
           <span>Sign Out</span>
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
         </button>
@@ -114,10 +136,10 @@
 
   <!-- Main Dashboard Area -->
   <main class="dashboard-container">
-    
+
     <!-- Left Column: Primary Content -->
     <div class="content-main">
-      
+
       <!-- Welcome Hero -->
       <section class="dashboard-hero dashboard-anim-item">
         <h1>My Application Overview</h1>
@@ -125,13 +147,17 @@
       </section>
 
       <!-- Update Required Alert -->
-      <div id="update-required-alert" class="widget dashboard-anim-item" style="display: none; border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.05); margin-bottom: 24px;">
+      <div id="update-required-alert" class="widget dashboard-anim-item"
+        style="display: none; border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.05); margin-bottom: 24px;">
         <div style="display: flex; gap: 16px; align-items: flex-start;">
           <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b; font-size: 1.5rem; margin-top: 4px;"></i>
           <div>
             <h3 style="color: #d97706; margin: 0 0 8px; font-size: 1.1rem;">Update Required</h3>
-            <p id="update-reason-text" style="color: var(--text); margin: 0 0 16px; font-size: 0.95rem; line-height: 1.5;">Your application needs some corrections.</p>
-            <a href="applicant_edit.html" class="btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); display: inline-flex; align-items: center; gap: 8px;">
+            <p id="update-reason-text"
+              style="color: var(--text); margin: 0 0 16px; font-size: 0.95rem; line-height: 1.5;">Your application needs
+              some corrections.</p>
+            <a href="applicant_edit.html" class="btn-primary"
+              style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); display: inline-flex; align-items: center; gap: 8px;">
               <i class="fa-solid fa-pen-to-square"></i> Edit Application
             </a>
           </div>
@@ -150,7 +176,7 @@
               Fetching your latest application details...
             </p>
           </div>
-          
+
           <div class="app-meta">
             <div class="status-label">Submitted On</div>
             <p id="app-date" class="date">--/--/----</p>
@@ -165,7 +191,7 @@
           <h2><i class="fa-solid fa-wallet" style="color:var(--accent);"></i> Recent Payments</h2>
           <span id="payment-count" class="table-count">0 records</span>
         </div>
-        
+
         <div style="overflow-x: auto;">
           <table class="custom-table">
             <thead>
@@ -180,7 +206,8 @@
               <!-- Loaded via JS -->
               <tr>
                 <td colspan="4" style="text-align:center; padding: 40px; color:var(--muted);">
-                  <i class="fa-solid fa-circle-notch fa-spin" style="font-size:2rem; color:var(--accent); margin-bottom:12px;"></i>
+                  <i class="fa-solid fa-circle-notch fa-spin"
+                    style="font-size:2rem; color:var(--accent); margin-bottom:12px;"></i>
                   <p style="margin:0;">Loading payment history...</p>
                 </td>
               </tr>
@@ -193,10 +220,10 @@
 
     <!-- Right Column: Sidebar Widgets -->
     <aside class="content-sidebar">
-      
+
       <!-- Profile Mini-Widget -->
       <div class="widget profile-widget dashboard-anim-item">
-          
+
         <div class="profile-avatar" style="position:relative; z-index:1;">
           <i class="fa-solid fa-user-check"></i>
         </div>
@@ -228,4 +255,5 @@
   </main>
 
 </body>
+
 </html>
