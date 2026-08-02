@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (result.status === 'success') {
           alert('Message forwarded and application returned to applicant successfully.');
           closeReviewModal();
-          fetchDashboard(); // Refresh UI
+          loadDashboard(); // Refresh UI
         } else {
           alert(result.message || 'Error forwarding message.');
           forwardGnBtn.innerHTML = '<i class="fa-solid fa-share-from-square"></i> Forward to Applicant';
