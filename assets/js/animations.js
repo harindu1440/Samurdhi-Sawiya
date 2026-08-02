@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Set initial states to prevent flickering before animation starts
-  gsap.set('.bg-watermark', { opacity: 0, scale: 0.8, rotation: -10 });
+  gsap.set('.bg-watermark', { opacity: 0, scale: 5, rotation: -30 });
   gsap.set('.navbar', { y: -60, opacity: 0 });
   gsap.set('.brand img', { scale: 0.5, rotation: -20, opacity: 0 });
   gsap.set('.brand-text', { x: -20, opacity: 0 });
@@ -16,12 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-  // 1. Watermark fade in and slow rotate
+  // 1. Watermark massive scale-down entrance
   tl.to('.bg-watermark', {
     duration: 3,
-    opacity: 0.03, // Will be overridden by CSS but good for entrance
+    opacity: 0.04,
     scale: 1,
-    ease: 'power2.out'
+    rotation: 0,
+    ease: 'expo.out'
   }, 0);
 
   // 2. Drop down the navbar
