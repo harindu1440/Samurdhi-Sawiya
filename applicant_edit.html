@@ -644,62 +644,7 @@
               <label for="address">Permanent Address</label>
             </div>
 
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <!--  SECTION 2 — ACCOUNT CREDENTIALS                              -->
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <div class="form-section-header">
-              <span class="section-badge">
-                <i class="fa-solid fa-key"></i>
-                Account Credentials
-              </span>
-              <span class="section-line" aria-hidden="true"></span>
-            </div>
 
-            <!-- Username (full width) -->
-            <div class="field full-width">
-              <input
-                type="text"
-                id="username"
-                name="username"
-                autocomplete="username"
-                placeholder=" "
-                required
-                minlength="3"
-                maxlength="100"
-              >
-              <label for="username">Create a Username</label>
-            </div>
-
-            <!-- Password -->
-            <div class="field">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                autocomplete="new-password"
-                placeholder=" "
-                required
-                minlength="8"
-              >
-              <label for="password">Password</label>
-              <!-- Live strength indicator -->
-              <div class="password-strength" id="strength-track" aria-hidden="true">
-                <div class="password-strength-bar" id="strength-bar"></div>
-              </div>
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="field">
-              <input
-                type="password"
-                id="confirm_password"
-                name="confirm_password"
-                autocomplete="new-password"
-                placeholder=" "
-                required
-              >
-              <label for="confirm_password">Confirm Password</label>
-            </div>
 
             <!-- ══════════════════════════════════════════════════════════════ -->
             <!--  SECTION 3 — APPLICATION DETAILS                              -->
@@ -816,14 +761,13 @@
 
           </div><!-- /.form-grid -->
 
-            <button type="submit" id="submit-btn" class="btn-primary">
+            <button type="submit" id="submit-btn" class="submit-button">
               <span>Submit Updates</span>
               <i class="fa-solid fa-arrow-right"></i>
             </button>
         </form>
 
         <p class="auth-footer-note" id="login-link-footer" style="text-align:center; margin-top:20px;">
-          Already have an account?
             <a href="applicant_dashboard.html" class="forgot-link">Cancel and return to Dashboard</a>
         </p>
 

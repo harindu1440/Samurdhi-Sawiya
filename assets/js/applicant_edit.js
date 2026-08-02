@@ -7,23 +7,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const editForm = document.getElementById('edit-form');
   const errorBox = document.getElementById('error-box');
-  const errorMsg = document.getElementById('error-msg');
-  const successBox = document.getElementById('success-box');
-  const successMsg = document.getElementById('success-msg');
   const submitBtn = document.getElementById('submit-btn');
-
   function showError(msg) {
-    errorMsg.textContent = msg;
-    errorBox.hidden = false;
-    successBox.hidden = true;
-    gsap.fromTo(errorBox, { y: -10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3 });
+    if (errorBox) {
+      errorBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>${msg}</span>`;
+      errorBox.hidden = false;
+      if (typeof gsap !== 'undefined') gsap.fromTo(errorBox, { y: -10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3 });
+    }
   }
 
   function showSuccess(msg) {
-    successMsg.textContent = msg;
-    successBox.hidden = false;
-    errorBox.hidden = true;
-    gsap.fromTo(successBox, { y: -10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3 });
+    if (errorBox) {
+      errorBox.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>${msg}</span>`;
+      errorBox.style.background = 'rgba(39, 174, 96, 0.1)';
+      errorBox.style.color = '#1e8449';
+      errorBox.style.borderColor = 'rgba(39, 174, 96, 0.3)';
+      errorBox.hidden = false;
+      if (typeof gsap !== 'undefined') gsap.fromTo(errorBox, { y: -10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3 });
+    }
   }
 
   // Load data
@@ -32,18 +33,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (data && data.status === 'success' && data.data) {
       const applicant = data.data;
 
-      document.getElementById('fullName').value = applicant.Full_Name || '';
+      document.getElementById('full_name').value = applicant.Full_Name || '';
       document.getElementById('nic').value = applicant.NIC || '';
       document.getElementById('address').value = applicant.Address || '';
-      document.getElementById('dob').value = applicant.DOB ? applicant.DOB.substring(0, 10) : '';
+      document.getElementById('dob').value = applicant.DOB ? new Date(applicant.DOB).toISOString().substring(0, 10) : '';
       document.getElementById('gender').value = applicant.Gender || '';
-      document.getElementById('division').value = applicant.Division || '';
+      document.getElementById('division').innerHTML = `<option value="${applicant.Division}" selected>${applicant.Division}</option>`;
+      document.getElementById('gnDivision').innerHTML = `<option value="${applicant.GN_Division}" selected>${applicant.GN_Division}</option>`;
       document.getElementById('bank_name').value = applicant.Bank_Name || '';
       document.getElementById('branch').value = applicant.Branch || '';
       document.getElementById('account_name').value = applicant.Account_Name || '';
       document.getElementById('account_number').value = applicant.Account_Number || '';
-      document.getElementById('monthlyIncome').value = applicant.Monthly_Income || '';
-      document.getElementById('dependents').value = applicant.Dependents || '';
+      document.getElementById('monthly_income').value = applicant.Monthly_Income || '';
+      document.getElementById('num_dependents').value = applicant.Dependents || '';
       document.getElementById('reason').value = applicant.Reason || '';
       
       if (applicant.Bank_Name && applicant.Branch && applicant.Account_Name && applicant.Account_Number) {
@@ -75,14 +77,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Submit form
   editForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    errorBox.hidden = true;
-    successBox.hidden = true;
+    if (errorBox) errorBox.hidden = true;
 
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
     submitBtn.disabled = true;
 
     const payload = {
-      Name: document.getElementById('fullName').value.trim(),
+      Name: document.getElementById('full_name').value.trim(),
       NIC: document.getElementById('nic').value.trim(),
       Address: document.getElementById('address').value.trim(),
       DOB: document.getElementById('dob').value,
@@ -92,8 +93,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       Branch: document.getElementById('branch').value.trim(),
       Account_Name: document.getElementById('account_name').value.trim(),
       Account_Number: document.getElementById('account_number').value.trim(),
-      Monthly_Income: document.getElementById('monthlyIncome').value,
-      Dependents: document.getElementById('dependents').value,
+      Monthly_Income: document.getElementById('monthly_income').value,
+      Dependents: document.getElementById('num_dependents').value,
       Reason: document.getElementById('reason').value.trim()
     };
 
