@@ -223,6 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset form
     homeVisitForm.reset();
+    const photoListEl = document.getElementById('home-visit-photo-list');
+    if (photoListEl) {
+      photoListEl.innerHTML = '';
+      photoListEl.classList.add('hidden');
+    }
 
     modal.classList.remove('hidden');
     if (typeof gsap !== 'undefined') {
@@ -245,6 +250,26 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 4. Handle Form Submission
+  const homeVisitPhotoInput = document.getElementById('home-visit-photo');
+  if (homeVisitPhotoInput) {
+    homeVisitPhotoInput.addEventListener('change', (e) => {
+      const listEl = document.getElementById('home-visit-photo-list');
+      if (!listEl) return;
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        let html = '';
+        for(let i=0; i<files.length; i++) {
+          html += `<li style="padding: 2px 0;">✓ ${files[i].name}</li>`;
+        }
+        listEl.innerHTML = html;
+        listEl.classList.remove('hidden');
+      } else {
+        listEl.innerHTML = '';
+        listEl.classList.add('hidden');
+      }
+    });
+  }
+
   let selectedAction = '';
   const actionButtons = homeVisitForm.querySelectorAll('button[type="submit"]');
   actionButtons.forEach(btn => {

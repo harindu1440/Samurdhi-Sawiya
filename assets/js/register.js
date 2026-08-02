@@ -103,21 +103,26 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── House photo — live filename preview + drag-and-drop feedback ────────────
-  function updatePhotoLabel(file) {
+  function updatePhotoLabel(files) {
     if (!housePhotoChosen) return;
-    if (file) {
-      housePhotoChosen.textContent = `✓ ${file.name}`;
+    if (files && files.length > 0) {
+      let fileListHtml = '<ul style="list-style: none; padding: 0; margin: 10px 0 0 0; text-align: left; font-size: 0.9em;">';
+      for (let i = 0; i < files.length; i++) {
+        fileListHtml += `<li style="padding: 2px 0;">✓ ${files[i].name}</li>`;
+      }
+      fileListHtml += '</ul>';
+      housePhotoChosen.innerHTML = fileListHtml;
       housePhotoChosen.hidden = false;
       if (housePhotoLabel) housePhotoLabel.style.borderColor = 'var(--accent)';
     } else {
-      housePhotoChosen.textContent = '';
+      housePhotoChosen.innerHTML = '';
       housePhotoChosen.hidden = true;
       if (housePhotoLabel) housePhotoLabel.style.borderColor = '';
     }
   }
 
   housePhotoInput?.addEventListener('change', () => {
-    updatePhotoLabel(housePhotoInput.files?.[0] || null);
+    updatePhotoLabel(housePhotoInput.files);
   });
 
   // Drag-and-drop onto the label
@@ -131,13 +136,15 @@ document.addEventListener('DOMContentLoaded', () => {
   housePhotoLabel?.addEventListener('drop', (e) => {
     e.preventDefault();
     housePhotoLabel.classList.remove('drag-over');
-    const file = e.dataTransfer?.files?.[0];
-    if (file && housePhotoInput) {
-      // Create a DataTransfer to assign the dropped file to the input
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0 && housePhotoInput) {
+      // Create a DataTransfer to assign the dropped files to the input
       const dt = new DataTransfer();
-      dt.items.add(file);
+      for (let i = 0; i < files.length; i++) {
+        dt.items.add(files[i]);
+      }
       housePhotoInput.files = dt.files;
-      updatePhotoLabel(file);
+      updatePhotoLabel(dt.files);
     }
   });
 
