@@ -6,66 +6,7 @@ html { scroll-behavior: smooth; }
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; }
 
-.report-layout {
-  display: grid;
-  grid-template-columns: 290px minmax(0, 1fr);
-  min-height: 100vh;
-}
-.sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 26px;
-  padding: 24px;
-  color: #fff;
-  background: linear-gradient(180deg, #0d1d33 0%, #102844 100%);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-}
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  padding: 10px 12px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
-}
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #1d4ed8, #22c55e);
-}
-.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
-.brand-text strong { font-size: 1.02rem; }
-.brand-text small { margin-top: 4px; color: rgba(255, 255, 255, 0.68); font-size: 0.82rem; }
-.nav-links { display: flex; flex-direction: column; gap: 10px; }
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 16px;
-  color: rgba(255, 255, 255, 0.84);
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-.nav-link:hover,
-.nav-link.active {
-  color: #fff;
-  background: var(--sidebar-soft);
-  transform: translateX(2px);
-}
-.nav-link i { width: 18px; }
-.sidebar-footer {
-  margin-top: auto;
-  padding: 16px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
-}
-.footer-label { display: block; margin-bottom: 6px; color: rgba(255, 255, 255, 0.62); font-size: 0.84rem; }
+
 .content { padding: 34px; }
 .topbar,
 .panel {
@@ -194,15 +135,7 @@ button, input { font: inherit; }
 .report-table tbody tr:hover { background: rgba(47, 111, 237, 0.04); }
 .empty-state { text-align: center; color: var(--muted); padding: 36px 20px !important; }
 
-@media (max-width: 1080px) {
-  .report-layout { grid-template-columns: 1fr; }
-  .sidebar {
-    position: relative;
-    height: auto;
-    border-right: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-}
+
 
 @media (max-width: 920px) {
   .topbar,

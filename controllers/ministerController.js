@@ -98,12 +98,6 @@ async function actionApproval(req, res) {
         [id, wa.Applicant_ID, amount]
       );
 
-      // Create a notification for the Applicant that they were approved
-      await conn.execute(
-        "INSERT INTO NOTIFICATION (User_ID, Message) VALUES (?, ?)",
-        [wa.Applicant_ID, `Your Samurdhi Welfare Application has been officially approved! You have been assigned a monthly payment of LKR ${amount}.`]
-      );
-
     } else if (action === 'Reject') {
       // Update WELFARE_APPLICATION status
       await conn.execute(

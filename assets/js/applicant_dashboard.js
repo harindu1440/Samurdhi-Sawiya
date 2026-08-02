@@ -177,7 +177,47 @@ document.addEventListener('DOMContentLoaded', async () => {
       </tr>`;
   }
 
-  // 6. Init GSAP Animations (staggered entrance)
+  // 6. Fetch Notifications
+  try {
+    const notifData = await authFetch('/api/applicant/notifications');
+    if (notifData && notifData.status === 'success') {
+      const notifications = notifData.data || [];
+      const badge = document.getElementById('notification-badge');
+      const list = document.getElementById('notification-list');
+      
+      if (notifications.length > 0) {
+        if (badge) badge.style.display = 'block';
+        list.innerHTML = notifications.map(n => `
+          <div class="notification-item ${n.type}">
+            <p class="notification-message">${n.message}</p>
+            <p class="notification-date">${formatDate(n.date)}</p>
+          </div>
+        `).join('');
+      } else {
+        if (badge) badge.style.display = 'none';
+        list.innerHTML = '<div class="notification-empty">No new notifications</div>';
+      }
+    }
+  } catch (err) {
+    console.error('Failed to fetch notifications:', err);
+  }
+
+  // 7. Notification Dropdown Toggle
+  const notifBtn = document.getElementById('notification-btn');
+  const notifDropdown = document.getElementById('notification-dropdown');
+  if (notifBtn && notifDropdown) {
+    notifBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notifDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!notifBtn.contains(e.target) && !notifDropdown.contains(e.target)) {
+        notifDropdown.classList.remove('active');
+      }
+    });
+  }
+
+  // 8. Init GSAP Animations (staggered entrance)
   if (typeof gsap !== 'undefined') {
     gsap.from('.dashboard-anim-item', { 
       duration: 0.8, 

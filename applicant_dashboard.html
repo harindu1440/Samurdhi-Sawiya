@@ -28,6 +28,41 @@
   <script src="assets/js/api-client.js" defer></script>
   <script src="assets/js/applicant_dashboard.js" defer></script>
   <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <style>
+    .notification-dropdown {
+      display: none;
+      position: absolute;
+      top: 130%;
+      right: 0;
+      width: 320px;
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .notification-dropdown.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+    .notification-item {
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--surface);
+      border-left: 4px solid var(--accent);
+      margin-bottom: 8px;
+    }
+    .notification-item:last-child {
+      margin-bottom: 0;
+    }
+    .notification-item.success { border-left-color: #10b981; }
+    .notification-item.error { border-left-color: #ef4444; }
+    .notification-message { font-size: 0.9rem; color: var(--text); line-height: 1.4; margin: 0 0 4px; }
+    .notification-date { font-size: 0.75rem; color: var(--muted); margin: 0; }
+    .notification-empty { font-size: 0.9rem; color: var(--muted); text-align: center; padding: 12px 0; }
+  </style>
 </head>
 <body>
 
@@ -50,6 +85,20 @@
         <button id="theme-toggle-btn" class="theme-toggle" aria-label="Toggle Theme">
           <i class="fa-solid fa-moon"></i>
         </button>
+
+        <!-- Notification Bell -->
+        <div style="position: relative;">
+          <button id="notification-btn" class="theme-toggle" aria-label="Notifications" style="position: relative;">
+            <i class="fa-solid fa-bell"></i>
+            <span id="notification-badge" style="display: none; position: absolute; top: 0px; right: 0px; width: 12px; height: 12px; background: #ef4444; border-radius: 50%; border: 2px solid var(--surface-strong);"></span>
+          </button>
+          <div id="notification-dropdown" class="notification-dropdown">
+            <h4 style="margin: 0 0 12px; color: var(--primary); font-size: 1rem;">Notifications</h4>
+            <div id="notification-list">
+              <div class="notification-empty">No new notifications</div>
+            </div>
+          </div>
+        </div>
 
         <span class="user-chip hidden-mobile">Welcome, <strong id="user-name">Applicant</strong></span>
         <button onclick="logout()" class="btn-logout">

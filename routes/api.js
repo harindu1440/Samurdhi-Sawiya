@@ -118,6 +118,13 @@ router.get(
   applicantController.getEditData
 );
 
+router.get(
+  '/applicant/notifications',
+  authMiddleware,
+  requireRole('Applicant'),
+  applicantController.getNotifications
+);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ── Grama Niladhari routes ────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────

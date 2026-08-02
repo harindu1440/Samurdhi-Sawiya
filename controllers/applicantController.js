@@ -221,4 +221,49 @@ async function getEditData(req, res) {
   }
 }
 
-module.exports = { submitApplication, getDashboard, getPayments, updateApplication, getEditData };
+async function getNotifications(req, res) {
+  try {
+    const applicantId = req.user.User_ID;
+    
+    // Check if the user has an approved or rejected application
+    const [[appRow]] = await pool.execute(
+      `SELECT Status, Date_Submitted 
+       FROM WELFARE_APPLICATION 
+       WHERE Applicant_ID = ? AND Status IN ('Minister_Approved', 'Rejected') 
+       ORDER BY Date_Submitted DESC LIMIT 1`,
+      [applicantId]
+    );
+
+    const notifications = [];
+    if (appRow) {
+      if (appRow.Status === 'Minister_Approved') {
+        // Find the amount assigned
+        const [[paymentRow]] = await pool.execute(
+          `SELECT Amount FROM SAMURDHI_PAYMENT WHERE Applicant_ID = ? ORDER BY Payment_Date DESC LIMIT 1`,
+          [applicantId]
+        );
+        const amount = paymentRow ? paymentRow.Amount : 'a calculated';
+        notifications.push({
+          id: 1,
+          message: `Your Samurdhi Welfare Application has been officially approved! You have been assigned a monthly payment of LKR ${amount}.`,
+          date: appRow.Date_Submitted,
+          type: 'success'
+        });
+      } else if (appRow.Status === 'Rejected') {
+        notifications.push({
+          id: 2,
+          message: `Your Samurdhi Welfare Application has been rejected.`,
+          date: appRow.Date_Submitted,
+          type: 'error'
+        });
+      }
+    }
+
+    return res.status(200).json({ status: 'success', data: notifications });
+  } catch (err) {
+    console.error('[applicantController.getNotifications]', err);
+    return res.status(500).json({ status: 'error', message: 'Unable to load notifications.' });
+  }
+}
+
+module.exports = { submitApplication, getDashboard, getPayments, updateApplication, getEditData, getNotifications };

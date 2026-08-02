@@ -14,69 +14,14 @@
   <script src="assets/js/api-client.js" defer></script>
   <script src="assets/js/admin_complaints.js" defer></script>
   <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/admin_dashboard.css">
+  <script src="assets/js/theme.js"></script>
   <script src="assets/js/theme.js"></script>
   <link rel="icon" type="image/png" href="assets/images/logo.png">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; margin: 0; }
     a { text-decoration: none; color: inherit; }
-
-    /* ── Layout ── */
-    .complaints-layout {
-      display: grid;
-      grid-template-columns: 270px minmax(0, 1fr);
-      min-height: 100vh;
-    }
-
-    /* ── Sidebar ── */
-    .sidebar {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      padding: 24px 18px;
-      background: linear-gradient(180deg, #0d1d33 0%, #102844 100%);
-      border-right: 1px solid rgba(255,255,255,0.08);
-      overflow-y: auto;
-    }
-    .sidebar-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 16px;
-    }
-    .sidebar-brand img { height: 38px; width: auto; object-fit: contain; }
-    .sidebar-brand-text { display: flex; flex-direction: column; line-height: 1.2; }
-    .sidebar-brand-text strong { font-size: 0.95rem; color: #fff; }
-    .sidebar-brand-text small { font-size: 0.72rem; color: rgba(255,255,255,0.6); }
-    .sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 14px;
-      border-radius: 12px;
-      color: rgba(255,255,255,0.75);
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: background 0.18s, color 0.18s;
-    }
-    .nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .nav-item.active { background: rgba(59,130,246,0.25); color: #60a5fa; font-weight: 600; }
-    .nav-item i { width: 18px; text-align: center; font-size: 0.9rem; }
-    .sidebar-footer {
-      margin-top: auto;
-      padding: 14px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      font-size: 0.82rem;
-    }
-    .sidebar-footer span { display: block; color: rgba(255,255,255,0.5); margin-bottom: 3px; }
-    .sidebar-footer strong { color: #fff; }
 
     /* ── Main Content ── */
     .main-content { padding: 32px; display: flex; flex-direction: column; gap: 24px; }
@@ -248,41 +193,39 @@
       color: var(--muted, #64748b) !important;
     }
 
-    @media (max-width: 1024px) {
-      .complaints-layout { grid-template-columns: 1fr; }
-      .sidebar { position: relative; height: auto; flex-direction: row; flex-wrap: wrap; }
-    }
     @media (max-width: 640px) {
       .main-content { padding: 16px; }
     }
   </style>
 </head>
 <body>
-  <div class="complaints-layout" data-complaints-page>
+  <div class="admin-layout" data-complaints-page>
 
     <!-- Sidebar -->
-    <aside class="sidebar">
-      <a class="sidebar-brand" href="admin_dashboard.html">
-        <img src="assets/images/logo.png" alt="Samurdhi Logo">
-        <img src="assets/images/emblem.png" alt="Emblem" onerror="this.style.display='none'" style="height:38px;width:auto;object-fit:contain;">
-        <div class="sidebar-brand-text">
+    <aside class="sidebar" aria-label="Minister navigation">
+      <a class="brand" href="admin_dashboard.html">
+        <div class="brand-logo-container">
+          <img src="assets/images/logo.png" alt="Samurdhi Logo">
+          <img src="assets/images/emblem.png" alt="National Emblem" class="sidebar-emblem" onerror="this.style.display='none'">
+        </div>
+        <span class="brand-text">
           <strong>SamurdhiSaviya</strong>
           <small>Minister Control Center</small>
-        </div>
+        </span>
       </a>
 
-      <nav class="sidebar-nav">
-        <a class="nav-item" href="admin_dashboard.html"><i class="fa-solid fa-chart-column"></i> Overview</a>
-        <a class="nav-item" href="admin_users.html"><i class="fa-solid fa-users-gear"></i> User Management</a>
-        <a class="nav-item" href="admin_approvals.html"><i class="fa-solid fa-file-signature"></i> Applications</a>
-        <a class="nav-item" href="reports.html"><i class="fa-solid fa-file-export"></i> Reports</a>
-        <a class="nav-item active" href="admin_complaints.html"><i class="fa-solid fa-bullhorn"></i> Applicant Complains</a>
-        <a class="nav-item" href="admin_payments.html"><i class="fa-solid fa-coins"></i> Payment History</a>
-        <a class="nav-item" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      <nav class="nav-links">
+        <a class="nav-link" href="admin_dashboard.html" data-page="admin_dashboard"><i class="fa-solid fa-chart-column"></i> Overview</a>
+        <a class="nav-link" href="admin_users.html" data-page="admin_users"><i class="fa-solid fa-users-gear"></i> User Management</a>
+        <a class="nav-link" href="admin_approvals.html" data-page="admin_approvals"><i class="fa-solid fa-file-signature"></i> Applications</a>
+        <a class="nav-link" href="reports.html" data-page="reports"><i class="fa-solid fa-file-export"></i> Reports</a>
+        <a class="nav-link active" href="admin_complaints.html" data-page="admin_complaints"><i class="fa-solid fa-bullhorn"></i> Applicant Complains</a>
+        <a class="nav-link" href="admin_payments.html" data-page="applicant_payments"><i class="fa-solid fa-coins"></i> Payment History</a>
+        <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
       </nav>
 
       <div class="sidebar-footer">
-        <span>Signed in as</span>
+        <span class="footer-label">Signed in as</span>
         <strong id="admin-name">Minister</strong>
       </div>
     </aside>
