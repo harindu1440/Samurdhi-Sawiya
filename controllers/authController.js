@@ -111,6 +111,7 @@ async function register(req, res) {
     const rawIncome     = req.body?.Monthly_Income;
     const rawDependents = req.body?.Dependents;
     const reason        = String(req.body?.Reason || '').trim();
+    const officerId     = req.body?.officer_id ? parseInt(req.body.officer_id, 10) : null;
 
     const monthlyIncome = rawIncome     !== undefined && rawIncome     !== null ? parseFloat(rawIncome)      : null;
     const dependents    = rawDependents !== undefined && rawDependents !== null ? parseInt(rawDependents, 10) : null;
@@ -217,9 +218,9 @@ async function register(req, res) {
     // Q2 — Insert APPLICANT subclass row (same PK as USERS; no Monthly_Income in final schema)
     await conn.execute(
       `INSERT INTO \`APPLICANT\`
-         (\`User_ID\`, \`Full_Name\`, \`NIC\`, \`Address\`, \`DOB\`, \`Gender\`, \`Division\`, \`GN_Division\`, \`Bank_Name\`, \`Account_Name\`, \`Account_Number\`, \`Branch\`)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [newUserId, fullName, nic || null, address, dob, gender, division, gnDivision, bankName, accountName, accountNumber, branch]
+         (\`User_ID\`, \`Full_Name\`, \`NIC\`, \`Address\`, \`DOB\`, \`Gender\`, \`Division\`, \`GN_Division\`, \`Bank_Name\`, \`Account_Name\`, \`Account_Number\`, \`Branch\`, \`Created_By_Officer_ID\`)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [newUserId, fullName, nic || null, address, dob, gender, division, gnDivision, bankName, accountName, accountNumber, branch, officerId]
     );
 
     // Q3 — Immediately create a WELFARE_APPLICATION tied to the new applicant

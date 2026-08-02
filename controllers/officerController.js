@@ -187,5 +187,30 @@ async function getApprovedApplications(req, res) {
     return res.status(500).json({ status: 'error', message: 'Unable to load approved applications.' });
   }
 }
+async function getMyApplicants(req, res) {
+  try {
+    const officerId = req.user.User_ID;
+    const [rows] = await pool.execute(`
+      SELECT 
+        a.User_ID as Applicant_ID,
+        a.Full_Name,
+        a.NIC,
+        a.Address,
+        u.Phone_Num,
+        wa.Application_ID,
+        wa.Date_Submitted,
+        wa.Status
+      FROM \`APPLICANT\` a
+      LEFT JOIN \`USERS\` u ON a.User_ID = u.User_ID
+      LEFT JOIN \`WELFARE_APPLICATION\` wa ON a.User_ID = wa.Applicant_ID
+      WHERE a.Created_By_Officer_ID = ?
+      ORDER BY a.User_ID DESC
+    `, [officerId]);
+    return res.status(200).json({ status: 'success', data: rows });
+  } catch (err) {
+    console.error('[officerController.getMyApplicants]', err);
+    return res.status(500).json({ status: 'error', message: 'Unable to load your applicants.' });
+  }
+}
 
-module.exports = { getDashboard, review, submitVisit, getApprovedApplications };
+module.exports = { getDashboard, review, submitVisit, getApprovedApplications, getMyApplicants };

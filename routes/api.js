@@ -190,6 +190,13 @@ router.get(
   officerController.getApprovedApplications
 );
 
+router.get(
+  '/officer/my-applicants',
+  authMiddleware,
+  requireRole('Samurdhi_Officer'),
+  officerController.getMyApplicants
+);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ── Minister routes (top-level admin) ─────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────

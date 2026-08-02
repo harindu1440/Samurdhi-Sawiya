@@ -42,6 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!form) return;
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const isOfficerMode = urlParams.get('mode') === 'officer';
+  const officerId = urlParams.get('officer_id');
+
+  if (isOfficerMode) {
+    const loginLink = document.getElementById('login-link-footer');
+    const disclaimer = document.getElementById('disclaimer-footer');
+    if (loginLink) loginLink.style.display = 'none';
+    if (disclaimer) disclaimer.style.display = 'none';
+  }
+
   // Populate division dropdown
   if (divisionSelect) {
     Object.keys(locationData).forEach(div => {
@@ -389,6 +400,10 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('housePhoto', housePhotoFiles[i]);
       }
 
+      if (isOfficerMode && officerId) {
+        formData.append('officer_id', officerId);
+      }
+
       // ── POST to /api/auth/register ────────────────────────────────────────────
       // NOTE: No 'Content-Type' header — browser sets multipart/form-data
       //       with the correct boundary automatically when using FormData.
@@ -417,7 +432,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // ── Success path — response was 201 and status === 'success' ──────────
-      showSuccess('Registration complete! Your application has been submitted. Redirecting to login…');
+      if (isOfficerMode) {
+        showSuccess('Applicant successfully registered!');
+      } else {
+        showSuccess('Registration complete! Your application has been submitted. Redirecting to login…');
+      }
+      
       form.reset();
       // Reset strength bar after form clear
       if (strengthBar) {
@@ -429,9 +449,11 @@ document.addEventListener('DOMContentLoaded', () => {
       renderPhotoList();
 
       // Redirect after the user can read the success message
-      window.setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 2800);
+      if (!isOfficerMode) {
+        window.setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2800);
+      }
 
     } catch (err) {
       // All error paths land here — success box stays hidden

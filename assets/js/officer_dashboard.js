@@ -14,7 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentApplications = [];
   let approvedApplications = [];
+  let myApplicants = [];
   let currentTab = 'pending';
+
+  // Initialize Register Applicant iframe URL
+  if (session && session.User_ID) {
+    const registerIframe = document.getElementById('register-iframe');
+    if (registerIframe) {
+      registerIframe.src = `register.html?mode=officer&officer_id=${session.User_ID}`;
+    }
+  }
 
   // Tab switching logic
   window.switchTab = (tab) => {
@@ -44,8 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (tab === 'pending') {
       renderTable(currentApplications);
-    } else {
+    } else if (tab === 'approved') {
       loadApprovedApplications();
+    } else if (tab === 'my-applicants') {
+      loadMyApplicants();
     }
   };
 
@@ -87,6 +98,26 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.error('Fetch Error:', err);
       approvedTbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Network error.</td></tr>';
+    }
+  }
+
+  // Load My Applicants
+  async function loadMyApplicants() {
+    const myTbody = document.getElementById('my-applicants-tbody');
+    if (!myTbody) return;
+    
+    myTbody.innerHTML = '<tr><td colspan="6" class="empty-state">Loading your applicants...</td></tr>';
+    try {
+      const res = await authFetch('/api/officer/my-applicants');
+      if (res && res.status === 'success') {
+        myApplicants = res.data || [];
+        renderMyApplicantsTable(myApplicants);
+      } else {
+        myTbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Failed to load your applicants.</td></tr>';
+      }
+    } catch (err) {
+      console.error('Fetch Error:', err);
+      myTbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Network error.</td></tr>';
     }
   }
 
@@ -155,25 +186,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
+  function renderMyApplicantsTable(apps) {
+    const myTbody = document.getElementById('my-applicants-tbody');
+    if (!myTbody) return;
+
+    if (apps.length === 0) {
+      myTbody.innerHTML = '<tr><td colspan="6" class="empty-state">You have not registered any applicants yet.</td></tr>';
+      return;
+    }
+
+    myTbody.innerHTML = apps.map(app => {
+      // Determine status badge
+      let statusBadge = '';
+      if (!app.Status) {
+        statusBadge = '<span class="text-slate-400">Account only (No App)</span>';
+      } else if (app.Status === 'Pending') {
+        statusBadge = '<span class="bg-yellow-500/20 text-yellow-700 dark:text-yellow-500 px-3 py-1 rounded-full text-xs font-semibold border border-yellow-500/30">Pending Review</span>';
+      } else if (app.Status === 'Rejected') {
+        statusBadge = '<span class="bg-red-500/20 text-red-700 dark:text-red-500 px-3 py-1 rounded-full text-xs font-semibold border border-red-500/30">Rejected</span>';
+      } else {
+        const displayStatus = app.Status.replace('_', ' ');
+        statusBadge = `<span class="bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-500/30">${displayStatus}</span>`;
+      }
+
+      return `
+        <tr class="hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50">
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">#${app.Applicant_ID}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-semibold">${app.Full_Name}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.NIC || 'N/A'}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Phone_Num || 'N/A'}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Date_Submitted ? app.Date_Submitted.substring(0, 10) : 'N/A'}</td>
+          <td class="px-6 py-4">${statusBadge}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
   // Search Filter Logic
   window.handleSearch = () => {
     if (!searchInput) return;
     const term = searchInput.value.toLowerCase();
     
+    const match = (obj, key) => String(obj[key] || '').toLowerCase().includes(term);
+
     if (currentTab === 'pending') {
       const filtered = currentApplications.filter(app => 
-        String(app.Application_ID).toLowerCase().includes(term) ||
-        String(app.applicant_name).toLowerCase().includes(term) ||
-        String(app.NIC).toLowerCase().includes(term)
+        match(app, 'Application_ID') ||
+        match(app, 'applicant_name') ||
+        match(app, 'NIC')
       );
       renderTable(filtered);
-    } else {
+    } else if (currentTab === 'approved') {
       const filtered = approvedApplications.filter(app => 
-        String(app.Application_ID).toLowerCase().includes(term) ||
-        String(app.applicant_name).toLowerCase().includes(term) ||
-        String(app.NIC).toLowerCase().includes(term)
+        match(app, 'Application_ID') ||
+        match(app, 'applicant_name') ||
+        match(app, 'NIC')
       );
       renderApprovedTable(filtered);
+    } else if (currentTab === 'my-applicants') {
+      const filtered = myApplicants.filter(app => 
+        match(app, 'Applicant_ID') ||
+        match(app, 'Full_Name') ||
+        match(app, 'NIC') ||
+        match(app, 'Phone_Num')
+      );
+      renderMyApplicantsTable(filtered);
     }
   };
 
