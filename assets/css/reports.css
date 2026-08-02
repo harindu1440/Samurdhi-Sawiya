@@ -146,7 +146,7 @@ button, input { font: inherit; }
   border-radius: 16px;
   border: 1px solid var(--border);
   outline: none;
-  background: #fff;
+  background: var(--surface-strong);
   color: var(--primary);
 }
 .report-form input:focus {
@@ -171,7 +171,7 @@ button, input { font: inherit; }
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 24px;
-  background: #fff;
+  background: var(--surface-strong);
 }
 .report-table {
   width: 100%;
@@ -184,7 +184,7 @@ button, input { font: inherit; }
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--muted);
-  background: #f8fbff;
+  background: var(--surface);
 }
 .report-table tbody td {
   padding: 18px 20px;
