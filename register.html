@@ -75,7 +75,7 @@
       width: 100%;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      background: #f8fbff;
+      background: transparent;
       color: var(--text);
       font: inherit;
       font-size: 0.97rem;
@@ -88,7 +88,7 @@
     .field textarea:focus {
       border-color: rgba(47, 111, 237, 0.5);
       box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.12);
-      background: #fff;
+      background: var(--surface);
     }
 
     /* Floating label for textarea — lifts when focused or has content */
@@ -97,7 +97,7 @@
       top: -10px;
       font-size: 0.78rem;
       color: var(--accent);
-      background: linear-gradient(180deg, transparent 50%, #fff 50%);
+      background: linear-gradient(180deg, transparent 50%, var(--surface-strong) 50%);
     }
 
     /* ── Date input — always show label above ────────────────────────────────── */
@@ -110,7 +110,7 @@
       top: -10px;
       font-size: 0.78rem;
       color: var(--accent);
-      background: linear-gradient(180deg, transparent 50%, #fff 50%);
+      background: linear-gradient(180deg, transparent 50%, var(--surface-strong) 50%);
     }
 
     /* ── Select chevron wrapper ───────────────────────────────────────────────── */
@@ -177,7 +177,7 @@
       padding: 22px 18px;
       border: 2px dashed var(--border);
       border-radius: var(--radius-md);
-      background: #f8fbff;
+      background: transparent;
       color: var(--muted);
       cursor: pointer;
       transition: border-color 0.22s ease, background 0.22s ease, color 0.22s ease;
@@ -250,7 +250,7 @@
       top: -10px;
       font-size: 0.78rem;
       color: var(--accent);
-      background: linear-gradient(180deg, transparent 50%, #fff 50%);
+      background: linear-gradient(180deg, transparent 50%, var(--surface-strong) 50%);
     }
 
     /* ==========================================================================
