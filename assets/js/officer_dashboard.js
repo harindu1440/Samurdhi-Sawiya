@@ -19,6 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const res = await authFetch('/api/officer/dashboard');
       if (res && res.status === 'success') {
+        if (res.profile) {
+          const officerName = document.getElementById('officer-name');
+          if (officerName) {
+            const divText = res.profile.GN_Division ? `${res.profile.GN_Division} | ${res.profile.Division}` : res.profile.Division;
+            officerName.innerHTML = `${res.profile.Name}<br><small style="font-weight:400; color:rgba(255,255,255,0.7); font-size: 0.8em;">${divText}</small>`;
+          }
+        }
         currentApplications = res.pending_applications || [];
         renderTable(currentApplications);
       } else {

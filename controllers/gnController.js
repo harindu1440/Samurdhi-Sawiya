@@ -12,7 +12,7 @@ async function getDashboard(req, res) {
 
     // Fetch this specific GN's assigned location
     const [[gnProfile]] = await pool.execute(
-      'SELECT `Division`, `GN_Division` FROM `GRAMA_NILADHARI` WHERE `User_ID` = ? LIMIT 1',
+      'SELECT `Name`, `Division`, `GN_Division` FROM `GRAMA_NILADHARI` WHERE `User_ID` = ? LIMIT 1',
       [gnId]
     );
 
@@ -63,6 +63,7 @@ async function getDashboard(req, res) {
 
     return res.status(200).json({
       status: 'success',
+      profile: gnProfile,
       stats: {
         total_applications: Number(totals.total_applications || 0),
         pending_gn:         Number(totals.pending_gn         || 0),

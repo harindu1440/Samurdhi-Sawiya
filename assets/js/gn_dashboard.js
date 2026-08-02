@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await authFetch('/api/gn/dashboard');
       if (!data || data.status !== 'success') throw new Error();
 
+      if (gnName && data.profile) {
+        gnName.innerHTML = `${data.profile.Name}<br><small style="font-weight:400; color:rgba(255,255,255,0.7); font-size: 0.8em;">${data.profile.GN_Division} | ${data.profile.Division}</small>`;
+      }
+
       // Update Metrics
       if (statTotal)    statTotal.textContent    = data.stats.total_applications;
       if (statPending)  statPending.textContent  = data.stats.pending_gn;

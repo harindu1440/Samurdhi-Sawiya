@@ -11,7 +11,7 @@ async function getDashboard(req, res) {
 
     // Retrieve the specific officer's assigned location
     const [[officer]] = await pool.execute(
-      'SELECT `Division`, `GN_Division` FROM `SAMURDHI_OFFICER` WHERE `User_ID` = ? LIMIT 1',
+      'SELECT `Name`, `Division`, `GN_Division` FROM `SAMURDHI_OFFICER` WHERE `User_ID` = ? LIMIT 1',
       [officerId]
     );
 
@@ -57,6 +57,7 @@ async function getDashboard(req, res) {
 
     return res.status(200).json({
       status: 'success',
+      profile: officer,
       stats: {
         total_applications:       Number(totals.total_applications || 0),
         pending_officer_approvals: Number(totals.pending_officer_approvals || 0),
