@@ -245,5 +245,48 @@ async function register(req, res) {
     });
   }
 }
+// ─────────────────────────────────────────────────────────────────────────────
+// PUT /api/auth/change-password
+// Body: { currentPassword, newPassword }
+// ─────────────────────────────────────────────────────────────────────────────
+async function changePassword(req, res) {
+  try {
+    const userId = req.user.User_ID;
+    const { currentPassword, newPassword } = req.body;
 
-module.exports = { login, register };
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ status: 'error', message: 'Current and new passwords are required.' });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ status: 'error', message: 'New password must be at least 8 characters long.' });
+    }
+
+    const [[user]] = await pool.execute(
+      'SELECT `Password` FROM `USERS` WHERE `User_ID` = ? LIMIT 1',
+      [userId]
+    );
+
+    if (!user) {
+      return res.status(404).json({ status: 'error', message: 'User not found.' });
+    }
+
+    const isValid = await bcrypt.compare(currentPassword, user.Password);
+    if (!isValid) {
+      return res.status(401).json({ status: 'error', message: 'Current password is incorrect.' });
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 12);
+    await pool.execute(
+      'UPDATE `USERS` SET `Password` = ? WHERE `User_ID` = ?',
+      [newHash, userId]
+    );
+
+    return res.status(200).json({ status: 'success', message: 'Password updated successfully.' });
+  } catch (err) {
+    console.error('[authController.changePassword]', err.message);
+    return res.status(500).json({ status: 'error', message: 'Failed to change password. Please try again later.' });
+  }
+}
+
+module.exports = { login, register, changePassword };

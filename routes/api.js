@@ -68,6 +68,9 @@ router.post('/auth/login', authController.login);
 // POST /api/auth/register  (public — no JWT required, multipart/form-data)
 router.post('/auth/register', upload.single('housePhoto'), authController.register);
 
+// PUT /api/auth/change-password (requires auth)
+router.put('/auth/change-password', authMiddleware, authController.changePassword);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ── Applicant routes ──────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────

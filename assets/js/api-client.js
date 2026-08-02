@@ -109,3 +109,79 @@ function logout() {
   localStorage.clear();
   window.location.replace('login.html');
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Profile Settings Modal & Change Password Logic
+// ─────────────────────────────────────────────────────────────────────────────
+window.openProfileModal = function(e) {
+  if (e) e.preventDefault();
+  const modal = document.getElementById('profileModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    // Clear previous inputs and errors
+    document.getElementById('profile-form')?.reset();
+    const errorEl = document.getElementById('profile-error');
+    const successEl = document.getElementById('profile-success');
+    if (errorEl) { errorEl.textContent = ''; errorEl.classList.add('hidden'); }
+    if (successEl) { successEl.textContent = ''; successEl.classList.add('hidden'); }
+  }
+};
+
+window.closeProfileModal = function() {
+  const modal = document.getElementById('profileModal');
+  if (modal) modal.classList.add('hidden');
+};
+
+window.submitChangePassword = async function(e) {
+  e.preventDefault();
+  
+  const currentPassword = document.getElementById('profile-current-password').value;
+  const newPassword = document.getElementById('profile-new-password').value;
+  const confirmPassword = document.getElementById('profile-confirm-password').value;
+  
+  const errorEl = document.getElementById('profile-error');
+  const successEl = document.getElementById('profile-success');
+  const btn = document.getElementById('profile-submit-btn');
+
+  errorEl.classList.add('hidden');
+  successEl.classList.add('hidden');
+
+  if (newPassword !== confirmPassword) {
+    errorEl.textContent = 'New passwords do not match.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  if (newPassword.length < 8) {
+    errorEl.textContent = 'New password must be at least 8 characters long.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Updating...';
+
+  try {
+    const res = await authFetch('/api/auth/change-password', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+    const data = await res.json();
+
+    if (res.ok && data.status === 'success') {
+      successEl.textContent = data.message || 'Password updated successfully.';
+      successEl.classList.remove('hidden');
+      document.getElementById('profile-form').reset();
+      setTimeout(closeProfileModal, 2000);
+    } else {
+      errorEl.textContent = data.message || 'Failed to update password.';
+      errorEl.classList.remove('hidden');
+    }
+  } catch (err) {
+    errorEl.textContent = 'An error occurred. Please try again later.';
+    errorEl.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Change Password';
+  }
+};
