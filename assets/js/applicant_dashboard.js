@@ -27,6 +27,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 3. Helper for Status Colors (Vanilla CSS Classes)
   const getStatusStyles = (status) => {
     const s = String(status || '').toLowerCase();
+    if (s.includes('update_required') || s.includes('update required')) {
+      return {
+        classes: 'badge badge-rejected', // reusing orange/red style
+        icon: '<i class="fa-solid fa-triangle-exclamation"></i>',
+        desc: 'Your application requires updates before it can be processed.'
+      };
+    }
     if (s.includes('pending')) {
       return {
         classes: 'badge badge-pending',
@@ -88,11 +95,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const styles = getStatusStyles(app.app_status);
         
         elStatusBadge.className = `inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold ${styles.classes}`;
-        elStatusBadge.innerHTML = `${styles.icon} ${app.app_status}`;
+        elStatusBadge.innerHTML = `${styles.icon} ${app.app_status.replace('_', ' ')}`;
         elStatusDesc.textContent = styles.desc;
         
         elAppDate.textContent = formatDate(app.date);
         elAppId.textContent = `APP-${app.application_id}`;
+
+        if (app.app_status === 'Update_Required') {
+          const alertEl = document.getElementById('update-required-alert');
+          const reasonEl = document.getElementById('update-reason-text');
+          if (alertEl && reasonEl) {
+            reasonEl.textContent = dashData.latest_application.update_reason || 'Please review your application and provide the missing details.';
+            alertEl.style.display = 'block';
+            
+            // Pass the application details via localStorage so the edit page can use them easily
+            localStorage.setItem('editApplicationData', JSON.stringify(dashData));
+          }
+        } else {
+          const alertEl = document.getElementById('update-required-alert');
+          if (alertEl) alertEl.style.display = 'none';
+        }
       } else {
         elStatusBadge.className = 'badge badge-default';
         elStatusBadge.innerHTML = '<i class="fa-solid fa-folder-open"></i> No Application';

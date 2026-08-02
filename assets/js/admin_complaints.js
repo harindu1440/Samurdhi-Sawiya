@@ -35,23 +35,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     complaintsBody.innerHTML = complaints.map((c) => {
       const isResolved = c.Status === 'Resolved';
-      const badgeClass = isResolved ? 'badge-resolved' : 'badge-pending';
-      const rowStyle   = isResolved ? 'opacity: 0.6;' : '';
+      const badgeClass = isResolved ? 'badge badge-resolved' : 'badge badge-pending';
+      const rowStyle   = isResolved ? 'opacity: 0.65;' : '';
 
       return `
         <tr data-id="${escapeHtml(String(c.Complaint_ID))}" style="${rowStyle}">
-          <td style="white-space: nowrap;">${escapeHtml(formatDate(c.Created_At))}</td>
-          <td style="font-weight: 500;">${escapeHtml(c.Applicant_Name || '—')}</td>
-          <td style="font-family: monospace; font-size: 0.85em;">${escapeHtml(c.Applicant_NIC || '—')}</td>
-          <td style="font-weight: 500; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(c.Subject)}">${escapeHtml(c.Subject)}</td>
-          <td>
-            <div class="complaint-msg" title="${escapeHtml(c.Message)}">${escapeHtml(c.Message)}</div>
+          <td class="cell-date">${escapeHtml(formatDate(c.Created_At))}</td>
+          <td class="cell-name">${escapeHtml(c.Applicant_Name || '—')}</td>
+          <td class="cell-nic">${escapeHtml(c.Applicant_NIC || '—')}</td>
+          <td class="cell-subject" title="${escapeHtml(c.Subject)}">${escapeHtml(c.Subject)}</td>
+          <td class="cell-message">
+            <div class="msg-text" title="${escapeHtml(c.Message)}">${escapeHtml(c.Message)}</div>
             <button class="expand-btn" data-full="${escapeHtml(c.Message)}">Read more</button>
           </td>
-          <td><span class="status-badge ${badgeClass}">${escapeHtml(c.Status)}</span></td>
+          <td><span class="${badgeClass}">${escapeHtml(c.Status)}</span></td>
           <td>
             ${isResolved
-              ? '<span style="color: #16a34a; font-size: 0.8rem;"><i class="fa-solid fa-check"></i> Closed</span>'
+              ? '<span class="closed-label"><i class="fa-solid fa-check"></i> Closed</span>'
               : `<button class="resolve-btn" data-complaint-id="${escapeHtml(String(c.Complaint_ID))}"><i class="fa-solid fa-check-circle"></i> Resolve</button>`
             }
           </td>
@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       btn.addEventListener('click', () => {
         const msg = btn.dataset.full;
         btn.previousElementSibling.textContent = msg;
+        btn.previousElementSibling.style.whiteSpace = 'normal';
         btn.style.display = 'none';
       });
     });

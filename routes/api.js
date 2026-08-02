@@ -104,6 +104,20 @@ router.get(
   applicantController.getPayments
 );
 
+router.put(
+  '/applicant/application/update',
+  authMiddleware,
+  requireRole('Applicant'),
+  applicantController.updateApplication
+);
+
+router.get(
+  '/applicant/application/edit-data',
+  authMiddleware,
+  requireRole('Applicant'),
+  applicantController.getEditData
+);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ── Grama Niladhari routes ────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────

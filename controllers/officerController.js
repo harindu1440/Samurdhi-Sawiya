@@ -65,7 +65,7 @@ async function getDashboard(req, res) {
       FROM \`WELFARE_APPLICATION\` wa
       JOIN \`APPLICANT\` a ON a.User_ID = wa.Applicant_ID
       JOIN \`USERS\` u ON u.User_ID = a.User_ID
-      WHERE wa.Status = 'Pending'
+      WHERE wa.Status IN ('Pending', 'Update_Required')
         AND a.Division = ?
         AND a.GN_Division = ?
       ORDER BY wa.Date_Submitted ASC
@@ -104,14 +104,14 @@ async function submitVisit(req, res) {
       conn.release();
       return res.status(422).json({ status: 'error', message: 'A valid Application ID is required.' });
     }
-    if (!['Approve', 'Reject', 'Pending'].includes(statusAction)) {
+    if (!['Approve', 'Reject', 'Pending', 'Update_Required'].includes(statusAction)) {
       conn.release();
       return res.status(422).json({ status: 'error', message: 'Invalid status action.' });
     }
 
     await conn.beginTransaction();
 
-    // Verify application exists and is currently Pending
+    // Verify application exists and is currently Pending or Update_Required
     const [[application]] = await conn.execute(
       'SELECT `Status` FROM `WELFARE_APPLICATION` WHERE `Application_ID` = ? LIMIT 1 FOR UPDATE',
       [applicationId]
@@ -123,7 +123,7 @@ async function submitVisit(req, res) {
       return res.status(404).json({ status: 'error', message: 'Application not found.' });
     }
 
-    if (application.Status !== 'Pending') {
+    if (!['Pending', 'Update_Required'].includes(application.Status)) {
       await conn.rollback();
       conn.release();
       return res.status(409).json({ status: 'error', message: 'Application is no longer pending.' });
@@ -132,19 +132,20 @@ async function submitVisit(req, res) {
     let newStatus = 'Pending';
     if (statusAction === 'Approve') newStatus = 'Officer_Approved';
     if (statusAction === 'Reject') newStatus = 'Rejected';
-    if (statusAction === 'Pending') newStatus = 'Pending';
+    if (statusAction === 'Update_Required') newStatus = 'Update_Required';
+
+    const updateReason = req.body?.UpdateReason || null;
 
     // Update Application Status
     await conn.execute(
-      'UPDATE `WELFARE_APPLICATION` SET `Status` = ? WHERE `Application_ID` = ?',
-      [newStatus, applicationId]
+      'UPDATE `WELFARE_APPLICATION` SET `Status` = ?, `Update_Reason` = ? WHERE `Application_ID` = ?',
+      [newStatus, newStatus === 'Update_Required' ? updateReason : null, applicationId]
     );
 
     // If it's a decision, insert into HOME_VISIT
-    if (statusAction === 'Approve' || statusAction === 'Reject') {
-      const recommendation = statusAction === 'Approve' ? 'Recommended' : 'Not Recommended';
+    if (statusAction === 'Approve' || statusAction === 'Reject' || statusAction === 'Update_Required') {
+      const recommendation = statusAction === 'Approve' ? 'Recommended' : (statusAction === 'Reject' ? 'Not Recommended' : 'Update Requested');
       
-      // Since ALTER TABLE failed due to permissions on the remote DB, we append the photo to remarks safely.
       const finalRemarks = photoFilename 
         ? `${remarks} | [Attached Photo: ${photoFilename}]` 
         : remarks;

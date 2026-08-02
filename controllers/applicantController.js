@@ -47,9 +47,9 @@ async function getDashboard(req, res) {
       return res.status(404).json({ status: 'error', message: 'Applicant record not found.' });
     }
 
-    // Fetch from the new WELFARE_APPLICATION schema (includes Monthly_Income and Date_Submitted)
+    // Fetch from the new WELFARE_APPLICATION schema
     const [[appRow]] = await pool.execute(
-      `SELECT \`Application_ID\`, \`Status\`, \`Date_Submitted\`, \`Monthly_Income\`
+      `SELECT \`Application_ID\`, \`Status\`, \`Update_Reason\`, \`Date_Submitted\`, \`Monthly_Income\`
        FROM \`WELFARE_APPLICATION\`
        WHERE \`Applicant_ID\` = ?
        ORDER BY \`Date_Submitted\` DESC LIMIT 1`,
@@ -66,6 +66,7 @@ async function getDashboard(req, res) {
         ? {
             application_id: appRow.Application_ID,
             app_status: appRow.Status,
+            update_reason: appRow.Update_Reason,
             date: appRow.Date_Submitted,
           }
         : null,
@@ -156,4 +157,68 @@ async function getPayments(req, res) {
   }
 }
 
-module.exports = { submitApplication, getDashboard, getPayments };
+async function updateApplication(req, res) {
+  const conn = await pool.getConnection();
+  try {
+    const applicantId = req.user.User_ID;
+    const { Monthly_Income, Dependents, Reason, Name, NIC, Address, DOB, Gender, Division, Bank_Name, Account_Name, Account_Number, Branch } = req.body;
+
+    if (!Monthly_Income || !Dependents || !Reason) {
+      return res.status(400).json({ status: 'error', message: 'Please provide all required application fields.' });
+    }
+
+    await conn.beginTransaction();
+
+    // 1. Update APPLICANT table profile data
+    await conn.execute(
+      `UPDATE \`APPLICANT\`
+       SET Full_Name = ?, NIC = ?, Address = ?, DOB = ?, Gender = ?, Division = ?, Bank_Name = ?, Account_Name = ?, Account_Number = ?, Branch = ?
+       WHERE User_ID = ?`,
+      [Name, NIC, Address, DOB, Gender, Division, Bank_Name, Account_Name, Account_Number, Branch, applicantId]
+    );
+
+    // 2. Update WELFARE_APPLICATION data and reset Status to Pending
+    await conn.execute(
+      `UPDATE \`WELFARE_APPLICATION\`
+       SET Monthly_Income = ?, Dependents = ?, Reason = ?, Status = 'Pending', Update_Reason = NULL
+       WHERE Applicant_ID = ? AND Status = 'Update_Required'`,
+      [Monthly_Income, Dependents, Reason, applicantId]
+    );
+
+    await conn.commit();
+    return res.status(200).json({ status: 'success', message: 'Application updated successfully and is pending review.' });
+  } catch (err) {
+    await conn.rollback();
+    console.error('[applicantController.updateApplication]', err);
+    return res.status(500).json({ status: 'error', message: 'Unable to update application.' });
+  } finally {
+    conn.release();
+  }
+}
+
+async function getEditData(req, res) {
+  try {
+    const applicantId = req.user.User_ID;
+    
+    // Fetch applicant and application data
+    const [[applicant]] = await pool.execute(
+      `SELECT a.*, w.Monthly_Income, w.Dependents, w.Reason, w.Status, w.Update_Reason
+       FROM \`APPLICANT\` a
+       JOIN \`WELFARE_APPLICATION\` w ON a.User_ID = w.Applicant_ID
+       WHERE a.User_ID = ?
+       ORDER BY w.Date_Submitted DESC LIMIT 1`,
+      [applicantId]
+    );
+
+    if (!applicant) {
+      return res.status(404).json({ status: 'error', message: 'Applicant data not found.' });
+    }
+
+    return res.status(200).json({ status: 'success', data: applicant });
+  } catch (err) {
+    console.error('[applicantController.getEditData]', err);
+    return res.status(500).json({ status: 'error', message: 'Unable to fetch edit data.' });
+  }
+}
+
+module.exports = { submitApplication, getDashboard, getPayments, updateApplication, getEditData };

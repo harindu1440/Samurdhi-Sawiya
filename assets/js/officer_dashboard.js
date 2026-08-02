@@ -400,6 +400,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const formData = new FormData(homeVisitForm);
     formData.append('StatusAction', selectedAction);
 
+    if (selectedAction === 'Update_Required') {
+      const updateReason = prompt('What needs to be updated by the applicant?');
+      if (!updateReason || !updateReason.trim()) {
+        alert('Update reason is required to request an update.');
+        return;
+      }
+      formData.append('UpdateReason', updateReason.trim());
+    }
+
     const submitBtn = homeVisitForm.querySelector(`button[data-action="${selectedAction}"]`);
     const origText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
