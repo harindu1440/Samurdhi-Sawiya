@@ -50,7 +50,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       if (applicant.Bank_Name && applicant.Branch && applicant.Account_Name && applicant.Account_Number) {
         document.getElementById('open-bank-modal-btn').style.display = 'none';
-        document.getElementById('bank-status-msg').style.display = 'flex';
+        
+        document.getElementById('display_bank_name').textContent = applicant.Bank_Name;
+        document.getElementById('display_branch').textContent = applicant.Branch;
+        document.getElementById('display_account_name').textContent = applicant.Account_Name;
+        document.getElementById('display_account_number').textContent = applicant.Account_Number;
+        document.getElementById('bank-display-container').style.display = 'block';
       }
 
       if (applicant.Status !== 'Update_Required') {
@@ -140,22 +145,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   const saveBankBtn = document.getElementById('save-bank-btn');
   const bankModal = document.getElementById('bank-modal');
   const bankModalError = document.getElementById('bank-modal-error');
-  const bankStatusMsg = document.getElementById('bank-status-msg');
+  const bankDisplayContainer = document.getElementById('bank-display-container');
+  const editBankModalBtn = document.getElementById('edit-bank-modal-btn');
+
+  function openModal() {
+    // Pre-fill if already saved
+    document.getElementById('modal_bank_name').value = document.getElementById('bank_name').value;
+    document.getElementById('modal_branch').value = document.getElementById('branch').value;
+    document.getElementById('modal_account_name').value = document.getElementById('account_name').value;
+    document.getElementById('modal_account_number').value = document.getElementById('account_number').value;
+    bankModalError.style.display = 'none';
+    bankModal.style.display = 'flex';
+    
+    if (typeof gsap !== 'undefined') {
+      gsap.fromTo(bankModal.firstElementChild, { y: 30, opacity: 0, scale: 0.95 }, { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.5)' });
+    }
+  }
 
   if (openBankModalBtn && bankModal) {
-    openBankModalBtn.addEventListener('click', () => {
-      // Pre-fill if already saved
-      document.getElementById('modal_bank_name').value = document.getElementById('bank_name').value;
-      document.getElementById('modal_branch').value = document.getElementById('branch').value;
-      document.getElementById('modal_account_name').value = document.getElementById('account_name').value;
-      document.getElementById('modal_account_number').value = document.getElementById('account_number').value;
-      bankModalError.style.display = 'none';
-      bankModal.style.display = 'flex';
-      
-      if (typeof gsap !== 'undefined') {
-        gsap.fromTo(bankModal.firstElementChild, { y: 30, opacity: 0, scale: 0.95 }, { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.5)' });
-      }
-    });
+    openBankModalBtn.addEventListener('click', openModal);
+  }
+
+  if (editBankModalBtn && bankModal) {
+    editBankModalBtn.addEventListener('click', openModal);
   }
 
   if (closeBankModalBtn && bankModal) {
@@ -192,6 +204,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('account_name').value = mbAccName;
       document.getElementById('account_number').value = mbAccNum;
       
+      // Update display text
+      document.getElementById('display_bank_name').textContent = mbName;
+      document.getElementById('display_branch').textContent = mbBranch;
+      document.getElementById('display_account_name').textContent = mbAccName;
+      document.getElementById('display_account_number').textContent = mbAccNum;
+      
       // Close modal and show success status
       if (typeof gsap !== 'undefined') {
         gsap.to(bankModal.firstElementChild, { y: 20, opacity: 0, scale: 0.95, duration: 0.2, ease: 'power2.in', onComplete: () => bankModal.style.display = 'none' });
@@ -200,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       
       openBankModalBtn.style.display = 'none';
-      bankStatusMsg.style.display = 'flex';
+      bankDisplayContainer.style.display = 'block';
     });
   }
 });

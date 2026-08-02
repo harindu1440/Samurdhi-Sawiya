@@ -748,8 +748,20 @@
               <button type="button" id="open-bank-modal-btn" class="submit-button" style="background: var(--accent); padding: 12px 24px; border-radius: 8px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; cursor: pointer; color: white; font-weight: 600;">
                 <i class="fa-solid fa-plus-circle"></i> <span>Add Bank Details</span>
               </button>
-              <div id="bank-status-msg" style="display: none; align-items: center; gap: 8px; margin-top: 10px; color: #10b981; font-size: 14px; font-weight: 600;">
-                <i class="fa-solid fa-check-circle"></i> Bank details added successfully!
+              
+              <div id="bank-display-container" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 16px; margin-top: 10px;">
+                <div style="color: #10b981; font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-check-circle"></i> Bank details added successfully!
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; margin-bottom: 16px; color: var(--text);">
+                  <div><span style="color: var(--muted); font-size: 0.8rem;">Bank:</span><br><strong id="display_bank_name"></strong></div>
+                  <div><span style="color: var(--muted); font-size: 0.8rem;">Branch:</span><br><strong id="display_branch"></strong></div>
+                  <div><span style="color: var(--muted); font-size: 0.8rem;">Account Name:</span><br><strong id="display_account_name"></strong></div>
+                  <div><span style="color: var(--muted); font-size: 0.8rem;">Account Number:</span><br><strong id="display_account_number"></strong></div>
+                </div>
+                <button type="button" id="edit-bank-modal-btn" style="background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 8px 16px; border-radius: 6px; width: 100%; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;">
+                  <i class="fa-solid fa-pen"></i> Edit Bank Details
+                </button>
               </div>
             </div>
 
