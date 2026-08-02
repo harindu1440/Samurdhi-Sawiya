@@ -100,7 +100,10 @@
           </div>
         </div>
 
-        <span class="user-chip hidden-mobile">Welcome, <strong id="user-name">Applicant</strong></span>
+        <span class="user-chip hidden-mobile" style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2;">
+          <span>Welcome, <strong id="user-name">Applicant</strong></span>
+          <small id="user-division" style="font-size: 0.75rem; color: var(--accent);">Division</small>
+        </span>
         <button onclick="logout()" class="btn-logout">
           <span>Sign Out</span>
           <i class="fa-solid fa-arrow-right-from-bracket"></i>

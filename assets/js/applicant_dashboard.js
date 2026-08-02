@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!session) return; // API client handles redirect
 
   const userNameNode = document.getElementById('user-name');
+  const userDivisionNode = document.getElementById('user-division');
   if (userNameNode) userNameNode.textContent = session.name || 'Applicant';
 
   // 2. DOM Elements
@@ -87,6 +88,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       // Update Profile
       if (elProfileName) elProfileName.textContent = dashData.name || session.name;
+      if (userNameNode) userNameNode.textContent = dashData.name || session.name;
+      if (userDivisionNode) {
+        userDivisionNode.textContent = dashData.division || 'Unassigned';
+      }
       if (elProfileIncome) elProfileIncome.textContent = formatCurrency(dashData.profile?.monthly_income);
 
       // Update Status Widget

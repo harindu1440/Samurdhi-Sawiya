@@ -35,9 +35,9 @@ async function getDashboard(req, res) {
   try {
     const applicantId = req.user.User_ID;
 
-    // Get applicant's Full_Name from APPLICANT table
+    // Get applicant's Full_Name and Division from APPLICANT table
     const [[applicant]] = await pool.execute(
-      `SELECT Full_Name 
+      `SELECT Full_Name, Division, GN_Division 
        FROM \`APPLICANT\`
        WHERE User_ID = ? LIMIT 1`,
       [applicantId]
@@ -59,6 +59,7 @@ async function getDashboard(req, res) {
     return res.status(200).json({
       status: 'success',
       name: applicant.Full_Name,
+      division: applicant.Division || applicant.GN_Division,
       profile: {
         monthly_income: appRow ? appRow.Monthly_Income : 0.00,
       },
