@@ -127,6 +127,23 @@ body {
     radial-gradient(circle at right bottom, var(--bg-gradient-2), transparent 36%),
     linear-gradient(180deg, var(--bg-gradient-top) 0%, var(--bg) 100%);
   transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50vw;
+  height: 50vh;
+  background: url('../images/emblem.png') no-repeat center center;
+  background-size: contain;
+  opacity: 0.05;
+  z-index: -1;
+  pointer-events: none;
 }
 
 a {
