@@ -49,14 +49,17 @@
       </a>
 
       <nav class="nav-links">
-        <a class="nav-link" href="officer_dashboard.html"><i class="fa-solid fa-chart-column"></i> Overview</a>
-        <a class="nav-link" href="#" onclick="openProfileModal(event)"><i class="fa-solid fa-user-circle"></i> User Profile</a>
         <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
       </nav>
 
-      <div class="sidebar-footer">
-        <span class="footer-label">Signed in as</span>
-        <strong id="officer-name">Officer</strong>
+      <div class="sidebar-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="footer-label">Signed in as</span>
+          <strong id="officer-name">Officer</strong>
+        </div>
+        <button type="button" onclick="openProfileModal(event)" style="background: rgba(255,255,255,0.1); border: none; color: #fff; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.2s; display: grid; place-items: center;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" title="Edit Profile / Change Password">
+          <i class="fa-solid fa-user-pen"></i>
+        </button>
       </div>
     </aside>
 
