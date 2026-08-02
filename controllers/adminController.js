@@ -344,7 +344,7 @@ async function getReport(req, res) {
         sp.Payment_Date      AS payment_date,
         sp.Amount            AS payment_amount,
         sp.Status            AS payment_status,
-        gn.GN_ID             AS gn_id,
+        gn.User_ID           AS gn_id,
         gnUser.Username      AS gn_name,
         gn.Division          AS division
       FROM \`WELFARE_APPLICATION\` wa
@@ -352,8 +352,8 @@ async function getReport(req, res) {
       JOIN \`USERS\` u ON u.User_ID = a.User_ID
       LEFT JOIN \`SAMURDHI_PAYMENT\` sp ON sp.Applicant_ID = a.User_ID
       LEFT JOIN \`MINISTER_APPROVAL\` ma ON ma.Request_ID = sp.Request_ID
-      LEFT JOIN \`GRAMA_NILADHARI\` gn  ON gn.GN_ID = ma.GN_ID
-      LEFT JOIN \`USERS\` gnUser ON gnUser.User_ID = gn.GN_ID
+      LEFT JOIN \`GRAMA_NILADHARI\` gn  ON gn.User_ID = ma.GN_ID
+      LEFT JOIN \`USERS\` gnUser ON gnUser.User_ID = gn.User_ID
       WHERE wa.Status = 'Accepted'
         AND DATE(wa.Date_Submitted) BETWEEN ? AND ?
       ORDER BY wa.Date_Submitted DESC
