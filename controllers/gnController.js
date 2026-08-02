@@ -22,14 +22,16 @@ async function getDashboard(req, res) {
 
     const { Division, GN_Division } = gnProfile;
 
-    // Aggregate stats
+    // Aggregate stats for this specific GN's division
     const [[totals]] = await pool.execute(`
       SELECT
         COUNT(*)                                  AS total_applications,
-        SUM(Status = 'Officer_Approved')          AS pending_gn,
-        SUM(Status = 'GN_Approved')               AS forwarded
-      FROM \`WELFARE_APPLICATION\`
-    `);
+        SUM(wa.Status = 'Officer_Approved')       AS pending_gn,
+        SUM(wa.Status = 'GN_Approved')            AS forwarded
+      FROM \`WELFARE_APPLICATION\` wa
+      JOIN \`APPLICANT\` a ON a.User_ID = wa.Applicant_ID
+      WHERE a.Division = ? AND a.GN_Division = ?
+    `, [Division, GN_Division]);
 
     // Fetch Officer_Approved applications joined with HOME_VISIT, APPLICANT, USERS
     const [rows] = await pool.execute(`
