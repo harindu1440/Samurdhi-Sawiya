@@ -319,6 +319,31 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         </div>
 
+        <!-- Bank Details -->
+        <div class="bg-slate-50 dark:bg-[#0B1121] p-5 rounded-xl border border-slate-200 dark:border-slate-700 md:col-span-2 shadow-inner">
+          <h3 class="text-sm font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
+            <i class="fa-solid fa-building-columns mr-2"></i>Bank Details
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-slate-700 dark:text-slate-300">
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider">Bank Name</p>
+              <p class="font-bold">${app.Bank_Name || 'Not Provided'}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider">Branch</p>
+              <p class="font-bold">${app.Branch || 'Not Provided'}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider">Account Name</p>
+              <p class="font-bold">${app.Account_Name || 'Not Provided'}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider">Account Number</p>
+              <p class="font-bold">${app.Account_Number || 'Not Provided'}</p>
+            </div>
+          </div>
+        </div>
+
         <!-- House Photograph -->
         <div class="bg-slate-50 dark:bg-[#0B1121] p-5 rounded-xl border border-slate-200 dark:border-slate-700 md:col-span-2">
           <h3 class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">

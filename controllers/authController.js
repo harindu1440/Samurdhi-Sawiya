@@ -115,6 +115,12 @@ async function register(req, res) {
     const monthlyIncome = rawIncome     !== undefined && rawIncome     !== null ? parseFloat(rawIncome)      : null;
     const dependents    = rawDependents !== undefined && rawDependents !== null ? parseInt(rawDependents, 10) : null;
 
+    // Section 4: Bank Details
+    const bankName      = String(req.body?.Bank_Name || '').trim();
+    const branch        = String(req.body?.Branch || '').trim();
+    const accountName   = String(req.body?.Account_Name || '').trim();
+    const accountNumber = String(req.body?.Account_Number || '').trim();
+
     // House photo — provided by multer via upload.single('housePhoto')
     const housePhoto = req.file ? req.file.filename : null;
 
@@ -157,6 +163,18 @@ async function register(req, res) {
     if (!housePhoto)
       validationErrors.push('A house photo is required. Please upload a JPEG or PNG image.');
 
+    if (!bankName || bankName.length > 255)
+      validationErrors.push('Bank Name is required.');
+    
+    if (!branch || branch.length > 255)
+      validationErrors.push('Branch is required.');
+    
+    if (!accountName || accountName.length > 255)
+      validationErrors.push('Account Holder Name is required.');
+    
+    if (!accountNumber || !/^[0-9]+$/.test(accountNumber) || accountNumber.length > 50)
+      validationErrors.push('Account Number is required and must contain only digits.');
+
     if (validationErrors.length > 0) {
       return res.status(400).json({
         status:  'error',
@@ -197,9 +215,9 @@ async function register(req, res) {
     // Q2 — Insert APPLICANT subclass row (same PK as USERS; no Monthly_Income in final schema)
     await conn.execute(
       `INSERT INTO \`APPLICANT\`
-         (\`User_ID\`, \`Full_Name\`, \`NIC\`, \`Address\`, \`DOB\`, \`Gender\`, \`Division\`, \`GN_Division\`)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [newUserId, fullName, nic || null, address, dob, gender, division, gnDivision]
+         (\`User_ID\`, \`Full_Name\`, \`NIC\`, \`Address\`, \`DOB\`, \`Gender\`, \`Division\`, \`GN_Division\`, \`Bank_Name\`, \`Account_Name\`, \`Account_Number\`, \`Branch\`)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [newUserId, fullName, nic || null, address, dob, gender, division, gnDivision, bankName, accountName, accountNumber, branch]
     );
 
     // Q3 — Immediately create a WELFARE_APPLICATION tied to the new applicant

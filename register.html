@@ -783,6 +783,40 @@
               <label for="reason">Reason for Application</label>
             </div>
 
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!--  SECTION 4 — BANK DETAILS                                     -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <div class="form-section-header">
+              <span class="section-badge">
+                <i class="fa-solid fa-building-columns"></i>
+                Bank Details
+              </span>
+              <span class="section-line" aria-hidden="true"></span>
+            </div>
+            <p class="form-section-desc">
+              Your bank details are required for processing monthly Samurdhi welfare payments upon approval.
+            </p>
+
+            <div class="field">
+              <input type="text" id="bank_name" name="bank_name" placeholder=" " required maxlength="255">
+              <label for="bank_name">Bank Name</label>
+            </div>
+
+            <div class="field">
+              <input type="text" id="branch" name="branch" placeholder=" " required maxlength="255">
+              <label for="branch">Branch</label>
+            </div>
+
+            <div class="field full-width">
+              <input type="text" id="account_name" name="account_name" placeholder=" " required maxlength="255">
+              <label for="account_name">Account Holder Name</label>
+            </div>
+
+            <div class="field full-width">
+              <input type="text" id="account_number" name="account_number" placeholder=" " required maxlength="50" pattern="[0-9]+">
+              <label for="account_number">Account Number</label>
+            </div>
+
           </div><!-- /.form-grid -->
 
           <button type="submit" class="submit-button" id="register-btn">

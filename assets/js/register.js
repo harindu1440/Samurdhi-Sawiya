@@ -204,6 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const numDependents    = numDependentsRaw !== '' ? parseInt(numDependentsRaw, 10) : null;
     const reason           = String(form.reason.value || '').trim();
 
+    // ── Section 4: Bank Details ─────────────────────────────────────────────
+    const bankName      = String(form.bank_name.value || '').trim();
+    const branch        = String(form.branch.value || '').trim();
+    const accountName   = String(form.account_name.value || '').trim();
+    const accountNumber = String(form.account_number.value || '').trim();
+
     // ── Client-side validation ────────────────────────────────────────────────
 
     // Section 1
@@ -296,6 +302,24 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Section 4
+    if (!bankName) {
+      showError('Please enter the name of your bank.');
+      return;
+    }
+    if (!branch) {
+      showError('Please enter your bank branch.');
+      return;
+    }
+    if (!accountName) {
+      showError('Please enter the account holder name.');
+      return;
+    }
+    if (!accountNumber || !/^[0-9]+$/.test(accountNumber)) {
+      showError('Please enter a valid account number (digits only).');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -322,6 +346,12 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('Monthly_Income', monthlyIncome);
       formData.append('Dependents',     numDependents);
       formData.append('Reason',         reason);
+
+      // Bank Details
+      formData.append('Bank_Name',      bankName);
+      formData.append('Branch',         branch);
+      formData.append('Account_Name',   accountName);
+      formData.append('Account_Number', accountNumber);
 
       // House photo file
       formData.append('housePhoto', housePhotoFile);

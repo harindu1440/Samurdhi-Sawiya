@@ -80,8 +80,53 @@ async function getPayments(req, res) {
   try {
     const applicantId = req.user.User_ID;
 
-    // Using the exact columns from new SAMURDHI_PAYMENT table
-    const [payments] = await pool.execute(
+    // --- RECURRING PAYMENT CATCH-UP LOGIC ---
+    // Fetch all existing payments for the user
+    let [payments] = await pool.execute(
+      `SELECT * FROM \`SAMURDHI_PAYMENT\` WHERE Applicant_ID = ? ORDER BY Payment_Date ASC`,
+      [applicantId]
+    );
+
+    if (payments.length > 0) {
+      const firstPayment = payments[0];
+      const amount = firstPayment.Amount;
+      const reqId = firstPayment.Request_ID;
+      
+      const firstDate = new Date(firstPayment.Payment_Date);
+      const currentDate = new Date();
+      
+      // Calculate total expected months (inclusive of first month)
+      const monthsElapsed = (currentDate.getFullYear() - firstDate.getFullYear()) * 12 + (currentDate.getMonth() - firstDate.getMonth());
+      
+      let newPaymentsAdded = false;
+      
+      // Check each month from the first payment up to current month
+      for (let i = 1; i <= monthsElapsed; i++) {
+        const expectedDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + i, firstDate.getDate());
+        
+        // Skip future dates if the calculation slightly overshoots due to days in month
+        if (expectedDate > currentDate) continue;
+        
+        // Check if a payment for this specific year & month already exists
+        const exists = payments.some(p => {
+          const pDate = new Date(p.Payment_Date);
+          return pDate.getFullYear() === expectedDate.getFullYear() && pDate.getMonth() === expectedDate.getMonth();
+        });
+        
+        if (!exists) {
+          // Insert missing monthly payment
+          await pool.execute(
+            `INSERT INTO \`SAMURDHI_PAYMENT\` (Request_ID, Applicant_ID, Amount, Status, Payment_Date) VALUES (?, ?, ?, 'Completed', ?)`,
+            [reqId, applicantId, amount, `${expectedDate.getFullYear()}-${(expectedDate.getMonth() + 1).toString().padStart(2, '0')}-${expectedDate.getDate().toString().padStart(2, '0')}`]
+          );
+          newPaymentsAdded = true;
+        }
+      }
+    }
+    // --- END CATCH-UP LOGIC ---
+
+    // Fetch the final, updated list of payments with GN info
+    [payments] = await pool.execute(
       `SELECT 
         sp.Payment_ID AS sp_id, 
         sp.Status     AS p_status, 
