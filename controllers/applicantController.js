@@ -35,12 +35,11 @@ async function getDashboard(req, res) {
   try {
     const applicantId = req.user.User_ID;
 
-    // Join APPLICANT with USERS to get Name
+    // Get applicant's Full_Name from APPLICANT table
     const [[applicant]] = await pool.execute(
-      `SELECT u.Username AS Full_Name 
-       FROM \`APPLICANT\` a 
-       JOIN \`USERS\` u ON u.User_ID = a.User_ID 
-       WHERE a.User_ID = ? LIMIT 1`,
+      `SELECT Full_Name 
+       FROM \`APPLICANT\`
+       WHERE User_ID = ? LIMIT 1`,
       [applicantId]
     );
 
