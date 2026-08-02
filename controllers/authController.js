@@ -267,20 +267,29 @@ async function changePassword(req, res) {
       [userId]
     );
 
-    if (!user) {
-      return res.status(404).json({ status: 'error', message: 'User not found.' });
+    if (!user || !user.Password) {
+      return res.status(404).json({ status: 'error', message: 'User not found or password not set.' });
     }
 
-    const isValid = await bcrypt.compare(currentPassword, user.Password);
-    if (!isValid) {
-      return res.status(400).json({ status: 'error', message: 'Current password is incorrect.' });
+    try {
+      const isValid = await bcrypt.compare(String(currentPassword), String(user.Password));
+      if (isValid !== true) {
+        return res.status(400).json({ status: 'error', message: 'Current password is incorrect.' });
+      }
+    } catch (compareErr) {
+      console.error('[authController.changePassword] Compare Error:', compareErr.message);
+      return res.status(500).json({ status: 'error', message: 'Failed to verify current password.' });
     }
 
-    const newHash = await bcrypt.hash(newPassword, 12);
-    await pool.execute(
+    const newHash = await bcrypt.hash(String(newPassword), 12);
+    const [updateResult] = await pool.execute(
       'UPDATE `USERS` SET `Password` = ? WHERE `User_ID` = ?',
       [newHash, userId]
     );
+
+    if (updateResult.affectedRows === 0) {
+      return res.status(400).json({ status: 'error', message: 'Failed to update password. User not found.' });
+    }
 
     return res.status(200).json({ status: 'success', message: 'Password updated successfully.' });
   } catch (err) {
