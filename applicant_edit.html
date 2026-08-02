@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Edit Application | SamurdhiSaviya</title>
+  <meta name="description" content="Create your SamurdhiSaviya applicant account and submit your welfare benefit application in one step.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +13,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+  <!-- Registration-page specific styles -->
   <style>
+    /* ── Success box ─────────────────────────────────────────────────────────── */
     .success-box {
       margin-bottom: 18px;
       padding: 14px 16px;
@@ -25,7 +28,35 @@
       align-items: center;
       gap: 10px;
     }
+
+    /*
+      CRITICAL: The HTML `hidden` attribute sets display:none, but any CSS
+      `display` rule on the same element overrides it due to specificity.
+      This selector restores the correct behaviour for ALL hidden elements.
+    */
     [hidden] { display: none !important; }
+
+
+    /* ── Password strength bar ───────────────────────────────────────────────── */
+    .password-strength {
+      height: 4px;
+      border-radius: 99px;
+      margin-top: 8px;
+      background: var(--border);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .password-strength-bar {
+      height: 100%;
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.35s ease, background 0.35s ease;
+    }
+    .strength-weak   { width: 33%; background: #e74c3c; }
+    .strength-medium { width: 66%; background: #f39c12; }
+    .strength-strong { width: 100%; background: #27ae60; }
+
+    /* ── Two-column grid ─────────────────────────────────────────────────────── */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -38,6 +69,8 @@
       .form-grid { grid-template-columns: 1fr; }
       .full-width { grid-column: 1; }
     }
+
+    /* ── Textarea field ──────────────────────────────────────────────────────── */
     .field textarea {
       width: 100%;
       border: 1px solid var(--border);
@@ -57,6 +90,8 @@
       box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.12);
       background: var(--surface);
     }
+
+    /* Floating label for textarea — lifts when focused or has content */
     .field textarea:focus + label,
     .field textarea:not(:placeholder-shown) + label {
       top: -10px;
@@ -64,168 +99,778 @@
       color: var(--accent);
       background: linear-gradient(180deg, transparent 50%, var(--surface-strong) 50%);
     }
+
+    /* ── Date input — always show label above ────────────────────────────────── */
+    .field input[type="date"] {
+      /* Force browsers to show placeholder space so label lifts */
+      color: var(--text);
+    }
+    /* Label is always lifted for date inputs to avoid overlap with browser chrome */
+    .field--date label {
+      top: -10px;
+      font-size: 0.78rem;
+      color: var(--accent);
+      background: linear-gradient(180deg, transparent 50%, var(--surface-strong) 50%);
+    }
+
+    /* ── Select chevron wrapper ───────────────────────────────────────────────── */
+    .field--select::after {
+      content: '\f078';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 0.75rem;
+    }
+
+    /* ── Section divider ─────────────────────────────────────────────────────── */
+    .form-section-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 8px 0 2px;
+    }
+    .form-section-header .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .form-section-header .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .form-section-desc {
+      grid-column: 1 / -1;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin: 0 0 4px;
+    }
+
+    /* ── File upload input (house photo) ────────────────────────────────── */
     .file-upload-wrapper {
-      position: relative;
+      grid-column: 1 / -1;
+    }
+    .file-upload-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       width: 100%;
-      padding: 24px;
+      min-height: 110px;
+      padding: 22px 18px;
       border: 2px dashed var(--border);
       border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.22s ease, background 0.22s ease, color 0.22s ease;
       text-align: center;
-      background: var(--surface-dim);
-      transition: all 0.3s ease;
-      cursor: pointer;
     }
-    .file-upload-wrapper:hover {
+    .file-upload-label:hover,
+    .file-upload-label.drag-over {
       border-color: var(--accent);
-      background: var(--surface);
-    }
-    .file-upload-wrapper i {
-      font-size: 2rem;
+      background: var(--accent-soft);
       color: var(--accent);
-      margin-bottom: 8px;
     }
-    .file-upload-wrapper input[type="file"] {
+    .file-upload-label .upload-icon {
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+    .file-upload-label .upload-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .file-upload-label .upload-hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .file-upload-label .upload-chosen {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 2px;
+      word-break: break-all;
+    }
+    /* The actual <input type="file"> is visually hidden */
+    #housePhoto {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      width: 1px;
+      height: 1px;
       opacity: 0;
-      cursor: pointer;
+      pointer-events: none;
+    }
+
+    /* ── Number input — hide spin arrows ─────────────────────────────────────── */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    /* ── LKR currency prefix on monthly income ───────────────────────────────── */
+    .field--currency {
+      position: relative;
+    }
+    .field--currency .currency-tag {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      pointer-events: none;
+      letter-spacing: 0.04em;
+    }
+    .field--currency input {
+      padding-left: 52px !important;
+    }
+    /*
+      Always lift the label above for currency fields — the LKR tag occupies
+      the left side of the input body, so the label must never sit there.
+      Matches the same pattern used for .field--date label.
+    */
+    .field--currency label {
+      top: -10px;
+      font-size: 0.78rem;
+      color: var(--accent);
+      background: linear-gradient(180deg, transparent 50%, var(--surface-strong) 50%);
+    }
+
+    /* ==========================================================================
+       LEFT PANEL REDESIGN — animated step cards
+       ========================================================================== */
+
+    /* Override login.css: make the visual panel a proper flex column
+       so content distributes between top (heading) and bottom (points) */
+    .auth-visual {
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px 48px 52px;
+    }
+
+    /* Top block: badge + title + subtitle */
+    .panel-top {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Middle animated carousel viewport */
+    .panel-carousel {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      margin: 28px 0;
+      /* mask edges for a soft scroll fade */
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+    }
+
+    /* The scrolling track — duplicated so the loop is seamless */
+    .carousel-track {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: panelScroll 14s linear infinite;
+    }
+    .carousel-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes panelScroll {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
+    /* Individual step card */
+    .step-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+      transition: background 0.25s ease, transform 0.25s ease;
+      cursor: default;
+    }
+    .step-card:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateX(4px);
+    }
+
+    .step-card-icon {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.16);
+      display: grid;
+      place-items: center;
+      font-size: 1.15rem;
+      color: #fff;
+    }
+
+    .step-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .step-card-title {
+      font-weight: 700;
+      font-size: 0.93rem;
+      color: #fff;
+      line-height: 1.25;
+    }
+    .step-card-desc {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.72);
+      line-height: 1.5;
+    }
+    .step-card-step {
+      display: inline-block;
+      margin-bottom: 4px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #9fd0ff;
+    }
+
+    /* Bottom auth-points strip */
+    .auth-points {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Responsive: hide carousel on very small heights */
+    @media (max-height: 700px) {
+      .panel-carousel { display: none; }
+      .auth-visual { justify-content: flex-end; }
+    }
+    @media (max-width: 980px) {
+      .auth-visual {
+        padding: 36px 28px;
+        min-height: 440px;
+      }
+      .panel-carousel { margin: 20px 0; }
+    }
+    @media (max-width: 640px) {
+      .auth-visual { padding: 28px 20px; min-height: 340px; }
+      .panel-carousel { display: none; }
     }
   </style>
+
+  <script src="assets/js/api-client.js"></script>
+  <script src="assets/js/applicant_edit.js" defer></script>
+
+  <!-- Global Theme CSS and JS -->
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <script src="assets/js/theme.js"></script>
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
 </head>
-<body class="light-mode">
-  <div class="login-wrapper">
-    <div class="login-container w-full max-w-4xl" style="width: 100%; max-width: 800px; padding: 48px;">
-      
-      <div class="logo-box">
-        <img src="assets/images/emblem.png" alt="State Emblem" class="emblem">
-        <div class="brand">
-          <h1>Samurdhi<span>Saviya</span></h1>
-          <p>Democratic Socialist Republic of Sri Lanka</p>
-        </div>
-      </div>
+<body>
+  <main class="auth-page">
+    <section class="auth-shell" aria-label="Registration panel">
 
-      <div class="login-header">
-        <h2>Edit Application</h2>
-        <p>Update your details below and resubmit for review.</p>
-      </div>
+      <!-- ── Left decorative panel ─────────────────────────────────────────── -->
+      <aside class="auth-visual" aria-hidden="true">
+        <div class="auth-visual-overlay"></div>
 
-      <div id="error-box" class="error-box" hidden>
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <span id="error-msg"></span>
-      </div>
-      
-      <div id="success-box" class="success-box" hidden>
-        <i class="fa-solid fa-check-circle"></i>
-        <span id="success-msg"></span>
-      </div>
-
-      <form id="edit-form" novalidate>
-        
-        <div class="form-grid">
-          <div class="field full-width">
-            <input type="text" id="Name" name="Name" placeholder=" " required>
-            <label for="Name">Full Name (As per NIC)</label>
-            <i class="fa-regular fa-user field-icon"></i>
-          </div>
-
-          <div class="field">
-            <input type="text" id="NIC" name="NIC" placeholder=" " required>
-            <label for="NIC">National Identity Card No.</label>
-            <i class="fa-regular fa-id-card field-icon"></i>
-          </div>
-
-          <div class="field">
-            <input type="date" id="DOB" name="DOB" required>
-            <label for="DOB" style="top: -10px; font-size: 0.78rem; background: linear-gradient(180deg, transparent 50%, var(--surface-strong) 50%); color: var(--accent);">Date of Birth</label>
-          </div>
-
-          <div class="field full-width">
-            <input type="text" id="Address" name="Address" placeholder=" " required>
-            <label for="Address">Permanent Address</label>
-            <i class="fa-solid fa-house field-icon"></i>
-          </div>
-
-          <div class="field">
-            <select id="Gender" name="Gender" required>
-              <option value="" disabled selected></option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            <label for="Gender" style="top: -10px; font-size: 0.78rem; background: linear-gradient(180deg, transparent 50%, var(--surface-strong) 50%); color: var(--accent);">Gender</label>
-          </div>
-
-          <div class="field">
-            <select id="Division" name="Division" required>
-              <option value="" disabled selected></option>
-              <option value="Colombo">Colombo</option>
-              <option value="Gampaha">Gampaha</option>
-              <option value="Kalutara">Kalutara</option>
-              <option value="Kandy">Kandy</option>
-              <option value="Galle">Galle</option>
-            </select>
-            <label for="Division" style="top: -10px; font-size: 0.78rem; background: linear-gradient(180deg, transparent 50%, var(--surface-strong) 50%); color: var(--accent);">Division Secretariat</label>
-          </div>
-
-          <!-- Application details -->
-          <div class="field">
-            <input type="number" id="Monthly_Income" name="Monthly_Income" placeholder=" " step="0.01" min="0" required>
-            <label for="Monthly_Income">Declared Monthly Income (LKR)</label>
-            <i class="fa-solid fa-coins field-icon"></i>
-          </div>
-
-          <div class="field">
-            <input type="number" id="Dependents" name="Dependents" placeholder=" " min="0" max="20" required>
-            <label for="Dependents">Number of Dependents</label>
-            <i class="fa-solid fa-users field-icon"></i>
-          </div>
-
-          <div class="field full-width">
-            <textarea id="Reason" name="Reason" placeholder=" " required></textarea>
-            <label for="Reason">Reason for applying for Samurdhi welfare</label>
-          </div>
-
-          <!-- Bank details -->
-          <div class="field">
-            <input type="text" id="Bank_Name" name="Bank_Name" placeholder=" " required>
-            <label for="Bank_Name">Bank Name</label>
-            <i class="fa-solid fa-building-columns field-icon"></i>
-          </div>
-
-          <div class="field">
-            <input type="text" id="Branch" name="Branch" placeholder=" " required>
-            <label for="Branch">Branch</label>
-            <i class="fa-solid fa-code-branch field-icon"></i>
-          </div>
-
-          <div class="field full-width">
-            <input type="text" id="Account_Name" name="Account_Name" placeholder=" " required>
-            <label for="Account_Name">Account Holder Name</label>
-            <i class="fa-solid fa-user-tag field-icon"></i>
-          </div>
-
-          <div class="field full-width">
-            <input type="text" id="Account_Number" name="Account_Number" placeholder=" " required>
-            <label for="Account_Number">Account Number</label>
-            <i class="fa-solid fa-hashtag field-icon"></i>
-          </div>
-
+        <!-- TOP: Badge + Heading + Subtitle -->
+        <div class="panel-top">
+          <span class="auth-badge">Application Edit</span>
+          <h1>Your welfare journey<br>starts here.</h1>
+          <p>
+            Register and submit your Samurdhi benefit application
+            in one seamless step.
+          </p>
         </div>
 
-        <button type="submit" id="submit-btn" class="btn-primary" style="margin-top: 32px;">
-          <span>Submit Updates</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </button>
+        <!-- MIDDLE: Auto-scrolling step cards carousel -->
+        <div class="panel-carousel" aria-hidden="true">
+          <div class="carousel-track">
 
-      </form>
+            <!-- Original 5 cards -->
+            <div class="step-card">
+              <span class="step-card-icon"><i class="fa-solid fa-user-pen"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 1</span>
+                <span class="step-card-title">Submit Details &amp; House Photo</span>
+                <span class="step-card-desc">Register with your NIC, address, income, and upload a photo of your home.</span>
+              </div>
+            </div>
 
-      <div class="login-footer">
-        <a href="applicant_dashboard.html" class="forgot-link">Cancel and return to Dashboard</a>
+            <div class="step-card">
+              <span class="step-card-icon"><i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 2</span>
+                <span class="step-card-title">Samurdhi Officer Home Visit</span>
+                <span class="step-card-desc">An officer visits your home and records an official recommendation.</span>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-card-icon"><i class="fa-solid fa-stamp"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 3</span>
+                <span class="step-card-title">Grama Niladhari &amp; Officer Verification</span>
+                <span class="step-card-desc">Your GN reviews the application and forwards it for ministerial approval.</span>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-card-icon"><img src="assets/images/logo.png" alt="Logo" style="width:24px; height:auto; margin-right:4px;">
+<img src="assets/images/emblem.png" alt="Emblem" style="width:24px; height:auto;"></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 4</span>
+                <span class="step-card-title">Minister Final Approval</span>
+                <span class="step-card-desc">The Minister reviews and grants or rejects the welfare benefit request.</span>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-card-icon"><i class="fa-solid fa-sack-dollar"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 5</span>
+                <span class="step-card-title">Receive Samurdhi Benefits Securely</span>
+                <span class="step-card-desc">Approved payments are disbursed directly and tracked in your dashboard.</span>
+              </div>
+            </div>
+
+            <!-- Exact duplicate set — creates the seamless infinite scroll loop -->
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><i class="fa-solid fa-user-pen"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 1</span>
+                <span class="step-card-title">Submit Details &amp; House Photo</span>
+                <span class="step-card-desc">Register with your NIC, address, income, and upload a photo of your home.</span>
+              </div>
+            </div>
+
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 2</span>
+                <span class="step-card-title">Samurdhi Officer Home Visit</span>
+                <span class="step-card-desc">An officer visits your home and records an official recommendation.</span>
+              </div>
+            </div>
+
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><i class="fa-solid fa-stamp"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 3</span>
+                <span class="step-card-title">Grama Niladhari &amp; Officer Verification</span>
+                <span class="step-card-desc">Your GN reviews the application and forwards it for ministerial approval.</span>
+              </div>
+            </div>
+
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><img src="assets/images/logo.png" alt="Logo" style="width:24px; height:auto; margin-right:4px;">
+<img src="assets/images/emblem.png" alt="Emblem" style="width:24px; height:auto;"></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 4</span>
+                <span class="step-card-title">Minister Final Approval</span>
+                <span class="step-card-desc">The Minister reviews and grants or rejects the welfare benefit request.</span>
+              </div>
+            </div>
+
+            <div class="step-card" aria-hidden="true">
+              <span class="step-card-icon"><i class="fa-solid fa-sack-dollar"></i></span>
+              <div class="step-card-body">
+                <span class="step-card-step">Step 5</span>
+                <span class="step-card-title">Receive Samurdhi Benefits Securely</span>
+                <span class="step-card-desc">Approved payments are disbursed directly and tracked in your dashboard.</span>
+              </div>
+            </div>
+
+          </div><!-- /.carousel-track -->
+        </div><!-- /.panel-carousel -->
+
+        <!-- BOTTOM: Trust signals strip -->
+        <ul class="auth-points">
+          <li><i class="fa-solid fa-shield-halved"></i> Government-verified &amp; secured system</li>
+          <li><i class="fa-solid fa-bolt-lightning"></i> Register &amp; apply in a single step</li>
+          <li><i class="fa-solid fa-magnifying-glass-chart"></i> Real-time application tracking</li>
+        </ul>
+
+      </aside>
+
+
+      <!-- ── Right form panel ───────────────────────────────────────────────── -->
+      <section class="auth-card">
+        <div class="auth-card-header">
+          <div class="auth-logo" aria-hidden="true">
+            <i class="fa-solid fa-user-plus"></i>
+          </div>
+          <div>
+            <h1>Edit Application</h1>
+            <p>Update your details below and resubmit for review.</p>
+          </div>
+        </div>
+
+        <!-- Success message — hidden by default via the `hidden` attribute -->
+        <div id="success-box" class="success-box" aria-live="polite" hidden>
+          <i class="fa-solid fa-circle-check"></i>
+          <span id="success-message">Registration successful! Redirecting…</span>
+        </div>
+
+        <!-- Error message — hidden by default via the `hidden` attribute -->
+        <div id="error-box" class="error-box" aria-live="polite" hidden></div>
+
+        <form id="edit-form" class="auth-form" novalidate enctype="multipart/form-data">
+          <div class="form-grid">
+
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!--  SECTION 1 — PERSONAL INFORMATION                             -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <div class="form-section-header">
+              <span class="section-badge">
+                <i class="fa-solid fa-id-card"></i>
+                Personal Information
+              </span>
+              <span class="section-line" aria-hidden="true"></span>
+            </div>
+
+            <!-- Full Name (full width) -->
+            <div class="field full-width">
+              <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                autocomplete="name"
+                placeholder=" "
+                required
+                maxlength="255"
+              >
+              <label for="full_name">Full Name as per NIC</label>
+            </div>
+
+            <!-- NIC Number -->
+            <div class="field">
+              <input
+                type="text"
+                id="nic"
+                name="nic"
+                placeholder=" "
+                required
+                maxlength="20"
+                autocomplete="off"
+              >
+              <label for="nic">NIC Number</label>
+            </div>
+
+            <!-- Date of Birth — label always floated to avoid browser chrome overlap -->
+            <div class="field field--date">
+              <input
+                type="date"
+                id="dob"
+                name="dob"
+                required
+              >
+              <label for="dob">Date of Birth</label>
+            </div>
+
+            <!-- Gender (proper select with chevron) -->
+            <div class="field field--select">
+              <select id="gender" name="gender" required>
+                <option value="" disabled selected hidden></option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              <label for="gender">Gender</label>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="field">
+              <input
+                type="tel"
+                id="phone_num"
+                name="phone_num"
+                autocomplete="tel"
+                placeholder=" "
+                pattern="[0-9+]{7,20}"
+                maxlength="20"
+              >
+              <label for="phone_num">Phone Number (optional)</label>
+            </div>
+
+            <!-- Division -->
+            <div class="field field--select">
+              <select id="division" name="division" class="bg-slate-800 border-slate-700 text-slate-200 focus:ring-blue-500 rounded-lg w-full px-4 py-2" required>
+                <option value="" disabled selected hidden>Select Division</option>
+              </select>
+            </div>
+
+            <!-- GN Division -->
+            <div class="field field--select">
+              <select id="gnDivision" name="gnDivision" class="bg-slate-800 border-slate-700 text-slate-200 focus:ring-blue-500 rounded-lg w-full px-4 py-2" required disabled>
+                <option value="" disabled selected hidden>Select GN Division</option>
+              </select>
+            </div>
+
+            <!-- Permanent Address (full-width textarea) -->
+            <div class="field full-width">
+              <textarea
+                id="address"
+                name="address"
+                placeholder=" "
+                required
+                rows="3"
+                maxlength="500"
+              ></textarea>
+              <label for="address">Permanent Address</label>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!--  SECTION 2 — ACCOUNT CREDENTIALS                              -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <div class="form-section-header">
+              <span class="section-badge">
+                <i class="fa-solid fa-key"></i>
+                Account Credentials
+              </span>
+              <span class="section-line" aria-hidden="true"></span>
+            </div>
+
+            <!-- Username (full width) -->
+            <div class="field full-width">
+              <input
+                type="text"
+                id="username"
+                name="username"
+                autocomplete="username"
+                placeholder=" "
+                required
+                minlength="3"
+                maxlength="100"
+              >
+              <label for="username">Create a Username</label>
+            </div>
+
+            <!-- Password -->
+            <div class="field">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="new-password"
+                placeholder=" "
+                required
+                minlength="8"
+              >
+              <label for="password">Password</label>
+              <!-- Live strength indicator -->
+              <div class="password-strength" id="strength-track" aria-hidden="true">
+                <div class="password-strength-bar" id="strength-bar"></div>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="field">
+              <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                autocomplete="new-password"
+                placeholder=" "
+                required
+              >
+              <label for="confirm_password">Confirm Password</label>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!--  SECTION 3 — APPLICATION DETAILS                              -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <div class="form-section-header">
+              <span class="section-badge">
+                <i class="fa-solid fa-file-lines"></i>
+                Application Details
+              </span>
+              <span class="section-line" aria-hidden="true"></span>
+            </div>
+            <p class="form-section-desc">
+              Your welfare application will be submitted simultaneously with your registration.
+              Please provide accurate information to ensure a fair assessment.
+            </p>
+
+            <!-- Monthly Income (LKR) -->
+            <div class="field field--currency">
+              <span class="currency-tag">LKR</span>
+              <input
+                type="number"
+                id="monthly_income"
+                name="monthly_income"
+                placeholder=" "
+                required
+                min="0"
+                step="0.01"
+              >
+              <label for="monthly_income">Monthly Household Income</label>
+            </div>
+
+            <!-- Number of Dependents -->
+            <div class="field">
+              <input
+                type="number"
+                id="num_dependents"
+                name="num_dependents"
+                placeholder=" "
+                required
+                min="0"
+                max="20"
+                step="1"
+              >
+              <label for="num_dependents">Number of Dependents</label>
+            </div>
+
+            <!-- House Photo Upload (full-width) -->
+            <div class="file-upload-wrapper">
+              <input
+                type="file"
+                id="housePhoto"
+                name="housePhoto"
+                accept="image/jpeg,image/png,image/jpg"
+                required
+                multiple
+              >
+              <label
+                for="housePhoto"
+                class="file-upload-label"
+                id="housePhoto-label"
+                role="button"
+                aria-label="Upload a photo of your house"
+              >
+                <span class="upload-icon" aria-hidden="true">
+                  <i class="fa-solid fa-house-chimney-window"></i>
+                </span>
+                <span class="upload-title">Upload House Photo</span>
+                <span class="upload-hint">Click to browse or drag &amp; drop &mdash; JPEG or PNG, max 5&nbsp;MB</span>
+              </label>
+              <div id="housePhoto-chosen" class="mt-3 text-sm font-semibold text-blue-500 dark:text-blue-400" hidden></div>
+            </div>
+
+            <!-- Reason for Application (full-width textarea) -->
+            <div class="field full-width">
+              <textarea
+                id="reason"
+                name="reason"
+                placeholder=" "
+                required
+                rows="4"
+                maxlength="1000"
+              ></textarea>
+              <label for="reason">Reason for Application</label>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!--  SECTION 4 — BANK DETAILS (MODAL)                              -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <div class="form-section-header">
+              <span class="section-badge">
+                <i class="fa-solid fa-building-columns"></i>
+                Bank Details
+              </span>
+              <span class="section-line" aria-hidden="true"></span>
+            </div>
+            <p class="form-section-desc">
+              Your bank details are required for processing monthly Samurdhi welfare payments upon approval.
+            </p>
+            
+            <div class="full-width" style="margin-bottom: 20px;">
+              <button type="button" id="open-bank-modal-btn" class="submit-button" style="background: var(--accent); padding: 12px 24px; border-radius: 8px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; cursor: pointer; color: white; font-weight: 600;">
+                <i class="fa-solid fa-plus-circle"></i> <span>Add Bank Details</span>
+              </button>
+              <div id="bank-status-msg" style="display: none; align-items: center; gap: 8px; margin-top: 10px; color: #10b981; font-size: 14px; font-weight: 600;">
+                <i class="fa-solid fa-check-circle"></i> Bank details added successfully!
+              </div>
+            </div>
+
+            <!-- Hidden inputs to store bank data in main form -->
+            <input type="hidden" id="bank_name" name="bank_name">
+            <input type="hidden" id="branch" name="branch">
+            <input type="hidden" id="account_name" name="account_name">
+            <input type="hidden" id="account_number" name="account_number">
+
+          </div><!-- /.form-grid -->
+
+            <button type="submit" id="submit-btn" class="btn-primary">
+              <span>Submit Updates</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <p class="auth-footer-note" id="login-link-footer" style="text-align:center; margin-top:20px;">
+          Already have an account?
+            <a href="applicant_dashboard.html" class="forgot-link">Cancel and return to Dashboard</a>
+        </p>
+
+        <p class="auth-footer-note" id="disclaimer-footer">
+          Registration is available for Applicants only. Officers and GN accounts are managed by admins.
+        </p>
+      </section>
+
+    </section>
+  </main>
+  <!-- ── Bank Details Modal ────────────────────────────────────────────────── -->
+  <div id="bank-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: var(--surface-strong); border: 1px solid var(--border); border-radius: 16px; width: 90%; max-width: 500px; padding: 24px; position: relative; box-shadow: var(--shadow);">
+      <button type="button" id="close-bank-modal" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--muted);">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 700; color: var(--text);"><i class="fa-solid fa-building-columns" style="color:var(--accent); margin-right:8px;"></i>Enter Bank Details</h3>
+      <p style="margin: 0 0 20px 0; font-size: 0.85rem; color: var(--muted);">Please provide your bank information for monthly welfare transfers.</p>
+      
+      <div id="bank-modal-error" style="display: none; background: var(--danger-soft); color: var(--danger); padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600;"></div>
+      
+      <div class="form-grid">
+        <div class="field full-width">
+          <input type="text" id="modal_bank_name" placeholder=" " maxlength="255">
+          <label for="modal_bank_name">Bank Name</label>
+        </div>
+        <div class="field full-width">
+          <input type="text" id="modal_branch" placeholder=" " maxlength="255">
+          <label for="modal_branch">Branch</label>
+        </div>
+        <div class="field full-width">
+          <input type="text" id="modal_account_name" placeholder=" " maxlength="255">
+          <label for="modal_account_name">Account Holder Name</label>
+        </div>
+        <div class="field full-width">
+          <input type="text" id="modal_account_number" placeholder=" " maxlength="50" pattern="[0-9]+">
+          <label for="modal_account_number">Account Number</label>
+        </div>
       </div>
-
+      
+      <button type="button" id="save-bank-btn" class="submit-button" style="margin-top: 20px;">
+        <span>Save Bank Details</span>
+        <i class="fa-solid fa-check"></i>
+      </button>
     </div>
   </div>
 
-  <script src="assets/js/api-client.js"></script>
-  <script src="assets/js/applicant_edit.js"></script>
 </body>
 </html>
+
