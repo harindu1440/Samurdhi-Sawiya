@@ -77,10 +77,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       userGnDivisionSelect.disabled = true;
 
       if (selectedDiv && locationData[selectedDiv]) {
+        const selectedRole = userRoleSelect ? userRoleSelect.value : 'Grama Niladhari';
+        const currentUserId = formActionInput?.value === 'update' ? userIdInput?.value : null;
+
+        // Find which GN divisions are already taken in the selected division for the current role
+        const takenGns = usersCache
+          .filter(u => u.role === selectedRole && u.division === selectedDiv && String(u.user_id) !== currentUserId)
+          .map(u => u.gn_division);
+
         locationData[selectedDiv].forEach(gn => {
           const option = document.createElement('option');
           option.value = gn;
           option.textContent = gn;
+          
+          if (takenGns.includes(gn)) {
+            option.disabled = true;
+            option.textContent = `${gn} (Already Assigned)`;
+          }
+
           userGnDivisionSelect.appendChild(option);
         });
         userGnDivisionSelect.disabled = false;
@@ -174,7 +188,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   // ── Event listeners ───────────────────────────────────────────────────────
-  userRoleSelect?.addEventListener('change', updateModalFields);
+  userRoleSelect?.addEventListener('change', () => {
+    updateModalFields();
+    if (userDivisionSelect) userDivisionSelect.dispatchEvent(new Event('change'));
+  });
   openCreateModalButton?.addEventListener('click', () => openModal('create'));
   closeModalButton?.addEventListener('click', closeModal);
   cancelModalButton?.addEventListener('click', closeModal);
