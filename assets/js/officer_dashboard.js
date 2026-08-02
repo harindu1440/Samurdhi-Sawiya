@@ -298,16 +298,20 @@ document.addEventListener('DOMContentLoaded', () => {
       noImgEl.classList.remove('hidden');
     }
 
-    // Reset form
+    // Reset form and hide GN feedback by default
     homeVisitForm.reset();
+    const gnFeedbackSection = document.getElementById('gn-feedback-section');
+    const gnFeedbackText = document.getElementById('gn-feedback-text');
+    if (gnFeedbackSection) gnFeedbackSection.classList.add('hidden');
 
-    // Pre-fill GN Feedback if present
+    // Show GN Feedback if present
     if (app.Officer_Remarks && app.Officer_Remarks.includes('[GN Feedback:')) {
       try {
         const matches = [...app.Officer_Remarks.matchAll(/\[GN Feedback:\s*(.*?)\]/g)];
         if (matches.length > 0) {
           const lastFeedback = matches[matches.length - 1][1];
-          document.getElementById('officer-notes').value = lastFeedback;
+          if (gnFeedbackText) gnFeedbackText.textContent = lastFeedback;
+          if (gnFeedbackSection) gnFeedbackSection.classList.remove('hidden');
         }
       } catch (e) {
         console.error('Error parsing GN feedback:', e);
@@ -339,6 +343,51 @@ document.addEventListener('DOMContentLoaded', () => {
       closeReviewModal();
     }
   });
+
+  // GN Feedback Forward Button
+  const forwardGnBtn = document.getElementById('forward-gn-feedback-btn');
+  if (forwardGnBtn) {
+    forwardGnBtn.addEventListener('click', async () => {
+      const gnText = document.getElementById('gn-feedback-text').textContent;
+      const officerNotes = document.getElementById('officer-notes');
+      
+      if (!officerNotes.value.trim()) {
+        officerNotes.value = 'Forwarding GN Feedback: ' + gnText;
+      }
+
+      const formData = new FormData(homeVisitForm);
+      formData.append('StatusAction', 'Update_Required');
+      formData.append('UpdateReason', gnText);
+
+      forwardGnBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Forwarding...';
+      forwardGnBtn.disabled = true;
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/officer/visit', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+        
+        const result = await response.json();
+        if (result.status === 'success') {
+          alert('Message forwarded and application returned to applicant successfully.');
+          closeReviewModal();
+          fetchDashboard(); // Refresh UI
+        } else {
+          alert(result.message || 'Error forwarding message.');
+          forwardGnBtn.innerHTML = '<i class="fa-solid fa-share-from-square"></i> Forward to Applicant';
+          forwardGnBtn.disabled = false;
+        }
+      } catch (err) {
+        console.error('Error forwarding GN feedback:', err);
+        alert('Network error. Please try again.');
+        forwardGnBtn.innerHTML = '<i class="fa-solid fa-share-from-square"></i> Forward to Applicant';
+        forwardGnBtn.disabled = false;
+      }
+    });
+  }
 
   // 4. Handle Form Submission
   let homeVisitPhotoDT = new DataTransfer();

@@ -275,6 +275,18 @@
           <form id="home-visit-form" novalidate>
             <input type="hidden" id="visit-app-id" name="Application_ID">
             
+            <!-- GN Feedback Section -->
+            <div id="gn-feedback-section" class="hidden mb-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700/50 rounded-lg p-4">
+              <h4 class="text-yellow-800 dark:text-yellow-500 font-bold mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-reply"></i> Returned by Grama Niladhari
+              </h4>
+              <p class="text-yellow-700 dark:text-yellow-400 text-sm mb-3">The Grama Niladhari has requested the following updates:</p>
+              <div id="gn-feedback-text" class="p-3 bg-white dark:bg-slate-800 rounded border border-yellow-200 dark:border-yellow-700 text-slate-800 dark:text-slate-200 text-sm mb-4 font-mono whitespace-pre-wrap"></div>
+              <button type="button" id="forward-gn-feedback-btn" class="px-4 py-2 bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border border-yellow-500/50 rounded-md text-sm font-semibold hover:bg-yellow-500/30 transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-share-from-square"></i> Forward to Applicant
+              </button>
+            </div>
+
             <label class="block mb-4">
               <span class="block mb-2 font-medium text-slate-800 dark:text-slate-200">Officer Notes / Remarks</span>
               <textarea id="officer-notes" name="OfficerNotes" rows="4" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg p-3 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500 transition-colors" placeholder="Enter your detailed observations here..." required></textarea>
