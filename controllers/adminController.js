@@ -127,6 +127,19 @@ async function createUser(req, res) {
       return res.status(409).json({ status: 'error', message: 'Username already exists.' });
     }
 
+    // Check if division/gnDivision is already assigned to someone else for this role
+    const [[existingTerritory]] = await conn.execute(
+      `SELECT 1 FROM \`${config.table}\` WHERE \`Division\` = ? AND \`GN_Division\` = ? LIMIT 1`,
+      [division, gnDivision]
+    );
+    if (existingTerritory) {
+      conn.release();
+      return res.status(409).json({ 
+        status: 'error', 
+        message: `A ${role} is already assigned to ${gnDivision} in ${division}. Only one ${role} is allowed per GN Division.` 
+      });
+    }
+
     const hash = await bcrypt.hash(defaultPassword, 12);
 
     await conn.beginTransaction();
@@ -205,6 +218,19 @@ async function updateUser(req, res) {
       return res.status(422).json({ status: 'error', message: 'Validation failed.', errors });
     }
 
+    // Check if the division/gnDivision already has ANOTHER user for this role
+    const [[existingTerritory]] = await conn.execute(
+      `SELECT \`${config.idCol}\` FROM \`${config.table}\` WHERE \`Division\` = ? AND \`GN_Division\` = ? LIMIT 1`,
+      [division, gnDivision]
+    );
+    if (existingTerritory && existingTerritory[config.idCol] !== userId) {
+      conn.release();
+      return res.status(409).json({ 
+        status: 'error', 
+        message: `A ${role} is already assigned to ${gnDivision} in ${division}. Only one ${role} is allowed per GN Division.` 
+      });
+    }
+
     await conn.beginTransaction();
 
     const userFields = ['`Username` = ?', '`Phone_Num` = ?'];
@@ -259,22 +285,45 @@ async function updateUser(req, res) {
 }
 
 async function deleteUser(req, res) {
+  const conn = await pool.getConnection();
   try {
     const userId = parseInt(req.params.id, 10);
     // User subclass is deleted via ON DELETE CASCADE in USERS table.
     
     if (!userId || userId < 1) {
+      conn.release();
       return res.status(400).json({ status: 'error', message: 'Invalid user ID.' });
     }
 
-    const [result] = await pool.execute(
+    await conn.beginTransaction();
+
+    const [[user]] = await conn.execute(
+      `SELECT \`Role\` FROM \`USERS\` WHERE \`User_ID\` = ? LIMIT 1`,
+      [userId]
+    );
+
+    if (!user) {
+      await conn.rollback();
+      conn.release();
+      return res.status(404).json({ status: 'error', message: 'User not found.' });
+    }
+
+    // Nullify foreign keys in dependent tables to prevent constraint errors
+    if (user.Role === 'Grama_Niladhari') {
+      await conn.execute(`UPDATE \`MINISTER_APPROVAL\` SET \`GN_ID\` = NULL WHERE \`GN_ID\` = ?`, [userId]);
+    } else if (user.Role === 'Samurdhi_Officer') {
+      await conn.execute(`UPDATE \`HOME_VISIT\` SET \`Officer_ID\` = NULL WHERE \`Officer_ID\` = ?`, [userId]);
+    } else if (user.Role === 'Minister') {
+      await conn.execute(`UPDATE \`MINISTER_APPROVAL\` SET \`Minister_ID\` = NULL WHERE \`Minister_ID\` = ?`, [userId]);
+    }
+
+    const [result] = await conn.execute(
       `DELETE FROM \`USERS\` WHERE \`User_ID\` = ?`,
       [userId]
     );
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ status: 'error', message: 'User not found.' });
-    }
+    await conn.commit();
+    conn.release();
 
     return res.status(200).json({
       status:  'success',
@@ -282,8 +331,10 @@ async function deleteUser(req, res) {
       deleted: { user_id: userId },
     });
   } catch (err) {
+    await conn.rollback().catch(() => {});
+    conn.release();
     console.error('[adminController.deleteUser]', err.message);
-    return res.status(500).json({ status: 'error', message: 'Unable to delete user.' });
+    return res.status(500).json({ status: 'error', message: 'Unable to delete user. They might be referenced in other critical records.' });
   }
 }
 
