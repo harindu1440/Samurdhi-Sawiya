@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function updatePhotoLabel(files) {
     if (!housePhotoChosen) return;
     if (files && files.length > 0) {
-      let fileListHtml = '<ul style="list-style: none; padding: 0; margin: 10px 0 0 0; text-align: left; font-size: 0.9em;">';
+      let fileListHtml = '<ul style="list-style: none; padding: 0; margin: 0; text-align: left;">';
       for (let i = 0; i < files.length; i++) {
         fileListHtml += `<li style="padding: 2px 0;">✓ ${files[i].name}</li>`;
       }
