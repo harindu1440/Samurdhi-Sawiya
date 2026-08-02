@@ -10,9 +10,9 @@ async function getStats(req, res) {
   try {
     const [[counts]] = await pool.execute(`
       SELECT
-        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'Accepted')  AS total_beneficiaries,
+        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'Minister_Approved')  AS total_beneficiaries,
         (SELECT COALESCE(SUM(\`Amount\`), 0) FROM \`SAMURDHI_PAYMENT\`)                 AS total_funds_disbursed,
-        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'Pending' OR \`Status\` = 'Under Review' OR \`Status\` = 'Forwarded') AS pending_approvals
+        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'Pending' OR \`Status\` = 'Officer_Approved' OR \`Status\` = 'GN_Approved') AS pending_approvals
     `);
 
     return res.status(200).json({
@@ -354,7 +354,7 @@ async function getReport(req, res) {
       LEFT JOIN \`MINISTER_APPROVAL\` ma ON ma.Request_ID = sp.Request_ID
       LEFT JOIN \`GRAMA_NILADHARI\` gn  ON gn.User_ID = ma.GN_ID
       LEFT JOIN \`USERS\` gnUser ON gnUser.User_ID = gn.User_ID
-      WHERE wa.Status = 'Accepted'
+      WHERE wa.Status = 'Minister_Approved'
         AND DATE(wa.Date_Submitted) BETWEEN ? AND ?
       ORDER BY wa.Date_Submitted DESC
     `, [startDate, endDate]);
