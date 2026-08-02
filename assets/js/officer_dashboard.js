@@ -223,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset form
     homeVisitForm.reset();
+    homeVisitPhotoDT = new DataTransfer();
     const photoListEl = document.getElementById('home-visit-photo-list');
     if (photoListEl) {
       photoListEl.innerHTML = '';
@@ -250,23 +251,54 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 4. Handle Form Submission
+  let homeVisitPhotoDT = new DataTransfer();
   const homeVisitPhotoInput = document.getElementById('home-visit-photo');
+
+  function renderHomeVisitPhotoList() {
+    const listEl = document.getElementById('home-visit-photo-list');
+    if (!listEl || !homeVisitPhotoInput) return;
+    
+    const files = homeVisitPhotoDT.files;
+    homeVisitPhotoInput.files = files; // Sync with input
+    
+    if (files && files.length > 0) {
+      let html = '';
+      for (let i = 0; i < files.length; i++) {
+        html += `
+          <li style="padding: 4px 8px; margin-bottom: 4px; background: rgba(0,0,0,0.05); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; list-style-type: none;">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">✓ ${files[i].name}</span>
+            <button type="button" class="remove-visit-photo-btn" data-index="${i}" style="color: red; border: none; background: none; cursor: pointer; font-weight: bold; margin-left: 8px;">✕</button>
+          </li>`;
+      }
+      listEl.innerHTML = html;
+      listEl.classList.remove('hidden');
+      
+      const removeBtns = listEl.querySelectorAll('.remove-visit-photo-btn');
+      removeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const indexToRemove = parseInt(e.target.getAttribute('data-index'), 10);
+          const newDt = new DataTransfer();
+          for(let i=0; i<homeVisitPhotoDT.files.length; i++) {
+            if(i !== indexToRemove) newDt.items.add(homeVisitPhotoDT.files[i]);
+          }
+          homeVisitPhotoDT = newDt;
+          renderHomeVisitPhotoList();
+        });
+      });
+    } else {
+      listEl.innerHTML = '';
+      listEl.classList.add('hidden');
+    }
+  }
+
   if (homeVisitPhotoInput) {
     homeVisitPhotoInput.addEventListener('change', (e) => {
-      const listEl = document.getElementById('home-visit-photo-list');
-      if (!listEl) return;
-      const files = e.target.files;
-      if (files && files.length > 0) {
-        let html = '';
-        for(let i=0; i<files.length; i++) {
-          html += `<li style="padding: 2px 0;">✓ ${files[i].name}</li>`;
-        }
-        listEl.innerHTML = html;
-        listEl.classList.remove('hidden');
-      } else {
-        listEl.innerHTML = '';
-        listEl.classList.add('hidden');
+      homeVisitPhotoDT = new DataTransfer();
+      for (let i = 0; i < e.target.files.length; i++) {
+        homeVisitPhotoDT.items.add(e.target.files[i]);
       }
+      renderHomeVisitPhotoList();
     });
   }
 
