@@ -190,9 +190,15 @@ document.addEventListener('DOMContentLoaded', () => {
         String(app.NIC).toLowerCase().includes(term)
       );
       renderTable(filtered);
-    });
-  }
-
+    } else {
+      const filtered = approvedApps.filter(app => 
+        String(app.Application_ID).toLowerCase().includes(term) ||
+        String(app.applicant_name).toLowerCase().includes(term) ||
+        String(app.NIC).toLowerCase().includes(term)
+      );
+      renderApprovedTable(filtered);
+    }
+  };
   // ── 4. Open Modal ────────────────────────────────────────────────────────
   window.openReviewModal = (id) => {
     const app = currentApps.find(a => String(a.Application_ID) === String(id));
