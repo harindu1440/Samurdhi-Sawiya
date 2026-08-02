@@ -20,10 +20,17 @@
   <link rel="icon" type="image/png" href="assets/images/logo.png">
 </head>
 <body>
+  <!-- Next Level Background Elements -->
+  <div class="bg-watermark">
+    <img src="assets/images/logo.png" alt="Watermark">
+  </div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
   <div class="page-shell">
     <header class="site-header">
       <nav class="navbar" aria-label="Primary navigation">
-        <a class="brand" href="#home" aria-label="SamurdhiSaviya home" style="display: flex; align-items: center; gap: 16px;">
+        <a class="brand" href="#home" aria-label="SamurdhiSaviya home" style="display: flex; align-items: center; gap: 16px; position: relative; z-index: 10;">
           <img src="assets/images/logo.png" alt="Samurdhi Logo" style="width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(47, 111, 237, 0.4));">
           <span class="brand-text">
             <strong>SamurdhiSaviya</strong>
@@ -41,15 +48,17 @@
     </header>
 
     <main>
-      <section class="hero" id="home" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 80px;">
-        <div class="hero-content" style="display: flex; flex-direction: column; align-items: center;">
+      <section class="hero" id="home" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 80px; position: relative; z-index: 5;">
+        <div class="hero-glass" style="display: flex; flex-direction: column; align-items: center; padding: 60px 40px; border-radius: 32px;">
           <p class="hero-kicker">Trusted Public Service Platform</p>
-          <h1 style="max-width: 800px;">Modern welfare management built for speed, clarity, and accountability.</h1>
-          <p class="hero-subtitle" style="max-width: 700px; margin-bottom: 24px;">
+          <h1 style="max-width: 800px; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25em;">
+            <span class="word">Modern</span> <span class="word">welfare</span> <span class="word">management</span> <span class="word">built</span> <span class="word">for</span> <span class="word">speed,</span> <span class="word">clarity,</span> <span class="word">and</span> <span class="word">accountability.</span>
+          </h1>
+          <p class="hero-subtitle" style="max-width: 700px; margin-bottom: 32px;">
             SamurdhiSaviya streamlines applicant registration, field verification, approvals,
             complaints, and payment tracking into one secure digital workflow for teams and citizens.
           </p>
-          <a class="cta-button" href="login.html" style="font-size: 1.25rem; padding: 20px 40px; border-radius: 999px; box-shadow: 0 0 30px rgba(47, 111, 237, 0.4); transform: scale(1.05);">
+          <a class="cta-button" href="login.html" style="font-size: 1.25rem; padding: 20px 40px; border-radius: 999px;">
             Get Started
             <i class="fa-solid fa-arrow-right"></i>
           </a>
