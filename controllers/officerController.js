@@ -5,6 +5,22 @@ const pool = require('../config/db');
 // Officer Controller
 // ─────────────────────────────────────────────────────────────────────────────
 
+// GET /api/officer/profile — returns Division & GN_Division for the logged-in officer
+async function getProfile(req, res) {
+  try {
+    const officerId = req.user.User_ID;
+    const [[officer]] = await pool.execute(
+      'SELECT `Name`, `Division`, `GN_Division` FROM `SAMURDHI_OFFICER` WHERE `User_ID` = ? LIMIT 1',
+      [officerId]
+    );
+    if (!officer) return res.status(404).json({ status: 'error', message: 'Officer profile not found.' });
+    return res.status(200).json({ status: 'success', data: officer });
+  } catch (err) {
+    console.error('[officerController.getProfile]', err);
+    return res.status(500).json({ status: 'error', message: 'Unable to load officer profile.' });
+  }
+}
+
 async function getDashboard(req, res) {
   try {
     const officerId = req.user.User_ID;
@@ -97,7 +113,7 @@ async function submitVisit(req, res) {
 
     // Verify application exists and is currently Pending
     const [[application]] = await conn.execute(
-      'SELECT \`Status\` FROM \`WELFARE_APPLICATION\` WHERE \`Application_ID\` = ? LIMIT 1 FOR UPDATE',
+      'SELECT `Status` FROM `WELFARE_APPLICATION` WHERE `Application_ID` = ? LIMIT 1 FOR UPDATE',
       [applicationId]
     );
 
@@ -120,7 +136,7 @@ async function submitVisit(req, res) {
 
     // Update Application Status
     await conn.execute(
-      'UPDATE \`WELFARE_APPLICATION\` SET \`Status\` = ? WHERE \`Application_ID\` = ?',
+      'UPDATE `WELFARE_APPLICATION` SET `Status` = ? WHERE `Application_ID` = ?',
       [newStatus, applicationId]
     );
 
@@ -187,7 +203,8 @@ async function getApprovedApplications(req, res) {
     return res.status(500).json({ status: 'error', message: 'Unable to load approved applications.' });
   }
 }
-async function getMyApplicants(req, res) {
+
+async function getMyApplicants(req, res) {
   try {
     const officerId = req.user.User_ID;
     const [rows] = await pool.execute(`
@@ -213,4 +230,4 @@ async function getApprovedApplications(req, res) {
   }
 }
 
-module.exports = { getDashboard, review, submitVisit, getApprovedApplications, getMyApplicants };
+module.exports = { getProfile, getDashboard, review, submitVisit, getApprovedApplications, getMyApplicants };

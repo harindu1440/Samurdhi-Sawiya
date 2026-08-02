@@ -162,6 +162,13 @@ router.get(
 // ─────────────────────────────────────────────────────────────────────────────
 
 router.get(
+  '/officer/profile',
+  authMiddleware,
+  requireRole('Samurdhi_Officer'),
+  officerController.getProfile
+);
+
+router.get(
   '/officer/dashboard',
   authMiddleware,
   requireRole('Samurdhi_Officer'),

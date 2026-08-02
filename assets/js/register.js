@@ -82,6 +82,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ── Officer Mode: Auto-fill & lock Division fields ────────────────────────
+  if (isOfficerMode && officerId) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/api/officer/profile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success' && data.data) {
+          const { Division, GN_Division } = data.data;
+
+          // Set Division
+          if (divisionSelect && Division) {
+            divisionSelect.value = Division;
+            divisionSelect.disabled = true;
+
+            // Trigger change to populate GN Division options
+            divisionSelect.dispatchEvent(new Event('change'));
+
+            // Set GN_Division after options are populated
+            setTimeout(() => {
+              if (gnDivisionSelect && GN_Division) {
+                gnDivisionSelect.value = GN_Division;
+                gnDivisionSelect.disabled = true;
+              }
+            }, 50);
+          }
+        }
+      })
+      .catch(err => console.warn('Could not fetch officer profile for auto-fill:', err));
+    }
+  }
+
   // ── GSAP entrance animations ──────────────────────────────────────────────
   if (typeof gsap !== 'undefined') {
     gsap.from('.auth-visual', {

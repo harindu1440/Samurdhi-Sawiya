@@ -224,14 +224,26 @@ async function register(req, res) {
     );
 
     // Q3 — Immediately create a WELFARE_APPLICATION tied to the new applicant
+    // If registered by an officer, skip Officer review and go straight to GN (Officer_Approved)
+    const initialStatus = officerId ? 'Officer_Approved' : 'Pending';
     const [appResult] = await conn.execute(
       `INSERT INTO \`WELFARE_APPLICATION\`
          (\`Applicant_ID\`, \`Status\`, \`Date_Submitted\`,
           \`Monthly_Income\`, \`Dependents\`, \`Reason\`, \`House_Photo\`)
-       VALUES (?, 'Pending', CURDATE(), ?, ?, ?, ?)`,
-      [newUserId, monthlyIncome, dependents, reason, housePhoto]
+       VALUES (?, ?, CURDATE(), ?, ?, ?, ?)`,
+      [newUserId, initialStatus, monthlyIncome, dependents, reason, housePhoto]
     );
     const newApplicationId = appResult.insertId;
+
+    // If officer-registered, also create a HOME_VISIT record automatically to mark officer review as done
+    if (officerId) {
+      await conn.execute(
+        `INSERT INTO \`HOME_VISIT\`
+           (\`Application_ID\`, \`Officer_ID\`, \`Remarks\`, \`Recommendation\`, \`Date_Visited\`)
+         VALUES (?, ?, 'Registered directly by officer - no home visit required', 'Recommended', CURDATE())`,
+        [newApplicationId, officerId]
+      );
+    }
 
     // ── All three queries succeeded — commit ──────────────────────────────────
     await conn.commit();
