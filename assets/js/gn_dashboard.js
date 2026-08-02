@@ -36,7 +36,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnReturn    = document.getElementById('btn-return');
 
   let currentApps = [];
+  let approvedApps = [];
+  let currentTab = 'pending';
   let selectedAppId = null;
+
+  // Tab switching logic
+  window.switchTab = (tab) => {
+    currentTab = tab;
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.classList.remove('active', 'border-blue-600', 'text-blue-600', 'dark:border-blue-500', 'dark:text-blue-500');
+      btn.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400', 'hover:text-slate-600', 'hover:border-slate-300', 'dark:hover:text-slate-300');
+    });
+    
+    const activeBtn = document.getElementById(`${tab}-tab`);
+    if (activeBtn) {
+      activeBtn.classList.add('active', 'border-blue-600', 'text-blue-600', 'dark:border-blue-500', 'dark:text-blue-500');
+      activeBtn.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400', 'hover:text-slate-600', 'hover:border-slate-300', 'dark:hover:text-slate-300');
+    }
+
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.add('hidden');
+      panel.classList.remove('active');
+    });
+    const activePanel = document.getElementById(`${tab}-panel`);
+    if (activePanel) {
+      activePanel.classList.remove('hidden');
+      activePanel.classList.add('active');
+    }
+
+    if (searchInput) searchInput.value = '';
+    
+    if (tab === 'pending') {
+      renderTable(currentApps);
+    } else {
+      loadApprovedApplications();
+    }
+  };
 
   // ── Validation & Auth ──────────────────────────────────────────────────
   const session = getSession('Grama_Niladhari');
@@ -62,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (statApproved) statApproved.textContent = data.stats.forwarded;
 
       currentApps = data.applications || [];
-      renderTable(currentApps);
+      if (currentTab === 'pending') renderTable(currentApps);
 
       if (typeof gsap !== 'undefined') {
         gsap.from('.metric-card', { duration: 0.8, y: 30, opacity: 0, stagger: 0.1, ease: 'power3.out' });
@@ -72,6 +107,25 @@ document.addEventListener('DOMContentLoaded', () => {
       tbody.innerHTML = '<tr><td colspan="6" class="text-center text-red-500 py-10">Failed to load data. Please refresh.</td></tr>';
     }
   }
+
+  // Load approved applications
+  async function loadApprovedApplications() {
+    const approvedTbody = document.getElementById('approved-tbody');
+    approvedTbody.innerHTML = '<tr><td colspan="5" class="text-center py-10 text-slate-500">Loading approved applications...</td></tr>';
+    try {
+      const res = await authFetch('/api/gn/approved');
+      if (res && res.status === 'success') {
+        approvedApps = res.data || [];
+        renderApprovedTable(approvedApps);
+      } else {
+        approvedTbody.innerHTML = '<tr><td colspan="5" class="text-center text-red-500 py-10">Failed to load approved applications.</td></tr>';
+      }
+    } catch (err) {
+      console.error('Fetch Error:', err);
+      approvedTbody.innerHTML = '<tr><td colspan="5" class="text-center text-red-500 py-10">Network error.</td></tr>';
+    }
+  }
+
 
   // ── 2. Render Table ──────────────────────────────────────────────────────
   function renderTable(apps) {
@@ -101,10 +155,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
-  // ── 3. Search Filter ─────────────────────────────────────────────────────
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
+  function renderApprovedTable(apps) {
+    const approvedTbody = document.getElementById('approved-tbody');
+    if (apps.length === 0) {
+      approvedTbody.innerHTML = '<tr><td colspan="5" class="text-center py-10 text-slate-500">No approved applications found.</td></tr>';
+      return;
+    }
+
+    approvedTbody.innerHTML = apps.map(app => {
+      const displayStatus = app.Status.replace('_', ' ');
+      const statusBadge = `<span class="bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-500/30">${displayStatus}</span>`;
+
+      return `
+        <tr class="hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50">
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">#${app.Application_ID}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-semibold">${app.applicant_name}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Date_Submitted ? app.Date_Submitted.substring(0, 10) : 'N/A'}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">LKR ${Number(app.Monthly_Income).toLocaleString()}</td>
+          <td class="px-6 py-4">${statusBadge}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ── Search & Filter ──────────────────────────────────────────────────────
+  window.handleSearch = () => {
+    if (!searchInput) return;
+    const term = searchInput.value.toLowerCase();
+    
+    if (currentTab === 'pending') {
       const filtered = currentApps.filter(app => 
         String(app.Application_ID).toLowerCase().includes(term) ||
         String(app.applicant_name).toLowerCase().includes(term) ||

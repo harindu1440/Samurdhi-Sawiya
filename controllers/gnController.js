@@ -271,4 +271,29 @@ async function getPayments(req, res) {
   }
 }
 
-module.exports = { getDashboard, getStats, getApplications, getApplicationDetail, review, action, getPayments };
+async function getApprovedApplications(req, res) {
+  try {
+    const gnId = req.user.User_ID;
+    const [rows] = await pool.execute(`
+      SELECT 
+        wa.Application_ID,
+        wa.Date_Submitted,
+        wa.Status,
+        wa.Monthly_Income,
+        a.Full_Name AS applicant_name,
+        a.NIC,
+        ma.Request_ID AS Approval_Date /* We don't have a specific GN approval date field, so we use Request_ID for ordering */
+      FROM \`MINISTER_APPROVAL\` ma
+      JOIN \`WELFARE_APPLICATION\` wa ON ma.Application_ID = wa.Application_ID
+      JOIN \`APPLICANT\` a ON wa.Applicant_ID = a.User_ID
+      WHERE ma.GN_ID = ?
+      ORDER BY ma.Request_ID DESC
+    `, [gnId]);
+    return res.status(200).json({ status: 'success', data: rows });
+  } catch (err) {
+    console.error('[gnController.getApprovedApplications]', err);
+    return res.status(500).json({ status: 'error', message: 'Unable to load approved applications.' });
+  }
+}
+
+module.exports = { getDashboard, getStats, getApplications, getApplicationDetail, review, action, getPayments, getApprovedApplications };

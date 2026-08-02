@@ -13,6 +13,41 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('searchInput');
 
   let currentApplications = [];
+  let approvedApplications = [];
+  let currentTab = 'pending';
+
+  // Tab switching logic
+  window.switchTab = (tab) => {
+    currentTab = tab;
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.classList.remove('active', 'border-blue-600', 'text-blue-600', 'dark:border-blue-500', 'dark:text-blue-500');
+      btn.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400', 'hover:text-slate-600', 'hover:border-slate-300', 'dark:hover:text-slate-300');
+    });
+    
+    const activeBtn = document.getElementById(`${tab}-tab`);
+    if (activeBtn) {
+      activeBtn.classList.add('active', 'border-blue-600', 'text-blue-600', 'dark:border-blue-500', 'dark:text-blue-500');
+      activeBtn.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400', 'hover:text-slate-600', 'hover:border-slate-300', 'dark:hover:text-slate-300');
+    }
+
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.add('hidden');
+      panel.classList.remove('active');
+    });
+    const activePanel = document.getElementById(`${tab}-panel`);
+    if (activePanel) {
+      activePanel.classList.remove('hidden');
+      activePanel.classList.add('active');
+    }
+
+    if (searchInput) searchInput.value = '';
+    
+    if (tab === 'pending') {
+      renderTable(currentApplications);
+    } else {
+      loadApprovedApplications();
+    }
+  };
 
   // 1. Fetch pending applications
   async function loadDashboard() {
@@ -27,13 +62,31 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
         currentApplications = res.pending_applications || [];
-        renderTable(currentApplications);
+        if (currentTab === 'pending') renderTable(currentApplications);
       } else {
         tbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Failed to load applications from server.</td></tr>';
       }
     } catch (err) {
       console.error('Fetch Error:', err);
       tbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Failed to load applications. Network error.</td></tr>';
+    }
+  }
+
+  // Load approved applications
+  async function loadApprovedApplications() {
+    const approvedTbody = document.getElementById('approved-tbody');
+    approvedTbody.innerHTML = '<tr><td colspan="6" class="empty-state">Loading approved applications...</td></tr>';
+    try {
+      const res = await authFetch('/api/officer/approved');
+      if (res && res.status === 'success') {
+        approvedApplications = res.data || [];
+        renderApprovedTable(approvedApplications);
+      } else {
+        approvedTbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Failed to load approved applications.</td></tr>';
+      }
+    } catch (err) {
+      console.error('Fetch Error:', err);
+      approvedTbody.innerHTML = '<tr><td colspan="6" class="text-red-500 p-4">Network error.</td></tr>';
     }
   }
 
@@ -78,18 +131,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
+  function renderApprovedTable(apps) {
+    const approvedTbody = document.getElementById('approved-tbody');
+    if (apps.length === 0) {
+      approvedTbody.innerHTML = '<tr><td colspan="6" class="empty-state">No approved applications found.</td></tr>';
+      return;
+    }
+
+    approvedTbody.innerHTML = apps.map(app => {
+      const displayStatus = app.Status.replace('_', ' ');
+      const statusBadge = `<span class="bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-500/30">${displayStatus}</span>`;
+
+      return `
+        <tr class="hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50">
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">#${app.Application_ID}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-semibold">${app.applicant_name}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Date_Submitted ? app.Date_Submitted.substring(0, 10) : 'N/A'}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Approval_Date ? app.Approval_Date.substring(0, 10) : 'N/A'}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">LKR ${Number(app.Monthly_Income).toLocaleString()}</td>
+          <td class="px-6 py-4">${statusBadge}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
   // Search Filter Logic
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
+  window.handleSearch = () => {
+    if (!searchInput) return;
+    const term = searchInput.value.toLowerCase();
+    
+    if (currentTab === 'pending') {
       const filtered = currentApplications.filter(app => 
         String(app.Application_ID).toLowerCase().includes(term) ||
         String(app.applicant_name).toLowerCase().includes(term) ||
         String(app.NIC).toLowerCase().includes(term)
       );
       renderTable(filtered);
-    });
-  }
+    } else {
+      const filtered = approvedApplications.filter(app => 
+        String(app.Application_ID).toLowerCase().includes(term) ||
+        String(app.applicant_name).toLowerCase().includes(term) ||
+        String(app.NIC).toLowerCase().includes(term)
+      );
+      renderApprovedTable(filtered);
+    }
+  };
 
   // 3. Open Modal
   window.openReviewModal = (id) => {

@@ -163,4 +163,29 @@ async function review(req, res) {
   });
 }
 
-module.exports = { getDashboard, review, submitVisit };
+async function getApprovedApplications(req, res) {
+  try {
+    const officerId = req.user.User_ID;
+    const [rows] = await pool.execute(`
+      SELECT 
+        wa.Application_ID,
+        wa.Date_Submitted,
+        wa.Status,
+        wa.Monthly_Income,
+        a.Full_Name AS applicant_name,
+        a.NIC,
+        hv.Date_Visited AS Approval_Date
+      FROM \`HOME_VISIT\` hv
+      JOIN \`WELFARE_APPLICATION\` wa ON hv.Application_ID = wa.Application_ID
+      JOIN \`APPLICANT\` a ON wa.Applicant_ID = a.User_ID
+      WHERE hv.Officer_ID = ? AND hv.Recommendation = 'Recommended'
+      ORDER BY hv.Date_Visited DESC
+    `, [officerId]);
+    return res.status(200).json({ status: 'success', data: rows });
+  } catch (err) {
+    console.error('[officerController.getApprovedApplications]', err);
+    return res.status(500).json({ status: 'error', message: 'Unable to load approved applications.' });
+  }
+}
+
+module.exports = { getDashboard, review, submitVisit, getApprovedApplications };

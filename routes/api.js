@@ -150,6 +150,13 @@ router.get(
   gnController.getPayments
 );
 
+router.get(
+  '/gn/approved',
+  authMiddleware,
+  requireRole('Grama_Niladhari'),
+  gnController.getApprovedApplications
+);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ── Samurdhi Officer routes ───────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────
@@ -174,6 +181,13 @@ router.post(
   requireRole('Samurdhi_Officer'),
   uploadHomeVisit.single('home_visit_photo'),
   officerController.submitVisit
+);
+
+router.get(
+  '/officer/approved',
+  authMiddleware,
+  requireRole('Samurdhi_Officer'),
+  officerController.getApprovedApplications
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -245,6 +259,13 @@ router.post(
   authMiddleware,
   requireRole('Minister'),
   ministerController.actionApproval
+);
+
+router.get(
+  '/minister/approved',
+  authMiddleware,
+  requireRole('Minister'),
+  ministerController.getApprovedApplications
 );
 
 // ─────────────────────────────────────────────────────────────────────────────

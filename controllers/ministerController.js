@@ -124,4 +124,31 @@ async function actionApproval(req, res) {
   }
 }
 
-module.exports = { getApprovals, actionApproval };
+async function getApprovedApplications(req, res) {
+  try {
+    const ministerId = req.user.User_ID;
+    const sql = `
+      SELECT 
+        ma.Request_ID,
+        wa.Application_ID,
+        wa.Date_Submitted,
+        wa.Status,
+        wa.Monthly_Income,
+        a.Full_Name AS applicant_name,
+        a.NIC,
+        ma.Date_Reviewed AS Approval_Date
+      FROM MINISTER_APPROVAL ma
+      JOIN WELFARE_APPLICATION wa ON ma.Application_ID = wa.Application_ID
+      JOIN APPLICANT a ON wa.Applicant_ID = a.User_ID
+      WHERE ma.Minister_ID = ? AND ma.Final_Status = 'Approved'
+      ORDER BY ma.Date_Reviewed DESC
+    `;
+    const [rows] = await pool.execute(sql, [ministerId]);
+    return res.status(200).json({ status: 'success', data: rows });
+  } catch (error) {
+    console.error('Error fetching minister approved applications:', error);
+    return res.status(500).json({ status: 'error', message: 'Internal server error.' });
+  }
+}
+
+module.exports = { getApprovals, actionApproval, getApprovedApplications };
