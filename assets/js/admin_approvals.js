@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const detailsContainer = document.getElementById('approval-details-container');
 
   let currentRequestId = null;
+  let currentApps = [];
+  let approvedApps = [];
+  let currentTab = 'pending';
 
   try {
     const session = getSession('Minister');
@@ -22,10 +25,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Session error:', err);
     window.location.href = 'login.html';
   }
-
-  let currentApps = [];
-  let approvedApps = [];
-  let currentTab = 'pending';
 
   // Tab switching logic
   window.switchTab = (tab) => {

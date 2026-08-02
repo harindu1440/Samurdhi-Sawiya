@@ -16,6 +16,7 @@ async function getApprovals(req, res) {
         wa.Reason,
         wa.House_Photo,
         wa.Status,
+        wa.Date_Submitted,
         a.User_ID AS Applicant_ID,
         a.Full_Name,
         a.NIC,
