@@ -13,6 +13,7 @@ const gnController        = require('../controllers/gnController');
 const officerController   = require('../controllers/officerController');
 const adminController     = require('../controllers/adminController');
 const ministerController  = require('../controllers/ministerController');
+const complaintController = require('../controllers/complaintController');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Multer — house photo upload
@@ -57,6 +58,12 @@ const uploadHomeVisit = multer({
   fileFilter: uploadFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// APPLICANT — Complaints
+// ─────────────────────────────────────────────────────────────────────────────
+router.post('/applicant/complaints', authMiddleware, requireRole('Applicant'), complaintController.lodgeComplaint);
+router.get('/applicant/complaints', authMiddleware, requireRole('Applicant'), complaintController.getApplicantComplaints);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ── Public routes ─────────────────────────────────────────────────────────────
@@ -258,22 +265,13 @@ router.get(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// MINISTER ROUTES (Requires 'Minister' role)
+// MINISTER ROUTES
 // ─────────────────────────────────────────────────────────────────────────────
+router.get('/minister/approvals', authMiddleware, requireRole('Minister'), ministerController.getApprovals);
+router.post('/minister/approvals/:id/action', authMiddleware, requireRole('Minister'), ministerController.actionApproval);
 
-router.get(
-  '/minister/approvals',
-  authMiddleware,
-  requireRole('Minister'),
-  ministerController.getApprovals
-);
-
-router.post(
-  '/minister/approvals/:id/action',
-  authMiddleware,
-  requireRole('Minister'),
-  ministerController.actionApproval
-);
+router.get('/minister/complaints', authMiddleware, requireRole('Minister'), complaintController.getAllComplaints);
+router.post('/minister/complaints/:id/resolve', authMiddleware, requireRole('Minister'), complaintController.resolveComplaint);
 
 router.get(
   '/minister/approved',

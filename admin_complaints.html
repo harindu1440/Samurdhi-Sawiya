@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Applicant Complaints | SamurdhiSaviya</title>
+  <meta name="description" content="View and manage applicant complaints submitted to the welfare office.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/reports.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/admin_complaints.js" defer></script>
+
+  <!-- Global Theme CSS and JS -->
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <script src="assets/js/theme.js"></script>
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <style>
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-pending {
+      background: rgba(234, 179, 8, 0.15);
+      color: #ca8a04;
+      border: 1px solid rgba(234, 179, 8, 0.35);
+    }
+    .badge-resolved {
+      background: rgba(34, 197, 94, 0.15);
+      color: #16a34a;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+    .resolve-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .resolve-btn:hover { opacity: 0.85; }
+    .resolve-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .complaint-msg {
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-muted, #64748b);
+    }
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-bar select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border, #e2e8f0);
+      background: var(--surface, #fff);
+      color: var(--text, #1e293b);
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .filter-bar select:focus { outline: none; border-color: #3b82f6; }
+    #complaints-count {
+      margin-left: auto;
+      font-size: 0.85rem;
+      color: var(--text-muted, #64748b);
+      font-weight: 500;
+    }
+    .expand-btn {
+      background: none;
+      border: none;
+      color: #3b82f6;
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 2px 4px;
+      font-weight: 500;
+    }
+    .expand-btn:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="report-layout" data-complaints-page>
+    <aside class="sidebar" aria-label="Minister navigation">
+      <a class="brand" href="admin_dashboard.html" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 16px; text-decoration: none; width: 100%;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="assets/images/logo.png" alt="Samurdhi Logo" style="height: 42px; width: auto; object-fit: contain;">
+          <img src="assets/images/emblem.png" alt="National Emblem" class="sidebar-emblem" onerror="this.style.display='none'" style="height: 42px; width: auto; object-fit: contain;">
+        </div>
+        <span class="brand-text" style="display: flex; flex-direction: column; line-height: 1.2;">
+          <strong style="font-size: 1rem; color: #fff;">SamurdhiSaviya</strong>
+          <small style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.7);">Minister Control Center</small>
+        </span>
+      </a>
+
+      <nav class="nav-links">
+        <a class="nav-link" href="admin_dashboard.html" data-page="admin_dashboard"><i class="fa-solid fa-chart-column"></i> Overview</a>
+        <a class="nav-link" href="admin_users.html" data-page="admin_users"><i class="fa-solid fa-users-gear"></i> User Management</a>
+        <a class="nav-link" href="admin_approvals.html" data-page="admin_approvals"><i class="fa-solid fa-file-signature"></i> Applications</a>
+        <a class="nav-link" href="reports.html" data-page="reports"><i class="fa-solid fa-file-export"></i> Reports</a>
+        <a class="nav-link active" href="admin_complaints.html" data-page="admin_complaints"><i class="fa-solid fa-bullhorn"></i> Applicant Complains</a>
+        <a class="nav-link" href="admin_payments.html" data-page="applicant_payments"><i class="fa-solid fa-coins"></i> Payment History</a>
+        <a class="nav-link" href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="footer-label">Signed in as</span>
+        <strong id="admin-name">Minister</strong>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Citizen feedback</p>
+          <h1>Applicant Complaints</h1>
+          <p class="topbar-copy">View and manage complaints submitted by registered applicants. Mark resolved to close a complaint.</p>
+        </div>
+        <div class="status-chip" id="page-status">Loading...</div>
+      </header>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">All Complaints</p>
+            <h2>Submitted complaints inbox</h2>
+          </div>
+          <div class="panel-badge" id="complaints-badge">0 complaints</div>
+        </div>
+
+        <div style="padding: 16px 24px 0;">
+          <div class="filter-bar">
+            <label for="status-filter" style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted, #64748b);">Filter:</label>
+            <select id="status-filter">
+              <option value="All">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Resolved">Resolved</option>
+            </select>
+            <span id="complaints-count"></span>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Applicant Name</th>
+                <th scope="col">NIC</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Message</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody id="complaints-body">
+              <tr>
+                <td colspan="7" class="empty-state">Loading complaints...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

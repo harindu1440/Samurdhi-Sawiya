@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Lodge a Complaint | SamurdhiSaviya</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  
+  <!-- Global Theme & Dashboard CSS -->
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/applicant_dashboard.css">
+  <style>
+    .complaint-form-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .complaint-form-wrapper h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 1.25rem;
+      color: var(--text);
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface-alt);
+      color: var(--text);
+      font-family: inherit;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-pending { background: rgba(234, 179, 8, 0.2); color: #ca8a04; border: 1px solid rgba(234, 179, 8, 0.4); }
+    .status-resolved { background: rgba(34, 197, 94, 0.2); color: #16a34a; border: 1px solid rgba(34, 197, 94, 0.4); }
+  </style>
+
+  <script src="assets/js/theme.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="assets/js/api-client.js" defer></script>
+  <script src="assets/js/lodge_complain.js" defer></script>
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="top-nav">
+    <div class="nav-container">
+      <a class="brand" href="index.html" aria-label="SamurdhiSaviya home" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="assets/images/logo.png" alt="Samurdhi Logo" style="height: 42px; width: auto; object-fit: contain;">
+          <img src="assets/images/emblem.png" alt="National Emblem" class="sidebar-emblem" onerror="this.style.display='none'" style="height: 42px; width: auto; object-fit: contain;">
+        </div>
+        <span class="brand-text" style="display: flex; flex-direction: column; line-height: 1.2;">
+          <strong style="font-size: 1.1rem; color: var(--text);">SamurdhiSaviya</strong>
+          <small style="font-size: 0.75rem; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700;">APPLICANT PORTAL</small>
+        </span>
+      </a>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle-btn" class="theme-toggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <span class="user-chip hidden-mobile">Welcome, <strong id="user-name">Applicant</strong></span>
+        <button onclick="logout()" class="btn-logout">
+          <span>Sign Out</span>
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dashboard-layout" style="max-width: 900px; margin: 0 auto; padding: 24px;">
+    
+    <div style="margin-bottom: 20px;">
+      <a href="applicant_dashboard.html" style="color: var(--accent); text-decoration: none; font-weight: 500; font-size: 0.9rem;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
+    <!-- Lodge Complaint Form -->
+    <section class="complaint-form-wrapper dashboard-anim-item">
+      <h2><i class="fa-solid fa-bullhorn" style="color: var(--accent); margin-right: 8px;"></i> Lodge a New Complaint</h2>
+      <form id="complaint-form" novalidate>
+        <div class="form-group">
+          <label for="complaint-subject">Subject / Issue Title</label>
+          <input type="text" id="complaint-subject" placeholder="E.g. Delayed payment, Application rejected incorrectly..." required>
+        </div>
+        <div class="form-group">
+          <label for="complaint-message">Detailed Message</label>
+          <textarea id="complaint-message" rows="5" placeholder="Please describe your issue in detail so officials can assist you..." required></textarea>
+        </div>
+        <button type="submit" class="btn-primary" id="submit-complaint-btn" style="width: auto; padding: 12px 24px;">
+          Submit Complaint
+        </button>
+      </form>
+    </section>
+
+    <!-- Past Complaints -->
+    <section class="panel dashboard-anim-item" aria-label="My Complaints">
+      <div class="panel-header" style="padding: 20px; border-bottom: 1px solid var(--border);">
+        <h2 style="font-size: 1.1rem; color: var(--text); margin: 0;">My Previous Complaints</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="status-table" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Subject</th>
+              <th>Message</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="complaints-body">
+            <tr>
+              <td colspan="4" class="empty-state">Loading complaints...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>
