@@ -161,20 +161,19 @@ window.submitChangePassword = async function(e) {
   btn.textContent = 'Updating...';
 
   try {
-    const res = await authFetch('/api/auth/change-password', {
+    const data = await authFetch('/api/auth/change-password', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ currentPassword, newPassword })
     });
-    const data = await res.json();
 
-    if (res.ok && data.status === 'success') {
+    if (data && data.status === 'success') {
       successEl.textContent = data.message || 'Password updated successfully.';
       successEl.classList.remove('hidden');
       document.getElementById('profile-form').reset();
       setTimeout(closeProfileModal, 2000);
     } else {
-      errorEl.textContent = data.message || 'Failed to update password.';
+      errorEl.textContent = (data && data.message) ? data.message : 'Failed to update password.';
       errorEl.classList.remove('hidden');
     }
   } catch (err) {
