@@ -23,6 +23,7 @@ async function getApprovals(req, res) {
         a.Address,
         a.DOB,
         a.Gender,
+        a.Division,
         hv.Remarks AS Officer_Remarks,
         hv.Recommendation
       FROM MINISTER_APPROVAL ma
@@ -137,6 +138,7 @@ async function getApprovedApplications(req, res) {
         wa.Monthly_Income,
         a.Full_Name AS applicant_name,
         a.NIC,
+        a.Division,
         ma.Date_Reviewed AS Approval_Date
       FROM MINISTER_APPROVAL ma
       JOIN WELFARE_APPLICATION wa ON ma.Application_ID = wa.Application_ID

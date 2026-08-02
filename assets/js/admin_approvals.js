@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       
       currentApps = data.data;
+      populateDivisionFilter(currentApps);
       if (currentTab === 'pending') renderTable(currentApps);
 
     } catch (err) {
@@ -90,26 +91,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function renderTable(apps) {
     if (apps.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No applications pending approval.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-state text-center py-10 text-slate-500">No applications pending approval.</td></tr>';
       return;
     }
 
     tbody.innerHTML = '';
+    
+    // Group by division
+    const grouped = {};
     apps.forEach(app => {
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50';
-      tr.innerHTML = `
-        <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-medium">#REQ-${app.Request_ID}</td>
-        <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-bold">${app.Full_Name}</td>
-        <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.NIC}</td>
-        <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${new Date(app.Date_Submitted).toLocaleDateString()}</td>
-        <td class="px-6 py-4">
-          <button class="view-btn bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-all shadow-[0_0_10px_rgba(79,70,229,0.4)]" data-app='${JSON.stringify(app)}'>
-            Review
-          </button>
-        </td>
-      `;
-      tbody.appendChild(tr);
+      const div = app.Division || 'Unspecified Division';
+      if (!grouped[div]) grouped[div] = [];
+      grouped[div].push(app);
+    });
+
+    Object.keys(grouped).sort().forEach(div => {
+      const headerTr = document.createElement('tr');
+      headerTr.className = 'bg-slate-200 dark:bg-slate-700/80';
+      headerTr.innerHTML = `<td colspan="5" class="px-6 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider"><i class="fa-solid fa-map-location-dot mr-2"></i>${div}</td>`;
+      tbody.appendChild(headerTr);
+
+      grouped[div].forEach(app => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50';
+        tr.innerHTML = `
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-medium">#REQ-${app.Request_ID}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-bold">${app.Full_Name}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.NIC}</td>
+          <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Date_Submitted ? new Date(app.Date_Submitted).toLocaleDateString() : 'N/A'}</td>
+          <td class="px-6 py-4">
+            <button class="view-btn bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-all shadow-[0_0_10px_rgba(79,70,229,0.4)]" data-app='${JSON.stringify(app)}'>
+              Review
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
     });
 
     document.querySelectorAll('.view-btn').forEach(btn => {
@@ -128,6 +145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const res = await authFetch('/api/minister/approved');
       if (res && res.status === 'success') {
         approvedApps = res.data || [];
+        populateDivisionFilter(approvedApps);
         renderApprovedTable(approvedApps);
       } else {
         approvedTbody.innerHTML = '<tr><td colspan="6" class="text-center text-red-500 py-10">Failed to load approved applications.</td></tr>';
@@ -145,40 +163,83 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    approvedTbody.innerHTML = apps.map(app => {
-      return `
-        <tr class="hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50">
+    approvedTbody.innerHTML = '';
+    
+    const grouped = {};
+    apps.forEach(app => {
+      const div = app.Division || 'Unspecified Division';
+      if (!grouped[div]) grouped[div] = [];
+      grouped[div].push(app);
+    });
+
+    Object.keys(grouped).sort().forEach(div => {
+      const headerTr = document.createElement('tr');
+      headerTr.className = 'bg-slate-200 dark:bg-slate-700/80';
+      headerTr.innerHTML = `<td colspan="6" class="px-6 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider"><i class="fa-solid fa-map-location-dot mr-2"></i>${div}</td>`;
+      approvedTbody.appendChild(headerTr);
+      
+      grouped[div].forEach(app => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50';
+        tr.innerHTML = `
           <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-medium">#REQ-${app.Request_ID}</td>
           <td class="px-6 py-4 text-slate-800 dark:text-slate-200">#${app.Application_ID}</td>
           <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-bold">${app.applicant_name}</td>
           <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Date_Submitted ? app.Date_Submitted.substring(0, 10) : 'N/A'}</td>
           <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Approval_Date ? app.Approval_Date.substring(0, 10) : 'N/A'}</td>
           <td class="px-6 py-4 text-slate-800 dark:text-slate-200">LKR ${Number(app.Monthly_Income).toLocaleString()}</td>
-        </tr>
-      `;
-    }).join('');
+        `;
+        approvedTbody.appendChild(tr);
+      });
+    });
+  }
+
+  function populateDivisionFilter(apps) {
+    const filter = document.getElementById('divisionFilter');
+    if (!filter) return;
+    
+    const divisions = [...new Set(apps.map(a => a.Division).filter(Boolean))].sort();
+    const currentVal = filter.value;
+    
+    filter.innerHTML = '<option value="">All Divisions</option>';
+    divisions.forEach(div => {
+      const opt = document.createElement('option');
+      opt.value = div;
+      opt.textContent = div;
+      filter.appendChild(opt);
+    });
+    
+    if (divisions.includes(currentVal)) {
+      filter.value = currentVal;
+    }
   }
 
   window.handleSearch = () => {
     const searchInput = document.getElementById('searchInput');
-    if (!searchInput) return;
-    const term = searchInput.value.toLowerCase();
+    const divFilter = document.getElementById('divisionFilter');
+    
+    const term = searchInput ? searchInput.value.toLowerCase() : '';
+    const selectedDiv = divFilter ? divFilter.value : '';
     
     if (currentTab === 'pending') {
-      const filtered = currentApps.filter(app => 
-        String(app.Request_ID).toLowerCase().includes(term) ||
-        String(app.Application_ID).toLowerCase().includes(term) ||
-        String(app.Full_Name).toLowerCase().includes(term) ||
-        String(app.NIC).toLowerCase().includes(term)
-      );
+      const filtered = currentApps.filter(app => {
+        const matchesSearch = String(app.Request_ID).toLowerCase().includes(term) ||
+                              String(app.Application_ID).toLowerCase().includes(term) ||
+                              String(app.Full_Name).toLowerCase().includes(term) ||
+                              String(app.NIC).toLowerCase().includes(term);
+        const matchesDiv = selectedDiv === '' || app.Division === selectedDiv;
+        return matchesSearch && matchesDiv;
+      });
       renderTable(filtered);
     } else {
-      const filtered = approvedApps.filter(app => 
-        String(app.Request_ID).toLowerCase().includes(term) ||
-        String(app.Application_ID).toLowerCase().includes(term) ||
-        String(app.applicant_name).toLowerCase().includes(term) ||
-        String(app.NIC).toLowerCase().includes(term)
-      );
+      const filtered = approvedApps.filter(app => {
+        const matchesSearch = String(app.Request_ID).toLowerCase().includes(term) ||
+                              String(app.Application_ID).toLowerCase().includes(term) ||
+                              String(app.applicant_name).toLowerCase().includes(term) ||
+                              String(app.NIC).toLowerCase().includes(term);
+        const matchesDiv = selectedDiv === '' || app.Division === selectedDiv;
+        return matchesSearch && matchesDiv;
+      });
       renderApprovedTable(filtered);
     }
   };

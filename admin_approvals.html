@@ -94,11 +94,16 @@
             <h2 id="panel-title" class="text-lg font-bold text-slate-800 dark:text-white m-0">Final Approval & Payment Queue</h2>
             <p id="panel-desc" class="text-sm text-slate-500 dark:text-slate-400 m-0 mt-1">Applications rigorously vetted by Samurdhi Officers and Grama Niladharis.</p>
           </div>
-          <div class="relative w-full md:w-72">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <i class="fa-solid fa-search text-slate-400"></i>
+          <div class="flex gap-4 items-center">
+            <select id="divisionFilter" onchange="handleSearch()" class="bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none block p-2.5 transition-colors">
+              <option value="">All Divisions</option>
+            </select>
+            <div class="relative w-full md:w-64">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <i class="fa-solid fa-search text-slate-400"></i>
+              </div>
+              <input type="text" id="searchInput" class="bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none block w-full pl-10 p-2.5 transition-colors" placeholder="Search ID, Name, NIC..." onkeyup="handleSearch()">
             </div>
-            <input type="text" id="searchInput" class="bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none block w-full pl-10 p-2.5 transition-colors" placeholder="Search by ID, Name, or NIC..." onkeyup="handleSearch()">
           </div>
         </div>
 
