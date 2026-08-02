@@ -334,7 +334,7 @@ async function getReport(req, res) {
     const [records] = await pool.execute(`
       SELECT
         wa.Application_ID    AS application_id,
-        u.Username           AS applicant_name,
+        a.Full_Name          AS applicant_name,
         a.User_ID            AS applicant_id,
         wa.Date_Submitted    AS application_date,
         wa.Status            AS application_status,
