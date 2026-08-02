@@ -66,7 +66,7 @@ const uploadHomeVisit = multer({
 router.post('/auth/login', authController.login);
 
 // POST /api/auth/register  (public — no JWT required, multipart/form-data)
-router.post('/auth/register', upload.single('housePhoto'), authController.register);
+router.post('/auth/register', upload.array('housePhoto', 5), authController.register);
 
 // PUT /api/auth/change-password (requires auth)
 router.put('/auth/change-password', authMiddleware, authController.changePassword);
@@ -79,7 +79,7 @@ router.post(
   '/applications/submit',
   authMiddleware,
   requireRole('Applicant'),
-  upload.single('house_photo'),
+  upload.array('house_photo', 5),
   applicantController.submitApplication
 );
 
@@ -179,7 +179,7 @@ router.post(
   '/officer/visit',
   authMiddleware,
   requireRole('Samurdhi_Officer'),
-  uploadHomeVisit.single('home_visit_photo'),
+  uploadHomeVisit.array('home_visit_photo', 5),
   officerController.submitVisit
 );
 

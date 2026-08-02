@@ -247,20 +247,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // House photo
-    const housePhotoFile = housePhotoInput?.files?.[0] || null;
-    if (!housePhotoFile) {
-      showError('Please upload a photo of your house (JPEG or PNG).');
+    const housePhotoFiles = housePhotoInput?.files || [];
+    if (housePhotoFiles.length === 0) {
+      showError('Please upload at least one photo of your house (JPEG or PNG).');
       housePhotoLabel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    if (!allowedTypes.includes(housePhotoFile.type)) {
-      showError('House photo must be a JPEG or PNG image.');
+    if (housePhotoFiles.length > 5) {
+      showError('You can upload a maximum of 5 house photos.');
       return;
     }
-    if (housePhotoFile.size > 5 * 1024 * 1024) {
-      showError('House photo must be smaller than 5 MB.');
-      return;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    for (let i = 0; i < housePhotoFiles.length; i++) {
+      if (!allowedTypes.includes(housePhotoFiles[i].type)) {
+        showError(`File "${housePhotoFiles[i].name}" must be a JPEG or PNG image.`);
+        return;
+      }
+      if (housePhotoFiles[i].size > 5 * 1024 * 1024) {
+        showError(`File "${housePhotoFiles[i].name}" must be smaller than 5 MB.`);
+        return;
+      }
     }
 
     // Section 2
@@ -345,8 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('Account_Name',   accountName);
       formData.append('Account_Number', accountNumber);
 
-      // House photo file
-      formData.append('housePhoto', housePhotoFile);
+      // House photo files
+      for (let i = 0; i < housePhotoFiles.length; i++) {
+        formData.append('housePhoto', housePhotoFiles[i]);
+      }
 
       // ── POST to /api/auth/register ────────────────────────────────────────────
       // NOTE: No 'Content-Type' header — browser sets multipart/form-data

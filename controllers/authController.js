@@ -121,8 +121,10 @@ async function register(req, res) {
     const accountName   = String(req.body?.Account_Name || '').trim();
     const accountNumber = String(req.body?.Account_Number || '').trim();
 
-    // House photo — provided by multer via upload.single('housePhoto')
-    const housePhoto = req.file ? req.file.filename : null;
+    // House photos — provided by multer via upload.array('housePhoto', 5)
+    const housePhoto = req.files && req.files.length > 0
+      ? req.files.map(f => f.filename).join(',')
+      : null;
 
     // ── Server-side validation ────────────────────────────────────────────────
     const validationErrors = [];

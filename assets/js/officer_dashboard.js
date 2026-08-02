@@ -193,15 +193,31 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('detail-dependents').textContent = app.Dependents;
     document.getElementById('detail-reason').textContent = app.Reason;
 
-    const imgEl = document.getElementById('detail-house-photo');
+    const photoContainer = document.querySelector('.photo-container');
     const noImgEl = document.getElementById('detail-no-photo');
     
+    // Clear previously injected images
+    const existingImgs = photoContainer.querySelectorAll('img.dynamic-house-photo');
+    existingImgs.forEach(img => img.remove());
+    
+    // Original static img might still be there, hide it if present
+    const staticImg = document.getElementById('detail-house-photo');
+    if (staticImg) staticImg.style.display = 'none';
+
     if (app.House_Photo) {
-      imgEl.src = `/uploads/houses/${app.House_Photo}`;
-      imgEl.style.display = 'block';
       noImgEl.classList.add('hidden');
+      const photos = app.House_Photo.split(',');
+      photos.forEach(photo => {
+        const img = document.createElement('img');
+        img.className = 'dynamic-house-photo max-h-[400px] object-contain m-2 border border-slate-300 dark:border-slate-700 rounded-lg';
+        img.src = `/uploads/houses/${photo.trim()}`;
+        img.alt = 'House Photo';
+        img.onerror = function() { this.style.display='none'; };
+        photoContainer.appendChild(img);
+      });
+      // Enable flex-wrap on container for multiple images
+      photoContainer.style.flexWrap = 'wrap';
     } else {
-      imgEl.style.display = 'none';
       noImgEl.classList.remove('hidden');
     }
 

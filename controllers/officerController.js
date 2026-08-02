@@ -82,7 +82,7 @@ async function submitVisit(req, res) {
     const applicationId  = parseInt(req.body?.Application_ID, 10);
     const statusAction   = String(req.body?.StatusAction || '').trim(); // 'Approve', 'Reject', 'Pending'
     const remarks        = String(req.body?.OfficerNotes || '').trim();
-    const photoFilename  = req.file ? req.file.filename : null;
+    const photoFilename  = req.files && req.files.length > 0 ? req.files.map(f => f.filename).join(',') : null;
 
     if (!applicationId || applicationId < 1) {
       conn.release();

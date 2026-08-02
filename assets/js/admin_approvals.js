@@ -250,7 +250,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Construct HTML for the details view
     let photoHtml = '<div class="text-slate-500 dark:text-slate-400 p-8 text-center text-sm">No house photo uploaded.</div>';
     if (app.House_Photo) {
-      photoHtml = `<img src="/uploads/houses/${app.House_Photo}" class="max-h-[300px] object-contain mx-auto" alt="House Photo" onerror="this.style.display='none'" />`;
+      const photos = app.House_Photo.split(',');
+      photoHtml = `<div class="flex flex-wrap justify-center gap-2 w-full p-2">` + 
+        photos.map(p => `<img src="/uploads/houses/${p.trim()}" class="max-h-[300px] object-contain border border-slate-300 dark:border-slate-700 rounded-lg" alt="House Photo" onerror="this.style.display='none'" />`).join('') + 
+        `</div>`;
     }
 
     // Extract home visit photo from remarks if present
@@ -261,7 +264,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (photoMatch) {
       const visitPhotoName = photoMatch[1];
       rawRemarks = rawRemarks.replace(photoMatch[0], '').trim();
-      visitPhotoHtml = `<img src="/uploads/home_visits/${visitPhotoName}" class="max-h-[200px] object-contain mx-auto" alt="Home Visit Photo" onerror="this.style.display='none'" />`;
+      const vPhotos = visitPhotoName.split(',');
+      visitPhotoHtml = `<div class="flex flex-wrap justify-center gap-2 w-full p-2">` + 
+        vPhotos.map(p => `<img src="/uploads/home_visits/${p.trim()}" class="max-h-[200px] object-contain border border-slate-300 dark:border-slate-700 rounded-lg" alt="Home Visit Photo" onerror="this.style.display='none'" />`).join('') + 
+        `</div>`;
     }
 
     detailsContainer.innerHTML = `
