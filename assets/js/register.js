@@ -303,20 +303,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Section 4
-    if (!bankName) {
-      showError('Please enter the name of your bank.');
+    if (!bankName || !branch || !accountName || !accountNumber) {
+      showError('Please click "Add Bank Details" and provide your bank information before registering.');
       return;
     }
-    if (!branch) {
-      showError('Please enter your bank branch.');
-      return;
-    }
-    if (!accountName) {
-      showError('Please enter the account holder name.');
-      return;
-    }
-    if (!accountNumber || !/^[0-9]+$/.test(accountNumber)) {
-      showError('Please enter a valid account number (digits only).');
+    if (!/^[0-9]+$/.test(accountNumber)) {
+      showError('Account number must contain only digits.');
       return;
     }
 
@@ -406,4 +398,76 @@ document.addEventListener('DOMContentLoaded', () => {
       setLoading(false);
     }
   });
+
+  // ── Bank Details Modal Logic ──────────────────────────────────────────────
+  const openBankModalBtn = document.getElementById('open-bank-modal-btn');
+  const closeBankModalBtn = document.getElementById('close-bank-modal');
+  const saveBankBtn = document.getElementById('save-bank-btn');
+  const bankModal = document.getElementById('bank-modal');
+  const bankModalError = document.getElementById('bank-modal-error');
+  const bankStatusMsg = document.getElementById('bank-status-msg');
+
+  if (openBankModalBtn && bankModal) {
+    openBankModalBtn.addEventListener('click', () => {
+      // Pre-fill if already saved
+      document.getElementById('modal_bank_name').value = document.getElementById('bank_name').value;
+      document.getElementById('modal_branch').value = document.getElementById('branch').value;
+      document.getElementById('modal_account_name').value = document.getElementById('account_name').value;
+      document.getElementById('modal_account_number').value = document.getElementById('account_number').value;
+      bankModalError.style.display = 'none';
+      bankModal.style.display = 'flex';
+      
+      if (typeof gsap !== 'undefined') {
+        gsap.fromTo(bankModal.firstElementChild, { y: 30, opacity: 0, scale: 0.95 }, { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.5)' });
+      }
+    });
+  }
+
+  if (closeBankModalBtn && bankModal) {
+    closeBankModalBtn.addEventListener('click', () => {
+      if (typeof gsap !== 'undefined') {
+        gsap.to(bankModal.firstElementChild, { y: 20, opacity: 0, scale: 0.95, duration: 0.2, ease: 'power2.in', onComplete: () => bankModal.style.display = 'none' });
+      } else {
+        bankModal.style.display = 'none';
+      }
+    });
+  }
+
+  if (saveBankBtn) {
+    saveBankBtn.addEventListener('click', () => {
+      const mbName = document.getElementById('modal_bank_name').value.trim();
+      const mbBranch = document.getElementById('modal_branch').value.trim();
+      const mbAccName = document.getElementById('modal_account_name').value.trim();
+      const mbAccNum = document.getElementById('modal_account_number').value.trim();
+      
+      if (!mbName || !mbBranch || !mbAccName || !mbAccNum) {
+        bankModalError.textContent = 'All fields are required.';
+        bankModalError.style.display = 'block';
+        return;
+      }
+      if (!/^[0-9]+$/.test(mbAccNum)) {
+        bankModalError.textContent = 'Account number must contain only digits.';
+        bankModalError.style.display = 'block';
+        return;
+      }
+      
+      // Save to hidden inputs
+      document.getElementById('bank_name').value = mbName;
+      document.getElementById('branch').value = mbBranch;
+      document.getElementById('account_name').value = mbAccName;
+      document.getElementById('account_number').value = mbAccNum;
+      
+      // Close modal and show success status
+      if (typeof gsap !== 'undefined') {
+        gsap.to(bankModal.firstElementChild, { y: 20, opacity: 0, scale: 0.95, duration: 0.2, ease: 'power2.in', onComplete: () => bankModal.style.display = 'none' });
+      } else {
+        bankModal.style.display = 'none';
+      }
+      
+      openBankModalBtn.style.display = 'none';
+      bankStatusMsg.style.display = 'flex';
+    });
+  }
+
 });
+

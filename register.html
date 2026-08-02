@@ -784,7 +784,7 @@
             </div>
 
             <!-- ══════════════════════════════════════════════════════════════ -->
-            <!--  SECTION 4 — BANK DETAILS                                     -->
+            <!--  SECTION 4 — BANK DETAILS (MODAL)                              -->
             <!-- ══════════════════════════════════════════════════════════════ -->
             <div class="form-section-header">
               <span class="section-badge">
@@ -796,26 +796,21 @@
             <p class="form-section-desc">
               Your bank details are required for processing monthly Samurdhi welfare payments upon approval.
             </p>
-
-            <div class="field">
-              <input type="text" id="bank_name" name="bank_name" placeholder=" " required maxlength="255">
-              <label for="bank_name">Bank Name</label>
+            
+            <div class="full-width" style="margin-bottom: 20px;">
+              <button type="button" id="open-bank-modal-btn" class="submit-button" style="background: var(--accent); padding: 12px 24px; border-radius: 8px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; cursor: pointer; color: white; font-weight: 600;">
+                <i class="fa-solid fa-plus-circle"></i> <span>Add Bank Details</span>
+              </button>
+              <div id="bank-status-msg" style="display: none; align-items: center; gap: 8px; margin-top: 10px; color: #10b981; font-size: 14px; font-weight: 600;">
+                <i class="fa-solid fa-check-circle"></i> Bank details added successfully!
+              </div>
             </div>
 
-            <div class="field">
-              <input type="text" id="branch" name="branch" placeholder=" " required maxlength="255">
-              <label for="branch">Branch</label>
-            </div>
-
-            <div class="field full-width">
-              <input type="text" id="account_name" name="account_name" placeholder=" " required maxlength="255">
-              <label for="account_name">Account Holder Name</label>
-            </div>
-
-            <div class="field full-width">
-              <input type="text" id="account_number" name="account_number" placeholder=" " required maxlength="50" pattern="[0-9]+">
-              <label for="account_number">Account Number</label>
-            </div>
+            <!-- Hidden inputs to store bank data in main form -->
+            <input type="hidden" id="bank_name" name="bank_name">
+            <input type="hidden" id="branch" name="branch">
+            <input type="hidden" id="account_name" name="account_name">
+            <input type="hidden" id="account_number" name="account_number">
 
           </div><!-- /.form-grid -->
 
@@ -839,6 +834,43 @@
 
     </section>
   </main>
+  <!-- ── Bank Details Modal ────────────────────────────────────────────────── -->
+  <div id="bank-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 16px; width: 90%; max-width: 500px; padding: 24px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+      <button type="button" id="close-bank-modal" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #64748b;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 700; color: #0f172a;"><i class="fa-solid fa-building-columns" style="color:var(--accent); margin-right:8px;"></i>Enter Bank Details</h3>
+      <p style="margin: 0 0 20px 0; font-size: 0.85rem; color: #64748b;">Please provide your bank information for monthly welfare transfers.</p>
+      
+      <div id="bank-modal-error" style="display: none; background: #fee2e2; color: #b91c1c; padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600;"></div>
+      
+      <div class="form-grid">
+        <div class="field full-width">
+          <input type="text" id="modal_bank_name" placeholder=" " maxlength="255">
+          <label for="modal_bank_name">Bank Name</label>
+        </div>
+        <div class="field full-width">
+          <input type="text" id="modal_branch" placeholder=" " maxlength="255">
+          <label for="modal_branch">Branch</label>
+        </div>
+        <div class="field full-width">
+          <input type="text" id="modal_account_name" placeholder=" " maxlength="255">
+          <label for="modal_account_name">Account Holder Name</label>
+        </div>
+        <div class="field full-width">
+          <input type="text" id="modal_account_number" placeholder=" " maxlength="50" pattern="[0-9]+">
+          <label for="modal_account_number">Account Number</label>
+        </div>
+      </div>
+      
+      <button type="button" id="save-bank-btn" class="submit-button" style="margin-top: 20px;">
+        <span>Save Bank Details</span>
+        <i class="fa-solid fa-check"></i>
+      </button>
+    </div>
+  </div>
+
 </body>
 </html>
 
