@@ -42,6 +42,41 @@ document.addEventListener('DOMContentLoaded', async () => {
       lastUpdatedNode.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     }
 
+    if (m.breakdown) {
+      const ctx = document.getElementById('snapshotChart');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Pending', 'GN Approved', 'Officer Approved', 'Minister Approved', 'Rejected'],
+            datasets: [{
+              data: [
+                m.breakdown.pending,
+                m.breakdown.gn_approved,
+                m.breakdown.officer_approved,
+                m.breakdown.minister_approved,
+                m.breakdown.rejected
+              ],
+              backgroundColor: ['#64748b', '#f59e0b', '#3b82f6', '#10b981', '#ef4444'],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: { color: '#94a3b8', padding: 20, font: { family: 'Inter', size: 13 } }
+              }
+            }
+          }
+        });
+      }
+    }
+
     if (typeof gsap !== 'undefined') {
       gsap.from('.sidebar',      { duration: 0.8, x: -28, opacity: 0, ease: 'power3.out' });
       gsap.from('.topbar',       { duration: 0.8, y: -20, opacity: 0, delay: 0.08, ease: 'power3.out' });

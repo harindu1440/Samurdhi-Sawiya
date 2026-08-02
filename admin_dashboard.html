@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="assets/css/admin_dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="assets/js/api-client.js" defer></script>
   <script src="assets/js/admin_dashboard.js" defer></script>
 
@@ -88,8 +89,8 @@
           </div>
           <div class="panel-badge" id="last-updated">Updating...</div>
         </div>
-        <div class="panel-body">
-          <p>The dashboard refreshes aggregate values from the live database and animates the metrics as soon as they are available.</p>
+        <div class="panel-body" style="position: relative; height: 300px; width: 100%; display: flex; align-items: center; justify-content: center;">
+          <canvas id="snapshotChart"></canvas>
         </div>
       </section>
     </main>

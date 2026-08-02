@@ -12,7 +12,11 @@ async function getStats(req, res) {
       SELECT
         (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'Minister_Approved')  AS total_beneficiaries,
         (SELECT COALESCE(SUM(\`Amount\`), 0) FROM \`SAMURDHI_PAYMENT\`)                 AS total_funds_disbursed,
-        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'Pending' OR \`Status\` = 'Officer_Approved' OR \`Status\` = 'GN_Approved') AS pending_approvals
+        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` IN ('Pending', 'Officer_Approved', 'GN_Approved')) AS pending_approvals,
+        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'Pending') AS stat_pending,
+        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'GN_Approved') AS stat_gn,
+        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'Officer_Approved') AS stat_officer,
+        (SELECT COUNT(*) FROM \`WELFARE_APPLICATION\` WHERE \`Status\` = 'Rejected') AS stat_rejected
     `);
 
     return res.status(200).json({
@@ -21,6 +25,13 @@ async function getStats(req, res) {
         total_beneficiaries:   Number(counts.total_beneficiaries   || 0),
         total_funds_disbursed: Number(counts.total_funds_disbursed || 0),
         pending_approvals:     Number(counts.pending_approvals     || 0),
+        breakdown: {
+          pending: Number(counts.stat_pending || 0),
+          gn_approved: Number(counts.stat_gn || 0),
+          officer_approved: Number(counts.stat_officer || 0),
+          minister_approved: Number(counts.total_beneficiaries || 0),
+          rejected: Number(counts.stat_rejected || 0)
+        }
       },
     });
   } catch (err) {
