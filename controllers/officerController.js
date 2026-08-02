@@ -61,10 +61,12 @@ async function getDashboard(req, res) {
         a.NIC,
         a.Address,
         u.Username,
-        u.Phone_Num
+        u.Phone_Num,
+        hv.Remarks AS Officer_Remarks
       FROM \`WELFARE_APPLICATION\` wa
       JOIN \`APPLICANT\` a ON a.User_ID = wa.Applicant_ID
       JOIN \`USERS\` u ON u.User_ID = a.User_ID
+      LEFT JOIN \`HOME_VISIT\` hv ON hv.Application_ID = wa.Application_ID
       WHERE wa.Status IN ('Pending', 'Update_Required')
         AND a.Division = ?
         AND a.GN_Division = ?

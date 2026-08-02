@@ -300,6 +300,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset form
     homeVisitForm.reset();
+
+    // Pre-fill GN Feedback if present
+    if (app.Officer_Remarks && app.Officer_Remarks.includes('[GN Feedback:')) {
+      try {
+        const matches = [...app.Officer_Remarks.matchAll(/\[GN Feedback:\s*(.*?)\]/g)];
+        if (matches.length > 0) {
+          const lastFeedback = matches[matches.length - 1][1];
+          document.getElementById('officer-notes').value = lastFeedback;
+        }
+      } catch (e) {
+        console.error('Error parsing GN feedback:', e);
+      }
+    }
     homeVisitPhotoDT = new DataTransfer();
     const photoListEl = document.getElementById('home-visit-photo-list');
     if (photoListEl) {
