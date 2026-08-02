@@ -153,7 +153,12 @@ async function submitVisit(req, res) {
       await conn.execute(
         `INSERT INTO \`HOME_VISIT\` 
           (Application_ID, Officer_ID, Remarks, Recommendation, Date_Visited) 
-         VALUES (?, ?, ?, ?, CURDATE())`,
+         VALUES (?, ?, ?, ?, CURDATE())
+         ON DUPLICATE KEY UPDATE 
+          Officer_ID = VALUES(Officer_ID),
+          Remarks = VALUES(Remarks),
+          Recommendation = VALUES(Recommendation),
+          Date_Visited = VALUES(Date_Visited)`,
         [applicationId, officerId, finalRemarks, recommendation]
       );
     }
