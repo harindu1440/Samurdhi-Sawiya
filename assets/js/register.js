@@ -425,7 +425,8 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthBar.style.width = '0%';
       }
       // Reset file input visual state
-      updatePhotoLabel(null);
+      housePhotoDT = new DataTransfer();
+      renderPhotoList();
 
       // Redirect after the user can read the success message
       window.setTimeout(() => {
