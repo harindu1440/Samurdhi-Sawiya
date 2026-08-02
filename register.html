@@ -836,14 +836,14 @@
   </main>
   <!-- ── Bank Details Modal ────────────────────────────────────────────────── -->
   <div id="bank-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: white; border-radius: 16px; width: 90%; max-width: 500px; padding: 24px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-      <button type="button" id="close-bank-modal" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #64748b;">
+    <div style="background: var(--surface-strong); border: 1px solid var(--border); border-radius: 16px; width: 90%; max-width: 500px; padding: 24px; position: relative; box-shadow: var(--shadow);">
+      <button type="button" id="close-bank-modal" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--muted);">
         <i class="fa-solid fa-xmark"></i>
       </button>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 700; color: #0f172a;"><i class="fa-solid fa-building-columns" style="color:var(--accent); margin-right:8px;"></i>Enter Bank Details</h3>
-      <p style="margin: 0 0 20px 0; font-size: 0.85rem; color: #64748b;">Please provide your bank information for monthly welfare transfers.</p>
+      <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 700; color: var(--text);"><i class="fa-solid fa-building-columns" style="color:var(--accent); margin-right:8px;"></i>Enter Bank Details</h3>
+      <p style="margin: 0 0 20px 0; font-size: 0.85rem; color: var(--muted);">Please provide your bank information for monthly welfare transfers.</p>
       
-      <div id="bank-modal-error" style="display: none; background: #fee2e2; color: #b91c1c; padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600;"></div>
+      <div id="bank-modal-error" style="display: none; background: var(--danger-soft); color: var(--danger); padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600;"></div>
       
       <div class="form-grid">
         <div class="field full-width">
