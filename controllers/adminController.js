@@ -285,45 +285,22 @@ async function updateUser(req, res) {
 }
 
 async function deleteUser(req, res) {
-  const conn = await pool.getConnection();
   try {
     const userId = parseInt(req.params.id, 10);
     // User subclass is deleted via ON DELETE CASCADE in USERS table.
     
     if (!userId || userId < 1) {
-      conn.release();
       return res.status(400).json({ status: 'error', message: 'Invalid user ID.' });
     }
 
-    await conn.beginTransaction();
-
-    const [[user]] = await conn.execute(
-      `SELECT \`Role\` FROM \`USERS\` WHERE \`User_ID\` = ? LIMIT 1`,
-      [userId]
-    );
-
-    if (!user) {
-      await conn.rollback();
-      conn.release();
-      return res.status(404).json({ status: 'error', message: 'User not found.' });
-    }
-
-    // Nullify foreign keys in dependent tables to prevent constraint errors
-    if (user.Role === 'Grama_Niladhari') {
-      await conn.execute(`UPDATE \`MINISTER_APPROVAL\` SET \`GN_ID\` = NULL WHERE \`GN_ID\` = ?`, [userId]);
-    } else if (user.Role === 'Samurdhi_Officer') {
-      await conn.execute(`UPDATE \`HOME_VISIT\` SET \`Officer_ID\` = NULL WHERE \`Officer_ID\` = ?`, [userId]);
-    } else if (user.Role === 'Minister') {
-      await conn.execute(`UPDATE \`MINISTER_APPROVAL\` SET \`Minister_ID\` = NULL WHERE \`Minister_ID\` = ?`, [userId]);
-    }
-
-    const [result] = await conn.execute(
+    const [result] = await pool.execute(
       `DELETE FROM \`USERS\` WHERE \`User_ID\` = ?`,
       [userId]
     );
 
-    await conn.commit();
-    conn.release();
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ status: 'error', message: 'User not found.' });
+    }
 
     return res.status(200).json({
       status:  'success',
@@ -331,10 +308,17 @@ async function deleteUser(req, res) {
       deleted: { user_id: userId },
     });
   } catch (err) {
-    await conn.rollback().catch(() => {});
-    conn.release();
     console.error('[adminController.deleteUser]', err.message);
-    return res.status(500).json({ status: 'error', message: 'Unable to delete user. They might be referenced in other critical records.' });
+    
+    // Check if the error is a foreign key constraint failure
+    if (err.code === 'ER_ROW_IS_REFERENCED_2' || err.message.includes('foreign key constraint fails')) {
+      return res.status(409).json({ 
+        status: 'error', 
+        message: 'Cannot delete this user because they have processed applications or have existing records. To replace this user, please edit their account with the new person\'s details instead of deleting.' 
+      });
+    }
+
+    return res.status(500).json({ status: 'error', message: 'Unable to delete user.' });
   }
 }
 
