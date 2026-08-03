@@ -103,6 +103,9 @@
             <li class="mr-2" role="presentation">
               <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-slate-600 hover:border-slate-300 dark:hover:text-slate-300 tab-button text-slate-500 dark:text-slate-400" id="approved-tab" data-target="approved-panel" type="button" role="tab" onclick="switchTab('approved')">Approved Applications</button>
             </li>
+            <li class="mr-2" role="presentation">
+              <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-slate-600 hover:border-slate-300 dark:hover:text-slate-300 tab-button text-slate-500 dark:text-slate-400" id="rejected-tab" data-target="rejected-panel" type="button" role="tab" onclick="switchTab('rejected')">Rejected Applications</button>
+            </li>
           </ul>
         </div>
 
@@ -160,7 +163,29 @@
               </thead>
               <tbody id="approved-tbody" class="divide-y divide-slate-200 dark:divide-slate-700/50">
                 <tr>
-                  <td colspan="5" class="empty-state">Loading approved applications...</td>
+                  <td colspan="5" class="empty-state text-center py-10 text-slate-500">Loading approved applications...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Rejected Table Panel -->
+        <div id="rejected-panel" class="tab-panel hidden">
+          <div class="table-wrap w-full overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead class="bg-slate-100 dark:bg-slate-900/80">
+                <tr>
+                  <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">APP ID</th>
+                  <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">APPLICANT NAME</th>
+                  <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">DATE SUBMITTED</th>
+                  <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">INCOME</th>
+                  <th class="px-6 py-4 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">CURRENT STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="rejected-tbody" class="divide-y divide-slate-200 dark:divide-slate-700/50">
+                <tr>
+                  <td colspan="5" class="empty-state text-center py-10 text-slate-500">Loading rejected applications...</td>
                 </tr>
               </tbody>
             </table>

@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentApps = [];
   let approvedApps = [];
+  let rejectedApps = [];
   let currentTab = 'pending';
   let selectedAppId = null;
 
@@ -68,8 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (tab === 'pending') {
       renderTable(currentApps);
-    } else {
-      loadApprovedApplications();
+    } else if (tab === 'approved') {
+      loadApprovedApplications('approved');
+    } else if (tab === 'rejected') {
+      loadApprovedApplications('rejected');
     }
   };
 
@@ -109,20 +112,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Load approved applications
-  async function loadApprovedApplications() {
-    const approvedTbody = document.getElementById('approved-tbody');
-    approvedTbody.innerHTML = '<tr><td colspan="5" class="text-center py-10 text-slate-500">Loading approved applications...</td></tr>';
+  async function loadApprovedApplications(targetTab = 'approved') {
+    const tableId = targetTab === 'approved' ? 'approved-tbody' : 'rejected-tbody';
+    const tbodyEl = document.getElementById(tableId);
+    if (tbodyEl) tbodyEl.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-500">Loading ${targetTab} applications...</td></tr>`;
     try {
       const res = await authFetch('/api/gn/approved');
       if (res && res.status === 'success') {
-        approvedApps = res.data || [];
-        renderApprovedTable(approvedApps);
+        const allProcessed = res.data || [];
+        approvedApps = allProcessed.filter(app => app.Status !== 'Rejected');
+        rejectedApps = allProcessed.filter(app => app.Status === 'Rejected');
+        
+        if (targetTab === 'approved') {
+          renderApprovedTable(approvedApps, 'approved-tbody', 'No approved applications found.');
+        } else {
+          renderApprovedTable(rejectedApps, 'rejected-tbody', 'No rejected applications found.');
+        }
       } else {
-        approvedTbody.innerHTML = '<tr><td colspan="5" class="text-center text-red-500 py-10">Failed to load approved applications.</td></tr>';
+        if (tbodyEl) tbodyEl.innerHTML = `<tr><td colspan="5" class="text-center text-red-500 py-10">Failed to load ${targetTab} applications.</td></tr>`;
       }
     } catch (err) {
       console.error('Fetch Error:', err);
-      approvedTbody.innerHTML = '<tr><td colspan="5" class="text-center text-red-500 py-10">Network error.</td></tr>';
+      if (tbodyEl) tbodyEl.innerHTML = `<tr><td colspan="5" class="text-center text-red-500 py-10">Network error.</td></tr>`;
     }
   }
 
@@ -155,10 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
-  function renderApprovedTable(apps) {
-    const approvedTbody = document.getElementById('approved-tbody');
+  function renderApprovedTable(apps, tbodyId = 'approved-tbody', emptyMsg = 'No applications found.') {
+    const approvedTbody = document.getElementById(tbodyId);
+    if (!approvedTbody) return;
     if (apps.length === 0) {
-      approvedTbody.innerHTML = '<tr><td colspan="5" class="text-center py-10 text-slate-500">No approved applications found.</td></tr>';
+      approvedTbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-500">${emptyMsg}</td></tr>`;
       return;
     }
 
@@ -188,21 +200,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!searchInput) return;
     const term = searchInput.value.toLowerCase();
     
-    if (currentTab === 'pending') {
-      const filtered = currentApps.filter(app => 
-        String(app.Application_ID).toLowerCase().includes(term) ||
-        String(app.applicant_name).toLowerCase().includes(term) ||
-        String(app.NIC).toLowerCase().includes(term)
-      );
-      renderTable(filtered);
-    } else {
-      const filtered = approvedApps.filter(app => 
-        String(app.Application_ID).toLowerCase().includes(term) ||
-        String(app.applicant_name).toLowerCase().includes(term) ||
-        String(app.NIC).toLowerCase().includes(term)
-      );
-      renderApprovedTable(filtered);
-    }
+    let targetApps = [];
+    if (currentTab === 'pending') targetApps = currentApps;
+    else if (currentTab === 'approved') targetApps = approvedApps;
+    else if (currentTab === 'rejected') targetApps = rejectedApps;
+    
+    const filtered = targetApps.filter(app => 
+      String(app.Application_ID).toLowerCase().includes(term) ||
+      String(app.applicant_name).toLowerCase().includes(term) ||
+      String(app.NIC).toLowerCase().includes(term)
+    );
+
+    if (currentTab === 'pending') renderTable(filtered);
+    else if (currentTab === 'approved') renderApprovedTable(filtered, 'approved-tbody', 'No approved applications match your search.');
+    else if (currentTab === 'rejected') renderApprovedTable(filtered, 'rejected-tbody', 'No rejected applications match your search.');
   };
   // ── 4. Open Modal ────────────────────────────────────────────────────────
   window.openReviewModal = (id) => {
