@@ -254,4 +254,49 @@ document.addEventListener('DOMContentLoaded', async () => {
       ease: 'power3.out' 
     });
   }
+  // ─────────────────────────────────────────────────────────────────────────────
+  // 9. Change Password Logic
+  // ─────────────────────────────────────────────────────────────────────────────
+  window.openChangePasswordModal = () => {
+    const modal = document.getElementById('change-password-modal');
+    if (modal) modal.style.display = 'flex';
+  };
+
+  window.closeChangePasswordModal = () => {
+    const modal = document.getElementById('change-password-modal');
+    if (modal) modal.style.display = 'none';
+    const form = document.getElementById('change-password-form');
+    if (form) form.reset();
+  };
+
+  window.handleChangePassword = async (e) => {
+    e.preventDefault();
+    const currentPassword = document.getElementById('current-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    if (newPassword !== confirmPassword) {
+      alert("New passwords do not match.");
+      return;
+    }
+
+    try {
+      const res = await authFetch('/api/auth/change-password', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      
+      if (res && res.status === 'success') {
+        alert("Password updated successfully.");
+        closeChangePasswordModal();
+      } else {
+        alert(res?.message || "Failed to update password.");
+      }
+    } catch (err) {
+      console.error('Password change error:', err);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
 });
