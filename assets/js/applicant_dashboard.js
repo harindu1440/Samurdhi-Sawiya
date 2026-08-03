@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const s = String(status || '').toLowerCase();
     if (s.includes('update_required') || s.includes('update required')) {
       return {
-        classes: 'badge badge-rejected', // reusing orange/red style
+        classes: 'badge badge-rejected',
         icon: '<i class="fa-solid fa-triangle-exclamation"></i>',
         desc: 'Your application requires updates before it can be processed.'
       };
@@ -39,35 +39,56 @@ document.addEventListener('DOMContentLoaded', async () => {
       return {
         classes: 'badge badge-pending',
         icon: '<i class="fa-solid fa-clock"></i>',
-        desc: 'Your application is currently under review by the Grama Niladhari.'
+        desc: 'Your application is currently under review.'
       };
     }
-    if (s.includes('gn_approved') || s.includes('gn approved')) {
+    if (s.includes('officer_approved') || s.includes('officer approved')) {
       return {
-        classes: 'badge badge-approved', // Using approved style for both
-        icon: '<i class="fa-solid fa-file-signature"></i>',
-        desc: 'Approved by Grama Niladhari. Awaiting final Samurdhi Officer review.'
+        classes: 'badge badge-approved',
+        icon: '<i class="fa-solid fa-user-check"></i>',
+        desc: 'Approved by Samurdhi Officer. Awaiting Grama Niladhari Review.',
+        display: 'Approved by Officer'
       };
     }
-    if (s.includes('approved')) {
+    if (s.includes('gn_approved') || s.includes('gn approved') || s.includes('gn_reviewed')) {
+      return {
+        classes: 'badge badge-approved',
+        icon: '<i class="fa-solid fa-file-signature"></i>',
+        desc: 'Approved by Grama Niladhari. Awaiting Final Approval from Minister.',
+        display: 'Approved by GN'
+      };
+    }
+    if (s.includes('minister_approved') || s.includes('minister approved')) {
       return {
         classes: 'badge badge-approved',
         icon: '<i class="fa-solid fa-check-circle"></i>',
-        desc: 'Congratulations, your application has been fully approved.'
+        desc: 'Congratulations, your application has been fully approved by the Minister.',
+        display: 'Fully Approved'
+      };
+    }
+    if (s.includes('approved')) {
+      // Fallback for any other generic 'approved'
+      return {
+        classes: 'badge badge-approved',
+        icon: '<i class="fa-solid fa-check-circle"></i>',
+        desc: 'Your application has been approved.',
+        display: 'Approved'
       };
     }
     if (s.includes('rejected')) {
       return {
         classes: 'badge badge-rejected',
         icon: '<i class="fa-solid fa-circle-xmark"></i>',
-        desc: 'Your application has been rejected. Please lodge a complaint if you need assistance.'
+        desc: 'Your application has been rejected.',
+        display: 'Rejected'
       };
     }
     // Default
     return {
       classes: 'badge badge-default',
       icon: '<i class="fa-solid fa-circle-info"></i>',
-      desc: 'Status unknown or processing.'
+      desc: 'Status unknown or processing.',
+      display: status.replace('_', ' ')
     };
   };
 
@@ -100,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const styles = getStatusStyles(app.app_status);
         
         elStatusBadge.className = `inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold ${styles.classes}`;
-        elStatusBadge.innerHTML = `${styles.icon} ${app.app_status.replace('_', ' ')}`;
+        elStatusBadge.innerHTML = `${styles.icon} ${styles.display || app.app_status.replace('_', ' ')}`;
         elStatusDesc.textContent = styles.desc;
         
         elAppDate.textContent = formatDate(app.date);
