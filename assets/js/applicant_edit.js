@@ -139,6 +139,85 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
+  // ── House photo — live filename preview + drag-and-drop feedback ────────────
+  const housePhotoInput = document.getElementById('housePhoto');
+  const housePhotoLabel = document.getElementById('housePhoto-label');
+  const housePhotoChosen = document.getElementById('housePhoto-chosen');
+  let housePhotoDT = new DataTransfer();
+
+  function renderPhotoList() {
+    if (!housePhotoChosen) return;
+    const files = housePhotoDT.files;
+    if (housePhotoInput) housePhotoInput.files = files; // Sync with input
+    
+    if (files && files.length > 0) {
+      let fileListHtml = '<ul style="list-style: none; padding: 0; margin: 0; text-align: left; width: 100%;">';
+      for (let i = 0; i < files.length; i++) {
+        fileListHtml += `
+          <li style="padding: 4px 8px; margin-bottom: 4px; background: rgba(0,0,0,0.05); border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">✓ ${files[i].name}</span>
+            <button type="button" class="remove-photo-btn" data-index="${i}" style="color: red; border: none; background: none; cursor: pointer; font-weight: bold; margin-left: 8px;">✕</button>
+          </li>`;
+      }
+      fileListHtml += '</ul>';
+      housePhotoChosen.innerHTML = fileListHtml;
+      housePhotoChosen.hidden = false;
+      if (housePhotoLabel) housePhotoLabel.style.borderColor = 'var(--accent)';
+      
+      // Attach remove event listeners
+      const removeBtns = housePhotoChosen.querySelectorAll('.remove-photo-btn');
+      removeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const indexToRemove = parseInt(e.target.getAttribute('data-index'), 10);
+          const newDt = new DataTransfer();
+          for(let i=0; i<housePhotoDT.files.length; i++) {
+            if(i !== indexToRemove) newDt.items.add(housePhotoDT.files[i]);
+          }
+          housePhotoDT = newDt;
+          renderPhotoList();
+        });
+      });
+    } else {
+      housePhotoChosen.innerHTML = '';
+      housePhotoChosen.hidden = true;
+      if (housePhotoLabel) housePhotoLabel.style.borderColor = '';
+    }
+  }
+
+  if (housePhotoInput) {
+    housePhotoInput.addEventListener('change', () => {
+      housePhotoDT = new DataTransfer();
+      for (let i = 0; i < housePhotoInput.files.length; i++) {
+        housePhotoDT.items.add(housePhotoInput.files[i]);
+      }
+      renderPhotoList();
+    });
+  }
+
+  // Drag-and-drop onto the label
+  if (housePhotoLabel) {
+    housePhotoLabel.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      housePhotoLabel.classList.add('drag-over');
+    });
+    housePhotoLabel.addEventListener('dragleave', () => {
+      housePhotoLabel.classList.remove('drag-over');
+    });
+    housePhotoLabel.addEventListener('drop', (e) => {
+      e.preventDefault();
+      housePhotoLabel.classList.remove('drag-over');
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0 && housePhotoInput) {
+        housePhotoDT = new DataTransfer();
+        for (let i = 0; i < files.length; i++) {
+          housePhotoDT.items.add(files[i]);
+        }
+        renderPhotoList();
+      }
+    });
+  }
+
   // ── Bank Details Modal Logic ──────────────────────────────────────────────
   const openBankModalBtn = document.getElementById('open-bank-modal-btn');
   const closeBankModalBtn = document.getElementById('close-bank-modal');
