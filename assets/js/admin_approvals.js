@@ -175,10 +175,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     Object.keys(grouped).sort().forEach(div => {
       const headerTr = document.createElement('tr');
       headerTr.className = 'bg-slate-200 dark:bg-slate-700/80';
-      headerTr.innerHTML = `<td colspan="6" class="px-6 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider"><i class="fa-solid fa-map-location-dot mr-2"></i>${div}</td>`;
+      headerTr.innerHTML = `<td colspan="7" class="px-6 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider"><i class="fa-solid fa-map-location-dot mr-2"></i>${div}</td>`;
       approvedTbody.appendChild(headerTr);
       
       grouped[div].forEach(app => {
+        const displayStatus = app.Status.replace('_', ' ');
+        let statusBadge;
+        if (app.Status === 'Rejected') {
+          statusBadge = `<span class="bg-red-500/20 text-red-700 dark:text-red-400 px-3 py-1 rounded-full text-xs font-semibold border border-red-500/30">${displayStatus}</span>`;
+        } else {
+          statusBadge = `<span class="bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-500/30">${displayStatus}</span>`;
+        }
+
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50';
         tr.innerHTML = `
@@ -188,6 +196,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Date_Submitted ? app.Date_Submitted.substring(0, 10) : 'N/A'}</td>
           <td class="px-6 py-4 text-slate-800 dark:text-slate-200">${app.Approval_Date ? app.Approval_Date.substring(0, 10) : 'N/A'}</td>
           <td class="px-6 py-4 text-slate-800 dark:text-slate-200">LKR ${Number(app.Monthly_Income).toLocaleString()}</td>
+          <td class="px-6 py-4">${statusBadge}</td>
         `;
         approvedTbody.appendChild(tr);
       });

@@ -274,21 +274,26 @@ async function getPayments(req, res) {
 async function getApprovedApplications(req, res) {
   try {
     const gnId = req.user.User_ID;
-    const [rows] = await pool.execute(`
-      SELECT 
-        wa.Application_ID,
-        wa.Date_Submitted,
-        wa.Status,
+      const [[gnProfile]] = await pool.execute(
+        'SELECT `Division`, `GN_Division` FROM `GRAMA_NILADHARI` WHERE `User_ID` = ? LIMIT 1',
+        [gnId]
+      );
+
+      const [rows] = await pool.execute(`
+        SELECT 
+          wa.Application_ID,
+          wa.Date_Submitted,
+          wa.Status,
         wa.Monthly_Income,
         a.Full_Name AS applicant_name,
         a.NIC,
-        ma.Request_ID AS Approval_Date /* We don't have a specific GN approval date field, so we use Request_ID for ordering */
-      FROM \`MINISTER_APPROVAL\` ma
-      JOIN \`WELFARE_APPLICATION\` wa ON ma.Application_ID = wa.Application_ID
+        ma.Request_ID AS Approval_Date
+      FROM \`WELFARE_APPLICATION\` wa
       JOIN \`APPLICANT\` a ON wa.Applicant_ID = a.User_ID
-      WHERE ma.GN_ID = ?
-      ORDER BY ma.Request_ID DESC
-    `, [gnId]);
+      LEFT JOIN \`MINISTER_APPROVAL\` ma ON ma.Application_ID = wa.Application_ID
+      WHERE ma.GN_ID = ? OR (a.Division = ? AND a.GN_Division = ? AND wa.Status = 'Rejected')
+      ORDER BY wa.Date_Submitted DESC
+    `, [gnId, gnProfile.Division, gnProfile.GN_Division]);
     return res.status(200).json({ status: 'success', data: rows });
   } catch (err) {
     console.error('[gnController.getApprovedApplications]', err);

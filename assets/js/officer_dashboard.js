@@ -171,7 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     approvedTbody.innerHTML = apps.map(app => {
       const displayStatus = app.Status.replace('_', ' ');
-      const statusBadge = `<span class="bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-500/30">${displayStatus}</span>`;
+      let statusBadge;
+      if (app.Status === 'Rejected') {
+        statusBadge = `<span class="bg-red-500/20 text-red-700 dark:text-red-400 px-3 py-1 rounded-full text-xs font-semibold border border-red-500/30">${displayStatus}</span>`;
+      } else {
+        statusBadge = `<span class="bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-semibold border border-green-500/30">${displayStatus}</span>`;
+      }
 
       return `
         <tr class="hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200 dark:border-slate-700/50">

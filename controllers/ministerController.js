@@ -141,7 +141,7 @@ async function getApprovedApplications(req, res) {
       FROM MINISTER_APPROVAL ma
       JOIN WELFARE_APPLICATION wa ON ma.Application_ID = wa.Application_ID
       JOIN APPLICANT a ON wa.Applicant_ID = a.User_ID
-      WHERE ma.Minister_ID = ? AND ma.Final_Status = 'Approved'
+      WHERE ma.Minister_ID = ? AND ma.Final_Status IN ('Approved', 'Rejected')
       ORDER BY ma.Date_Reviewed DESC
     `;
     const [rows] = await pool.execute(sql, [ministerId]);

@@ -202,7 +202,7 @@ async function getApprovedApplications(req, res) {
       FROM \`HOME_VISIT\` hv
       JOIN \`WELFARE_APPLICATION\` wa ON hv.Application_ID = wa.Application_ID
       JOIN \`APPLICANT\` a ON wa.Applicant_ID = a.User_ID
-      WHERE hv.Officer_ID = ? AND hv.Recommendation = 'Recommended'
+      WHERE hv.Officer_ID = ? AND hv.Recommendation IN ('Recommended', 'Not Recommended')
       ORDER BY hv.Date_Visited DESC
     `, [officerId]);
     return res.status(200).json({ status: 'success', data: rows });
